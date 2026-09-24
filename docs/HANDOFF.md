@@ -3,13 +3,14 @@
 마지막 갱신: 2026-09-24
 
 ## 현재 단계
-설계(brainstorming) 시작 전. 레포 초기화 완료.
+설계(brainstorming) 진행 중 — 이해 요약 제시, 첫 질문(LLM 모델 구성) 답변 대기.
 
 ## 완료
 - GitHub 레포 생성: https://github.com/HGK-lab/SPCEXPLANER (private)
 - `docs/brief.md` 작성 (배포 항목 반영, 공고 확인 사항 추가)
 - `.env`에 OPENAI_API_KEY 저장 (gitignore 처리)
 - `CLAUDE.md`에 '작업 중지' 규칙 정의
+- 규칙 엔진 비교 실험 완료 → `docs/research/2026-09-24-spc-library-comparison.md` (추천: pycontrolcharts 판정 + shewhart 교차 검증)
 
 ## 진행 중
 없음
@@ -22,6 +23,8 @@
 ## 사용자 결정 사항
 - LLM: OpenAI 키 사용 (이전 해커톤 키 재사용). 2026-09-24 확인: 호출 정상, 접근 가능 모델은 `gpt-4.1-mini` 1개뿐
 - 배포: Streamlit Community Cloud
+- 작업마다 커밋 + 푸시 (상시 허락)
+- 필요하면 OpenAI 프로젝트의 허용 모델 변경 가능
 
 ## 막힌 점
 없음
