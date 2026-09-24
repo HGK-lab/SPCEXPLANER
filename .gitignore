@@ -1,0 +1,21 @@
+# 비밀 값 — 절대 커밋 금지
+.env
+.env.*
+.streamlit/secrets.toml
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+*.egg-info/
+
+# 도구 상태 폴더
+.omc/
+.claude/settings.local.json
+.worktrees/
+
+# OS
+.DS_Store
+Thumbs.db
