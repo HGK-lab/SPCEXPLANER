@@ -1,0 +1,4905 @@
+{
+ "prompt_version": "detect-v1",
+ "models": {
+  "gpt-4.1-mini": {
+   "config": {
+    "name": "gpt-4.1-mini",
+    "temperature": 0,
+    "repeats": 3,
+    "enabled": true
+   },
+   "series": {
+    "0": {
+     "input_hash": "9406fe00f808a56b",
+     "runs": [
+      {
+       "run": 0,
+       "text": "{\n  \"detections\": [\n    {\n      \"pattern\": \"급변\",\n      \"start\": 19,\n      \"end\": 19\n    },\n    {\n      \"pattern\": \"급변\",\n      \"start\": 66,\n      \"end\": 66\n    },\n    {\n      \"pattern\": \"추세\",\n      \"start\": 31,\n      \"end\": 36\n    },\n    {\n      \"pattern\": \"추세\",\n      \"start\": 84,\n      \"end\": 89\n    }\n  ]\n}",
+       "error": null,
+       "latency_s": 1.55,
+       "usage": {
+        "prompt_tokens": 948,
+        "completion_tokens": 114
+       },
+       "issues": [],
+       "created": "2026-09-25T23:48:41",
+       "events": [
+        {
+         "pattern": "spike",
+         "start": 19,
+         "end": 19,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 66,
+         "end": 66,
+         "direction": null
+        },
+        {
+         "pattern": "trend",
+         "start": 31,
+         "end": 36,
+         "direction": null
+        },
+        {
+         "pattern": "trend",
+         "start": 84,
+         "end": 89,
+         "direction": null
+        }
+       ]
+      },
+      {
+       "run": 1,
+       "text": "{\n  \"detections\": [\n    {\n      \"pattern\": \"급변\",\n      \"start\": 19,\n      \"end\": 19\n    },\n    {\n      \"pattern\": \"급변\",\n      \"start\": 66,\n      \"end\": 66\n    },\n    {\n      \"pattern\": \"추세\",\n      \"start\": 72,\n      \"end\": 78\n    }\n  ]\n}",
+       "error": null,
+       "latency_s": 1.22,
+       "usage": {
+        "prompt_tokens": 948,
+        "completion_tokens": 88
+       },
+       "issues": [],
+       "created": "2026-09-25T23:48:41",
+       "events": [
+        {
+         "pattern": "spike",
+         "start": 19,
+         "end": 19,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 66,
+         "end": 66,
+         "direction": null
+        },
+        {
+         "pattern": "trend",
+         "start": 72,
+         "end": 78,
+         "direction": null
+        }
+       ]
+      },
+      {
+       "run": 2,
+       "text": "{\n  \"detections\": [\n    {\n      \"pattern\": \"급변\",\n      \"start\": 19,\n      \"end\": 19\n    },\n    {\n      \"pattern\": \"급변\",\n      \"start\": 66,\n      \"end\": 66\n    }\n  ]\n}",
+       "error": null,
+       "latency_s": 1.05,
+       "usage": {
+        "prompt_tokens": 948,
+        "completion_tokens": 62
+       },
+       "issues": [],
+       "created": "2026-09-25T23:48:41",
+       "events": [
+        {
+         "pattern": "spike",
+         "start": 19,
+         "end": 19,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 66,
+         "end": 66,
+         "direction": null
+        }
+       ]
+      }
+     ]
+    },
+    "1": {
+     "input_hash": "63720cd6346feb11",
+     "runs": [
+      {
+       "run": 0,
+       "text": "{\n  \"detections\": [\n    {\n      \"pattern\": \"급변\",\n      \"start\": 78,\n      \"end\": 78\n    },\n    {\n      \"pattern\": \"급변\",\n      \"start\": 83,\n      \"end\": 83\n    },\n    {\n      \"pattern\": \"급변\",\n      \"start\": 85,\n      \"end\": 85\n    },\n    {\n      \"pattern\": \"급변\",\n      \"start\": 86,\n      \"end\": 86\n    },\n    {\n      \"pattern\": \"급변\",\n      \"start\": 98,\n      \"end\": 98\n    },\n    {\n      \"pattern\": \"추세\",\n      \"start\": 10,\n      \"end\": 15\n    },\n    {\n      \"pattern\": \"추세\",\n      \"start\": 51,\n      \"end\": 55\n    },\n    {\n      \"pattern\": \"추세\",\n      \"start\": 71,\n      \"end\": 76\n    }\n  ]\n}",
+       "error": null,
+       "latency_s": 2.52,
+       "usage": {
+        "prompt_tokens": 948,
+        "completion_tokens": 218
+       },
+       "issues": [],
+       "created": "2026-09-25T23:48:41",
+       "events": [
+        {
+         "pattern": "spike",
+         "start": 78,
+         "end": 78,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 83,
+         "end": 83,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 85,
+         "end": 85,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 86,
+         "end": 86,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 98,
+         "end": 98,
+         "direction": null
+        },
+        {
+         "pattern": "trend",
+         "start": 10,
+         "end": 15,
+         "direction": null
+        },
+        {
+         "pattern": "trend",
+         "start": 51,
+         "end": 55,
+         "direction": null
+        },
+        {
+         "pattern": "trend",
+         "start": 71,
+         "end": 76,
+         "direction": null
+        }
+       ]
+      },
+      {
+       "run": 1,
+       "text": "{\n  \"detections\": [\n    {\n      \"pattern\": \"급변\",\n      \"start\": 49,\n      \"end\": 49\n    },\n    {\n      \"pattern\": \"급변\",\n      \"start\": 78,\n      \"end\": 78\n    },\n    {\n      \"pattern\": \"급변\",\n      \"start\": 83,\n      \"end\": 85\n    },\n    {\n      \"pattern\": \"급변\",\n      \"start\": 86,\n      \"end\": 86\n    },\n    {\n      \"pattern\": \"급변\",\n      \"start\": 95,\n      \"end\": 95\n    },\n    {\n      \"pattern\": \"급변\",\n      \"start\": 98,\n      \"end\": 98\n    },\n    {\n      \"pattern\": \"추세\",\n      \"start\": 10,\n      \"end\": 15\n    },\n    {\n      \"pattern\": \"추세\",\n      \"start\": 51,\n      \"end\": 57\n    },\n    {\n      \"pattern\": \"추세\",\n      \"start\": 71,\n      \"end\": 76\n    },\n    {\n      \"pattern\": \"추세\",\n      \"start\": 87,\n      \"end\": 95\n    }\n  ]\n}",
+       "error": null,
+       "latency_s": 3.01,
+       "usage": {
+        "prompt_tokens": 948,
+        "completion_tokens": 270
+       },
+       "issues": [],
+       "created": "2026-09-25T23:48:41",
+       "events": [
+        {
+         "pattern": "spike",
+         "start": 49,
+         "end": 49,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 78,
+         "end": 78,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 83,
+         "end": 85,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 86,
+         "end": 86,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 95,
+         "end": 95,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 98,
+         "end": 98,
+         "direction": null
+        },
+        {
+         "pattern": "trend",
+         "start": 10,
+         "end": 15,
+         "direction": null
+        },
+        {
+         "pattern": "trend",
+         "start": 51,
+         "end": 57,
+         "direction": null
+        },
+        {
+         "pattern": "trend",
+         "start": 71,
+         "end": 76,
+         "direction": null
+        },
+        {
+         "pattern": "trend",
+         "start": 87,
+         "end": 95,
+         "direction": null
+        }
+       ]
+      },
+      {
+       "run": 2,
+       "text": "{\n  \"detections\": [\n    {\"pattern\": \"급변\", \"start\": 49, \"end\": 49},\n    {\"pattern\": \"급변\", \"start\": 78, \"end\": 78},\n    {\"pattern\": \"급변\", \"start\": 83, \"end\": 85},\n    {\"pattern\": \"급변\", \"start\": 86, \"end\": 86},\n    {\"pattern\": \"급변\", \"start\": 95, \"end\": 95},\n    {\"pattern\": \"급변\", \"start\": 98, \"end\": 98}\n  ]\n}",
+       "error": null,
+       "latency_s": 1.67,
+       "usage": {
+        "prompt_tokens": 948,
+        "completion_tokens": 130
+       },
+       "issues": [],
+       "created": "2026-09-25T23:48:41",
+       "events": [
+        {
+         "pattern": "spike",
+         "start": 49,
+         "end": 49,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 78,
+         "end": 78,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 83,
+         "end": 85,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 86,
+         "end": 86,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 95,
+         "end": 95,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 98,
+         "end": 98,
+         "direction": null
+        }
+       ]
+      }
+     ]
+    },
+    "2": {
+     "input_hash": "6047faf57859c9bf",
+     "runs": [
+      {
+       "run": 0,
+       "text": "{\n  \"detections\": [\n    {\n      \"pattern\": \"급변\",\n      \"start\": 48,\n      \"end\": 48\n    },\n    {\n      \"pattern\": \"급변\",\n      \"start\": 69,\n      \"end\": 69\n    },\n    {\n      \"pattern\": \"급변\",\n      \"start\": 84,\n      \"end\": 84\n    },\n    {\n      \"pattern\": \"추세\",\n      \"start\": 11,\n      \"end\": 16\n    },\n    {\n      \"pattern\": \"추세\",\n      \"start\": 72,\n      \"end\": 77\n    }\n  ]\n}",
+       "error": null,
+       "latency_s": 1.72,
+       "usage": {
+        "prompt_tokens": 948,
+        "completion_tokens": 140
+       },
+       "issues": [],
+       "created": "2026-09-25T23:48:41",
+       "events": [
+        {
+         "pattern": "spike",
+         "start": 48,
+         "end": 48,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 69,
+         "end": 69,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 84,
+         "end": 84,
+         "direction": null
+        },
+        {
+         "pattern": "trend",
+         "start": 11,
+         "end": 16,
+         "direction": null
+        },
+        {
+         "pattern": "trend",
+         "start": 72,
+         "end": 77,
+         "direction": null
+        }
+       ]
+      },
+      {
+       "run": 1,
+       "text": "{\n  \"detections\": [\n    {\n      \"pattern\": \"급변\",\n      \"start\": 48,\n      \"end\": 48\n    },\n    {\n      \"pattern\": \"급변\",\n      \"start\": 69,\n      \"end\": 69\n    },\n    {\n      \"pattern\": \"급변\",\n      \"start\": 84,\n      \"end\": 84\n    },\n    {\n      \"pattern\": \"추세\",\n      \"start\": 11,\n      \"end\": 16\n    },\n    {\n      \"pattern\": \"추세\",\n      \"start\": 72,\n      \"end\": 77\n    }\n  ]\n}",
+       "error": null,
+       "latency_s": 1.66,
+       "usage": {
+        "prompt_tokens": 948,
+        "completion_tokens": 140
+       },
+       "issues": [],
+       "created": "2026-09-25T23:48:41",
+       "events": [
+        {
+         "pattern": "spike",
+         "start": 48,
+         "end": 48,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 69,
+         "end": 69,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 84,
+         "end": 84,
+         "direction": null
+        },
+        {
+         "pattern": "trend",
+         "start": 11,
+         "end": 16,
+         "direction": null
+        },
+        {
+         "pattern": "trend",
+         "start": 72,
+         "end": 77,
+         "direction": null
+        }
+       ]
+      },
+      {
+       "run": 2,
+       "text": "{\n  \"detections\": [\n    {\n      \"pattern\": \"급변\",\n      \"start\": 48,\n      \"end\": 48\n    },\n    {\n      \"pattern\": \"급변\",\n      \"start\": 69,\n      \"end\": 69\n    },\n    {\n      \"pattern\": \"급변\",\n      \"start\": 84,\n      \"end\": 84\n    },\n    {\n      \"pattern\": \"추세\",\n      \"start\": 11,\n      \"end\": 16\n    },\n    {\n      \"pattern\": \"추세\",\n      \"start\": 71,\n      \"end\": 75\n    }\n  ]\n}",
+       "error": null,
+       "latency_s": 1.85,
+       "usage": {
+        "prompt_tokens": 948,
+        "completion_tokens": 140
+       },
+       "issues": [],
+       "created": "2026-09-25T23:48:41",
+       "events": [
+        {
+         "pattern": "spike",
+         "start": 48,
+         "end": 48,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 69,
+         "end": 69,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 84,
+         "end": 84,
+         "direction": null
+        },
+        {
+         "pattern": "trend",
+         "start": 11,
+         "end": 16,
+         "direction": null
+        },
+        {
+         "pattern": "trend",
+         "start": 71,
+         "end": 75,
+         "direction": null
+        }
+       ]
+      }
+     ]
+    },
+    "3": {
+     "input_hash": "2123f1e09014c4d1",
+     "runs": [
+      {
+       "run": 0,
+       "text": "{\n  \"detections\": [\n    {\n      \"pattern\": \"급변\",\n      \"start\": 63,\n      \"end\": 63\n    },\n    {\n      \"pattern\": \"급변\",\n      \"start\": 92,\n      \"end\": 92\n    },\n    {\n      \"pattern\": \"추세\",\n      \"start\": 3,\n      \"end\": 8\n    },\n    {\n      \"pattern\": \"추세\",\n      \"start\": 12,\n      \"end\": 17\n    },\n    {\n      \"pattern\": \"추세\",\n      \"start\": 27,\n      \"end\": 32\n    },\n    {\n      \"pattern\": \"추세\",\n      \"start\": 42,\n      \"end\": 47\n    },\n    {\n      \"pattern\": \"추세\",\n      \"start\": 54,\n      \"end\": 59\n    },\n    {\n      \"pattern\": \"추세\",\n      \"start\": 69,\n      \"end\": 74\n    }\n  ]\n}",
+       "error": null,
+       "latency_s": 2.87,
+       "usage": {
+        "prompt_tokens": 948,
+        "completion_tokens": 218
+       },
+       "issues": [],
+       "created": "2026-09-25T23:48:41",
+       "events": [
+        {
+         "pattern": "spike",
+         "start": 63,
+         "end": 63,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 92,
+         "end": 92,
+         "direction": null
+        },
+        {
+         "pattern": "trend",
+         "start": 3,
+         "end": 8,
+         "direction": null
+        },
+        {
+         "pattern": "trend",
+         "start": 12,
+         "end": 17,
+         "direction": null
+        },
+        {
+         "pattern": "trend",
+         "start": 27,
+         "end": 32,
+         "direction": null
+        },
+        {
+         "pattern": "trend",
+         "start": 42,
+         "end": 47,
+         "direction": null
+        },
+        {
+         "pattern": "trend",
+         "start": 54,
+         "end": 59,
+         "direction": null
+        },
+        {
+         "pattern": "trend",
+         "start": 69,
+         "end": 74,
+         "direction": null
+        }
+       ]
+      },
+      {
+       "run": 1,
+       "text": "{\n  \"detections\": [\n    {\n      \"pattern\": \"급변\",\n      \"start\": 63,\n      \"end\": 63\n    },\n    {\n      \"pattern\": \"급변\",\n      \"start\": 92,\n      \"end\": 92\n    },\n    {\n      \"pattern\": \"추세\",\n      \"start\": 3,\n      \"end\": 8\n    },\n    {\n      \"pattern\": \"추세\",\n      \"start\": 54,\n      \"end\": 57\n    },\n    {\n      \"pattern\": \"추세\",\n      \"start\": 71,\n      \"end\": 75\n    }\n  ]\n}",
+       "error": null,
+       "latency_s": 1.58,
+       "usage": {
+        "prompt_tokens": 948,
+        "completion_tokens": 140
+       },
+       "issues": [],
+       "created": "2026-09-25T23:48:41",
+       "events": [
+        {
+         "pattern": "spike",
+         "start": 63,
+         "end": 63,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 92,
+         "end": 92,
+         "direction": null
+        },
+        {
+         "pattern": "trend",
+         "start": 3,
+         "end": 8,
+         "direction": null
+        },
+        {
+         "pattern": "trend",
+         "start": 54,
+         "end": 57,
+         "direction": null
+        },
+        {
+         "pattern": "trend",
+         "start": 71,
+         "end": 75,
+         "direction": null
+        }
+       ]
+      },
+      {
+       "run": 2,
+       "text": "{\n  \"detections\": [\n    {\n      \"pattern\": \"급변\",\n      \"start\": 63,\n      \"end\": 63\n    },\n    {\n      \"pattern\": \"급변\",\n      \"start\": 92,\n      \"end\": 92\n    },\n    {\n      \"pattern\": \"추세\",\n      \"start\": 3,\n      \"end\": 8\n    },\n    {\n      \"pattern\": \"추세\",\n      \"start\": 54,\n      \"end\": 57\n    },\n    {\n      \"pattern\": \"추세\",\n      \"start\": 71,\n      \"end\": 75\n    }\n  ]\n}",
+       "error": null,
+       "latency_s": 1.76,
+       "usage": {
+        "prompt_tokens": 948,
+        "completion_tokens": 140
+       },
+       "issues": [],
+       "created": "2026-09-25T23:48:41",
+       "events": [
+        {
+         "pattern": "spike",
+         "start": 63,
+         "end": 63,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 92,
+         "end": 92,
+         "direction": null
+        },
+        {
+         "pattern": "trend",
+         "start": 3,
+         "end": 8,
+         "direction": null
+        },
+        {
+         "pattern": "trend",
+         "start": 54,
+         "end": 57,
+         "direction": null
+        },
+        {
+         "pattern": "trend",
+         "start": 71,
+         "end": 75,
+         "direction": null
+        }
+       ]
+      }
+     ]
+    },
+    "4": {
+     "input_hash": "c3320c81f583e6e6",
+     "runs": [
+      {
+       "run": 0,
+       "text": "{\n  \"detections\": [\n    {\"pattern\": \"급변\", \"start\": 21, \"end\": 21},\n    {\"pattern\": \"급변\", \"start\": 30, \"end\": 30},\n    {\"pattern\": \"급변\", \"start\": 34, \"end\": 34},\n    {\"pattern\": \"급변\", \"start\": 69, \"end\": 69},\n    {\"pattern\": \"추세\", \"start\": 31, \"end\": 36},\n    {\"pattern\": \"추세\", \"start\": 55, \"end\": 59},\n    {\"pattern\": \"추세\", \"start\": 87, \"end\": 91}\n  ]\n}",
+       "error": null,
+       "latency_s": 2.22,
+       "usage": {
+        "prompt_tokens": 948,
+        "completion_tokens": 150
+       },
+       "issues": [],
+       "created": "2026-09-25T23:48:41",
+       "events": [
+        {
+         "pattern": "spike",
+         "start": 21,
+         "end": 21,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 30,
+         "end": 30,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 34,
+         "end": 34,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 69,
+         "end": 69,
+         "direction": null
+        },
+        {
+         "pattern": "trend",
+         "start": 31,
+         "end": 36,
+         "direction": null
+        },
+        {
+         "pattern": "trend",
+         "start": 55,
+         "end": 59,
+         "direction": null
+        },
+        {
+         "pattern": "trend",
+         "start": 87,
+         "end": 91,
+         "direction": null
+        }
+       ]
+      },
+      {
+       "run": 1,
+       "text": "{\n  \"detections\": [\n    {\n      \"pattern\": \"급변\",\n      \"start\": 21,\n      \"end\": 21\n    },\n    {\n      \"pattern\": \"급변\",\n      \"start\": 30,\n      \"end\": 30\n    },\n    {\n      \"pattern\": \"급변\",\n      \"start\": 34,\n      \"end\": 34\n    },\n    {\n      \"pattern\": \"급변\",\n      \"start\": 69,\n      \"end\": 69\n    },\n    {\n      \"pattern\": \"추세\",\n      \"start\": 31,\n      \"end\": 36\n    },\n    {\n      \"pattern\": \"추세\",\n      \"start\": 55,\n      \"end\": 59\n    },\n    {\n      \"pattern\": \"추세\",\n      \"start\": 87,\n      \"end\": 91\n    }\n  ]\n}",
+       "error": null,
+       "latency_s": 3.04,
+       "usage": {
+        "prompt_tokens": 948,
+        "completion_tokens": 192
+       },
+       "issues": [],
+       "created": "2026-09-25T23:48:41",
+       "events": [
+        {
+         "pattern": "spike",
+         "start": 21,
+         "end": 21,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 30,
+         "end": 30,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 34,
+         "end": 34,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 69,
+         "end": 69,
+         "direction": null
+        },
+        {
+         "pattern": "trend",
+         "start": 31,
+         "end": 36,
+         "direction": null
+        },
+        {
+         "pattern": "trend",
+         "start": 55,
+         "end": 59,
+         "direction": null
+        },
+        {
+         "pattern": "trend",
+         "start": 87,
+         "end": 91,
+         "direction": null
+        }
+       ]
+      },
+      {
+       "run": 2,
+       "text": "{\n  \"detections\": [\n    {\n      \"pattern\": \"급변\",\n      \"start\": 21,\n      \"end\": 21\n    },\n    {\n      \"pattern\": \"급변\",\n      \"start\": 30,\n      \"end\": 30\n    },\n    {\n      \"pattern\": \"급변\",\n      \"start\": 34,\n      \"end\": 34\n    },\n    {\n      \"pattern\": \"급변\",\n      \"start\": 69,\n      \"end\": 69\n    },\n    {\n      \"pattern\": \"추세\",\n      \"start\": 31,\n      \"end\": 36\n    },\n    {\n      \"pattern\": \"추세\",\n      \"start\": 55,\n      \"end\": 59\n    },\n    {\n      \"pattern\": \"추세\",\n      \"start\": 87,\n      \"end\": 91\n    }\n  ]\n}",
+       "error": null,
+       "latency_s": 2.63,
+       "usage": {
+        "prompt_tokens": 948,
+        "completion_tokens": 192
+       },
+       "issues": [],
+       "created": "2026-09-25T23:48:41",
+       "events": [
+        {
+         "pattern": "spike",
+         "start": 21,
+         "end": 21,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 30,
+         "end": 30,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 34,
+         "end": 34,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 69,
+         "end": 69,
+         "direction": null
+        },
+        {
+         "pattern": "trend",
+         "start": 31,
+         "end": 36,
+         "direction": null
+        },
+        {
+         "pattern": "trend",
+         "start": 55,
+         "end": 59,
+         "direction": null
+        },
+        {
+         "pattern": "trend",
+         "start": 87,
+         "end": 91,
+         "direction": null
+        }
+       ]
+      }
+     ]
+    },
+    "5": {
+     "input_hash": "e99ee607c97110f2",
+     "runs": [
+      {
+       "run": 0,
+       "text": "{\n  \"detections\": [\n    {\n      \"pattern\": \"급변\",\n      \"start\": 87,\n      \"end\": 87\n    },\n    {\n      \"pattern\": \"급변\",\n      \"start\": 10,\n      \"end\": 10\n    },\n    {\n      \"pattern\": \"급변\",\n      \"start\": 51,\n      \"end\": 51\n    }\n  ]\n}",
+       "error": null,
+       "latency_s": 1.32,
+       "usage": {
+        "prompt_tokens": 948,
+        "completion_tokens": 88
+       },
+       "issues": [],
+       "created": "2026-09-25T23:48:41",
+       "events": [
+        {
+         "pattern": "spike",
+         "start": 87,
+         "end": 87,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 10,
+         "end": 10,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 51,
+         "end": 51,
+         "direction": null
+        }
+       ]
+      },
+      {
+       "run": 1,
+       "text": "{\n  \"detections\": [\n    {\n      \"pattern\": \"급변\",\n      \"start\": 87,\n      \"end\": 87\n    },\n    {\n      \"pattern\": \"추세\",\n      \"start\": 71,\n      \"end\": 76\n    }\n  ]\n}",
+       "error": null,
+       "latency_s": 1.41,
+       "usage": {
+        "prompt_tokens": 948,
+        "completion_tokens": 62
+       },
+       "issues": [],
+       "created": "2026-09-25T23:48:41",
+       "events": [
+        {
+         "pattern": "spike",
+         "start": 87,
+         "end": 87,
+         "direction": null
+        },
+        {
+         "pattern": "trend",
+         "start": 71,
+         "end": 76,
+         "direction": null
+        }
+       ]
+      },
+      {
+       "run": 2,
+       "text": "{\n  \"detections\": [\n    {\n      \"pattern\": \"급변\",\n      \"start\": 87,\n      \"end\": 87\n    },\n    {\n      \"pattern\": \"급변\",\n      \"start\": 10,\n      \"end\": 10\n    }\n  ]\n}",
+       "error": null,
+       "latency_s": 1.31,
+       "usage": {
+        "prompt_tokens": 948,
+        "completion_tokens": 62
+       },
+       "issues": [],
+       "created": "2026-09-25T23:48:41",
+       "events": [
+        {
+         "pattern": "spike",
+         "start": 87,
+         "end": 87,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 10,
+         "end": 10,
+         "direction": null
+        }
+       ]
+      }
+     ]
+    },
+    "6": {
+     "input_hash": "03f69a76c59f39ae",
+     "runs": [
+      {
+       "run": 0,
+       "text": "{\n  \"detections\": [\n    {\n      \"pattern\": \"급변\",\n      \"start\": 54,\n      \"end\": 54\n    },\n    {\n      \"pattern\": \"급변\",\n      \"start\": 57,\n      \"end\": 57\n    }\n  ]\n}",
+       "error": null,
+       "latency_s": 1.16,
+       "usage": {
+        "prompt_tokens": 948,
+        "completion_tokens": 62
+       },
+       "issues": [],
+       "created": "2026-09-25T23:48:41",
+       "events": [
+        {
+         "pattern": "spike",
+         "start": 54,
+         "end": 54,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 57,
+         "end": 57,
+         "direction": null
+        }
+       ]
+      },
+      {
+       "run": 1,
+       "text": "{\n  \"detections\": [\n    {\n      \"pattern\": \"급변\",\n      \"start\": 54,\n      \"end\": 54\n    },\n    {\n      \"pattern\": \"급변\",\n      \"start\": 57,\n      \"end\": 57\n    }\n  ]\n}",
+       "error": null,
+       "latency_s": 1.16,
+       "usage": {
+        "prompt_tokens": 948,
+        "completion_tokens": 62
+       },
+       "issues": [],
+       "created": "2026-09-25T23:48:41",
+       "events": [
+        {
+         "pattern": "spike",
+         "start": 54,
+         "end": 54,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 57,
+         "end": 57,
+         "direction": null
+        }
+       ]
+      },
+      {
+       "run": 2,
+       "text": "{\n  \"detections\": [\n    {\n      \"pattern\": \"급변\",\n      \"start\": 54,\n      \"end\": 54\n    },\n    {\n      \"pattern\": \"급변\",\n      \"start\": 57,\n      \"end\": 57\n    }\n  ]\n}",
+       "error": null,
+       "latency_s": 1.27,
+       "usage": {
+        "prompt_tokens": 948,
+        "completion_tokens": 62
+       },
+       "issues": [],
+       "created": "2026-09-25T23:48:41",
+       "events": [
+        {
+         "pattern": "spike",
+         "start": 54,
+         "end": 54,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 57,
+         "end": 57,
+         "direction": null
+        }
+       ]
+      }
+     ]
+    },
+    "7": {
+     "input_hash": "690654af67a9e052",
+     "runs": [
+      {
+       "run": 0,
+       "text": "{\n  \"detections\": [\n    {\n      \"pattern\": \"급변\",\n      \"start\": 29,\n      \"end\": 29\n    },\n    {\n      \"pattern\": \"급변\",\n      \"start\": 98,\n      \"end\": 98\n    }\n  ]\n}",
+       "error": null,
+       "latency_s": 1.1,
+       "usage": {
+        "prompt_tokens": 948,
+        "completion_tokens": 62
+       },
+       "issues": [],
+       "created": "2026-09-25T23:48:41",
+       "events": [
+        {
+         "pattern": "spike",
+         "start": 29,
+         "end": 29,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 98,
+         "end": 98,
+         "direction": null
+        }
+       ]
+      },
+      {
+       "run": 1,
+       "text": "{\n  \"detections\": [\n    {\n      \"pattern\": \"급변\",\n      \"start\": 29,\n      \"end\": 29\n    },\n    {\n      \"pattern\": \"급변\",\n      \"start\": 33,\n      \"end\": 33\n    },\n    {\n      \"pattern\": \"급변\",\n      \"start\": 40,\n      \"end\": 40\n    },\n    {\n      \"pattern\": \"급변\",\n      \"start\": 47,\n      \"end\": 47\n    },\n    {\n      \"pattern\": \"급변\",\n      \"start\": 50,\n      \"end\": 50\n    },\n    {\n      \"pattern\": \"급변\",\n      \"start\": 61,\n      \"end\": 61\n    },\n    {\n      \"pattern\": \"급변\",\n      \"start\": 71,\n      \"end\": 71\n    },\n    {\n      \"pattern\": \"급변\",\n      \"start\": 90,\n      \"end\": 90\n    },\n    {\n      \"pattern\": \"급변\",\n      \"start\": 96,\n      \"end\": 96\n    },\n    {\n      \"pattern\": \"급변\",\n      \"start\": 98,\n      \"end\": 98\n    }\n  ]\n}",
+       "error": null,
+       "latency_s": 3.24,
+       "usage": {
+        "prompt_tokens": 948,
+        "completion_tokens": 270
+       },
+       "issues": [],
+       "created": "2026-09-25T23:48:41",
+       "events": [
+        {
+         "pattern": "spike",
+         "start": 29,
+         "end": 29,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 33,
+         "end": 33,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 40,
+         "end": 40,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 47,
+         "end": 47,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 50,
+         "end": 50,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 61,
+         "end": 61,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 71,
+         "end": 71,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 90,
+         "end": 90,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 96,
+         "end": 96,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 98,
+         "end": 98,
+         "direction": null
+        }
+       ]
+      },
+      {
+       "run": 2,
+       "text": "{\n  \"detections\": [\n    {\n      \"pattern\": \"급변\",\n      \"start\": 29,\n      \"end\": 29\n    },\n    {\n      \"pattern\": \"급변\",\n      \"start\": 98,\n      \"end\": 98\n    }\n  ]\n}",
+       "error": null,
+       "latency_s": 1.1,
+       "usage": {
+        "prompt_tokens": 948,
+        "completion_tokens": 62
+       },
+       "issues": [],
+       "created": "2026-09-25T23:48:41",
+       "events": [
+        {
+         "pattern": "spike",
+         "start": 29,
+         "end": 29,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 98,
+         "end": 98,
+         "direction": null
+        }
+       ]
+      }
+     ]
+    },
+    "8": {
+     "input_hash": "f95b988ec81afa29",
+     "runs": [
+      {
+       "run": 0,
+       "text": "{\n  \"detections\": [\n    {\"pattern\": \"급변\", \"start\": 6, \"end\": 6},\n    {\"pattern\": \"급변\", \"start\": 46, \"end\": 46},\n    {\"pattern\": \"급변\", \"start\": 48, \"end\": 48},\n    {\"pattern\": \"급변\", \"start\": 59, \"end\": 59},\n    {\"pattern\": \"급변\", \"start\": 80, \"end\": 80},\n    {\"pattern\": \"추세\", \"start\": 60, \"end\": 68}\n  ]\n}",
+       "error": null,
+       "latency_s": 1.61,
+       "usage": {
+        "prompt_tokens": 948,
+        "completion_tokens": 130
+       },
+       "issues": [],
+       "created": "2026-09-25T23:48:41",
+       "events": [
+        {
+         "pattern": "spike",
+         "start": 6,
+         "end": 6,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 46,
+         "end": 46,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 48,
+         "end": 48,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 59,
+         "end": 59,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 80,
+         "end": 80,
+         "direction": null
+        },
+        {
+         "pattern": "trend",
+         "start": 60,
+         "end": 68,
+         "direction": null
+        }
+       ]
+      },
+      {
+       "run": 1,
+       "text": "{\n  \"detections\": [\n    {\"pattern\": \"급변\", \"start\": 6, \"end\": 6},\n    {\"pattern\": \"급변\", \"start\": 46, \"end\": 46},\n    {\"pattern\": \"급변\", \"start\": 48, \"end\": 48},\n    {\"pattern\": \"급변\", \"start\": 59, \"end\": 59},\n    {\"pattern\": \"급변\", \"start\": 80, \"end\": 80},\n    {\"pattern\": \"추세\", \"start\": 60, \"end\": 68}\n  ]\n}",
+       "error": null,
+       "latency_s": 1.67,
+       "usage": {
+        "prompt_tokens": 948,
+        "completion_tokens": 130
+       },
+       "issues": [],
+       "created": "2026-09-25T23:48:41",
+       "events": [
+        {
+         "pattern": "spike",
+         "start": 6,
+         "end": 6,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 46,
+         "end": 46,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 48,
+         "end": 48,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 59,
+         "end": 59,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 80,
+         "end": 80,
+         "direction": null
+        },
+        {
+         "pattern": "trend",
+         "start": 60,
+         "end": 68,
+         "direction": null
+        }
+       ]
+      },
+      {
+       "run": 2,
+       "text": "{\n  \"detections\": [\n    {\"pattern\": \"급변\", \"start\": 6, \"end\": 6},\n    {\"pattern\": \"급변\", \"start\": 46, \"end\": 46},\n    {\"pattern\": \"급변\", \"start\": 48, \"end\": 48},\n    {\"pattern\": \"급변\", \"start\": 59, \"end\": 59},\n    {\"pattern\": \"급변\", \"start\": 80, \"end\": 80},\n    {\"pattern\": \"추세\", \"start\": 60, \"end\": 68}\n  ]\n}",
+       "error": null,
+       "latency_s": 1.52,
+       "usage": {
+        "prompt_tokens": 948,
+        "completion_tokens": 130
+       },
+       "issues": [],
+       "created": "2026-09-25T23:48:41",
+       "events": [
+        {
+         "pattern": "spike",
+         "start": 6,
+         "end": 6,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 46,
+         "end": 46,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 48,
+         "end": 48,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 59,
+         "end": 59,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 80,
+         "end": 80,
+         "direction": null
+        },
+        {
+         "pattern": "trend",
+         "start": 60,
+         "end": 68,
+         "direction": null
+        }
+       ]
+      }
+     ]
+    },
+    "9": {
+     "input_hash": "12a12a9c9f694531",
+     "runs": [
+      {
+       "run": 0,
+       "text": "{\n  \"detections\": [\n    {\"pattern\": \"급변\", \"start\": 9, \"end\": 9},\n    {\"pattern\": \"급변\", \"start\": 12, \"end\": 12},\n    {\"pattern\": \"급변\", \"start\": 30, \"end\": 30},\n    {\"pattern\": \"급변\", \"start\": 40, \"end\": 40},\n    {\"pattern\": \"급변\", \"start\": 45, \"end\": 45},\n    {\"pattern\": \"급변\", \"start\": 91, \"end\": 91},\n    {\"pattern\": \"추세\", \"start\": 16, \"end\": 21},\n    {\"pattern\": \"추세\", \"start\": 26, \"end\": 31},\n    {\"pattern\": \"추세\", \"start\": 62, \"end\": 67},\n    {\"pattern\": \"추세\", \"start\": 70, \"end\": 75},\n    {\"pattern\": \"치우침\", \"start\": 16, \"end\": 24},\n    {\"pattern\": \"치우침\", \"start\": 50, \"end\": 58}\n  ]\n}",
+       "error": null,
+       "latency_s": 2.51,
+       "usage": {
+        "prompt_tokens": 948,
+        "completion_tokens": 252
+       },
+       "issues": [],
+       "created": "2026-09-25T23:48:41",
+       "events": [
+        {
+         "pattern": "spike",
+         "start": 9,
+         "end": 9,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 12,
+         "end": 12,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 30,
+         "end": 30,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 40,
+         "end": 40,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 45,
+         "end": 45,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 91,
+         "end": 91,
+         "direction": null
+        },
+        {
+         "pattern": "trend",
+         "start": 16,
+         "end": 21,
+         "direction": null
+        },
+        {
+         "pattern": "trend",
+         "start": 26,
+         "end": 31,
+         "direction": null
+        },
+        {
+         "pattern": "trend",
+         "start": 62,
+         "end": 67,
+         "direction": null
+        },
+        {
+         "pattern": "trend",
+         "start": 70,
+         "end": 75,
+         "direction": null
+        },
+        {
+         "pattern": "shift",
+         "start": 16,
+         "end": 24,
+         "direction": null
+        },
+        {
+         "pattern": "shift",
+         "start": 50,
+         "end": 58,
+         "direction": null
+        }
+       ]
+      },
+      {
+       "run": 1,
+       "text": "{\n  \"detections\": [\n    {\"pattern\": \"급변\", \"start\": 9, \"end\": 9},\n    {\"pattern\": \"급변\", \"start\": 12, \"end\": 12},\n    {\"pattern\": \"급변\", \"start\": 30, \"end\": 30},\n    {\"pattern\": \"급변\", \"start\": 40, \"end\": 40},\n    {\"pattern\": \"급변\", \"start\": 45, \"end\": 45},\n    {\"pattern\": \"급변\", \"start\": 91, \"end\": 91},\n    {\n      \"pattern\": \"추세\",\n      \"start\": 16,\n      \"end\": 21\n    },\n    {\n      \"pattern\": \"추세\",\n      \"start\": 26,\n      \"end\": 31\n    },\n    {\n      \"pattern\": \"추세\",\n      \"start\": 64,\n      \"end\": 69\n    },\n    {\n      \"pattern\": \"추세\",\n      \"start\": 71,\n      \"end\": 75\n    }\n  ]\n}",
+       "error": null,
+       "latency_s": 2.39,
+       "usage": {
+        "prompt_tokens": 948,
+        "completion_tokens": 234
+       },
+       "issues": [],
+       "created": "2026-09-25T23:48:41",
+       "events": [
+        {
+         "pattern": "spike",
+         "start": 9,
+         "end": 9,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 12,
+         "end": 12,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 30,
+         "end": 30,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 40,
+         "end": 40,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 45,
+         "end": 45,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 91,
+         "end": 91,
+         "direction": null
+        },
+        {
+         "pattern": "trend",
+         "start": 16,
+         "end": 21,
+         "direction": null
+        },
+        {
+         "pattern": "trend",
+         "start": 26,
+         "end": 31,
+         "direction": null
+        },
+        {
+         "pattern": "trend",
+         "start": 64,
+         "end": 69,
+         "direction": null
+        },
+        {
+         "pattern": "trend",
+         "start": 71,
+         "end": 75,
+         "direction": null
+        }
+       ]
+      },
+      {
+       "run": 2,
+       "text": "{\n  \"detections\": [\n    {\"pattern\": \"급변\", \"start\": 9, \"end\": 9},\n    {\"pattern\": \"급변\", \"start\": 12, \"end\": 12},\n    {\"pattern\": \"급변\", \"start\": 30, \"end\": 30},\n    {\"pattern\": \"급변\", \"start\": 40, \"end\": 40},\n    {\"pattern\": \"급변\", \"start\": 45, \"end\": 45},\n    {\"pattern\": \"급변\", \"start\": 91, \"end\": 91},\n    {\"pattern\": \"추세\", \"start\": 16, \"end\": 21},\n    {\"pattern\": \"추세\", \"start\": 26, \"end\": 30},\n    {\"pattern\": \"추세\", \"start\": 62, \"end\": 68},\n    {\"pattern\": \"추세\", \"start\": 70, \"end\": 75},\n    {\"pattern\": \"치우침\", \"start\": 16, \"end\": 24},\n    {\"pattern\": \"치우침\", \"start\": 50, \"end\": 58}\n  ]\n}",
+       "error": null,
+       "latency_s": 2.57,
+       "usage": {
+        "prompt_tokens": 948,
+        "completion_tokens": 252
+       },
+       "issues": [],
+       "created": "2026-09-25T23:48:41",
+       "events": [
+        {
+         "pattern": "spike",
+         "start": 9,
+         "end": 9,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 12,
+         "end": 12,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 30,
+         "end": 30,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 40,
+         "end": 40,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 45,
+         "end": 45,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 91,
+         "end": 91,
+         "direction": null
+        },
+        {
+         "pattern": "trend",
+         "start": 16,
+         "end": 21,
+         "direction": null
+        },
+        {
+         "pattern": "trend",
+         "start": 26,
+         "end": 30,
+         "direction": null
+        },
+        {
+         "pattern": "trend",
+         "start": 62,
+         "end": 68,
+         "direction": null
+        },
+        {
+         "pattern": "trend",
+         "start": 70,
+         "end": 75,
+         "direction": null
+        },
+        {
+         "pattern": "shift",
+         "start": 16,
+         "end": 24,
+         "direction": null
+        },
+        {
+         "pattern": "shift",
+         "start": 50,
+         "end": 58,
+         "direction": null
+        }
+       ]
+      }
+     ]
+    },
+    "10": {
+     "input_hash": "7870aab780344b5a",
+     "runs": [
+      {
+       "run": 0,
+       "text": "{\n  \"detections\": [\n    {\n      \"pattern\": \"급변\",\n      \"start\": 51,\n      \"end\": 51\n    },\n    {\n      \"pattern\": \"급변\",\n      \"start\": 54,\n      \"end\": 54\n    },\n    {\n      \"pattern\": \"급변\",\n      \"start\": 80,\n      \"end\": 80\n    },\n    {\n      \"pattern\": \"추세\",\n      \"start\": 92,\n      \"end\": 98\n    }\n  ]\n}",
+       "error": null,
+       "latency_s": 1.5,
+       "usage": {
+        "prompt_tokens": 948,
+        "completion_tokens": 114
+       },
+       "issues": [],
+       "created": "2026-09-25T23:48:41",
+       "events": [
+        {
+         "pattern": "spike",
+         "start": 51,
+         "end": 51,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 54,
+         "end": 54,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 80,
+         "end": 80,
+         "direction": null
+        },
+        {
+         "pattern": "trend",
+         "start": 92,
+         "end": 98,
+         "direction": null
+        }
+       ]
+      },
+      {
+       "run": 1,
+       "text": "{\n  \"detections\": [\n    {\n      \"pattern\": \"급변\",\n      \"start\": 80,\n      \"end\": 80\n    },\n    {\n      \"pattern\": \"추세\",\n      \"start\": 93,\n      \"end\": 99\n    }\n  ]\n}",
+       "error": null,
+       "latency_s": 1.08,
+       "usage": {
+        "prompt_tokens": 948,
+        "completion_tokens": 62
+       },
+       "issues": [],
+       "created": "2026-09-25T23:48:41",
+       "events": [
+        {
+         "pattern": "spike",
+         "start": 80,
+         "end": 80,
+         "direction": null
+        },
+        {
+         "pattern": "trend",
+         "start": 93,
+         "end": 99,
+         "direction": null
+        }
+       ]
+      },
+      {
+       "run": 2,
+       "text": "{\n  \"detections\": [\n    {\n      \"pattern\": \"급변\",\n      \"start\": 80,\n      \"end\": 80\n    },\n    {\n      \"pattern\": \"추세\",\n      \"start\": 93,\n      \"end\": 99\n    }\n  ]\n}",
+       "error": null,
+       "latency_s": 1.09,
+       "usage": {
+        "prompt_tokens": 948,
+        "completion_tokens": 62
+       },
+       "issues": [],
+       "created": "2026-09-25T23:48:41",
+       "events": [
+        {
+         "pattern": "spike",
+         "start": 80,
+         "end": 80,
+         "direction": null
+        },
+        {
+         "pattern": "trend",
+         "start": 93,
+         "end": 99,
+         "direction": null
+        }
+       ]
+      }
+     ]
+    },
+    "11": {
+     "input_hash": "be1d6087f2a671c7",
+     "runs": [
+      {
+       "run": 0,
+       "text": "{\n  \"detections\": [\n    {\"pattern\": \"급변\", \"start\": 45, \"end\": 45},\n    {\"pattern\": \"급변\", \"start\": 63, \"end\": 63},\n    {\"pattern\": \"급변\", \"start\": 34, \"end\": 34}\n  ]\n}",
+       "error": null,
+       "latency_s": 1.2,
+       "usage": {
+        "prompt_tokens": 948,
+        "completion_tokens": 70
+       },
+       "issues": [],
+       "created": "2026-09-25T23:48:41",
+       "events": [
+        {
+         "pattern": "spike",
+         "start": 45,
+         "end": 45,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 63,
+         "end": 63,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 34,
+         "end": 34,
+         "direction": null
+        }
+       ]
+      },
+      {
+       "run": 1,
+       "text": "{\n  \"detections\": [\n    {\n      \"pattern\": \"급변\",\n      \"start\": 45,\n      \"end\": 45\n    },\n    {\n      \"pattern\": \"급변\",\n      \"start\": 63,\n      \"end\": 63\n    },\n    {\n      \"pattern\": \"급변\",\n      \"start\": 34,\n      \"end\": 34\n    },\n    {\n      \"pattern\": \"급변\",\n      \"start\": 50,\n      \"end\": 50\n    },\n    {\n      \"pattern\": \"치우침\",\n      \"start\": 53,\n      \"end\": 59\n    },\n    {\n      \"pattern\": \"치우침\",\n      \"start\": 68,\n      \"end\": 70\n    }\n  ]\n}",
+       "error": null,
+       "latency_s": 1.86,
+       "usage": {
+        "prompt_tokens": 948,
+        "completion_tokens": 168
+       },
+       "issues": [],
+       "created": "2026-09-25T23:48:41",
+       "events": [
+        {
+         "pattern": "spike",
+         "start": 45,
+         "end": 45,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 63,
+         "end": 63,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 34,
+         "end": 34,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 50,
+         "end": 50,
+         "direction": null
+        },
+        {
+         "pattern": "shift",
+         "start": 53,
+         "end": 59,
+         "direction": null
+        },
+        {
+         "pattern": "shift",
+         "start": 68,
+         "end": 70,
+         "direction": null
+        }
+       ]
+      },
+      {
+       "run": 2,
+       "text": "{\n  \"detections\": [\n    {\n      \"pattern\": \"급변\",\n      \"start\": 45,\n      \"end\": 45\n    },\n    {\n      \"pattern\": \"급변\",\n      \"start\": 63,\n      \"end\": 63\n    },\n    {\n      \"pattern\": \"급변\",\n      \"start\": 34,\n      \"end\": 34\n    }\n  ]\n}",
+       "error": null,
+       "latency_s": 1.33,
+       "usage": {
+        "prompt_tokens": 948,
+        "completion_tokens": 88
+       },
+       "issues": [],
+       "created": "2026-09-25T23:48:41",
+       "events": [
+        {
+         "pattern": "spike",
+         "start": 45,
+         "end": 45,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 63,
+         "end": 63,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 34,
+         "end": 34,
+         "direction": null
+        }
+       ]
+      }
+     ]
+    },
+    "12": {
+     "input_hash": "51451938a4147dc0",
+     "runs": [
+      {
+       "run": 0,
+       "text": "{\n  \"detections\": [\n    {\n      \"pattern\": \"급변\",\n      \"start\": 9,\n      \"end\": 9\n    },\n    {\n      \"pattern\": \"급변\",\n      \"start\": 41,\n      \"end\": 41\n    },\n    {\n      \"pattern\": \"급변\",\n      \"start\": 69,\n      \"end\": 69\n    },\n    {\n      \"pattern\": \"급변\",\n      \"start\": 70,\n      \"end\": 70\n    },\n    {\n      \"pattern\": \"급변\",\n      \"start\": 74,\n      \"end\": 74\n    },\n    {\n      \"pattern\": \"급변\",\n      \"start\": 75,\n      \"end\": 75\n    },\n    {\n      \"pattern\": \"급변\",\n      \"start\": 77,\n      \"end\": 77\n    },\n    {\n      \"pattern\": \"추세\",\n      \"start\": 1,\n      \"end\": 6\n    },\n    {\n      \"pattern\": \"추세\",\n      \"start\": 68,\n      \"end\": 73\n    },\n    {\n      \"pattern\": \"치우침\",\n      \"start\": 1,\n      \"end\": 8\n    },\n    {\n      \"pattern\": \"치우침\",\n      \"start\": 71,\n      \"end\": 79\n    }\n  ]\n}",
+       "error": null,
+       "latency_s": 3.19,
+       "usage": {
+        "prompt_tokens": 948,
+        "completion_tokens": 298
+       },
+       "issues": [],
+       "created": "2026-09-25T23:48:41",
+       "events": [
+        {
+         "pattern": "spike",
+         "start": 9,
+         "end": 9,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 41,
+         "end": 41,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 69,
+         "end": 69,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 70,
+         "end": 70,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 74,
+         "end": 74,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 75,
+         "end": 75,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 77,
+         "end": 77,
+         "direction": null
+        },
+        {
+         "pattern": "trend",
+         "start": 1,
+         "end": 6,
+         "direction": null
+        },
+        {
+         "pattern": "trend",
+         "start": 68,
+         "end": 73,
+         "direction": null
+        },
+        {
+         "pattern": "shift",
+         "start": 1,
+         "end": 8,
+         "direction": null
+        },
+        {
+         "pattern": "shift",
+         "start": 71,
+         "end": 79,
+         "direction": null
+        }
+       ]
+      },
+      {
+       "run": 1,
+       "text": "{\n  \"detections\": [\n    {\n      \"pattern\": \"급변\",\n      \"start\": 9,\n      \"end\": 9\n    },\n    {\n      \"pattern\": \"급변\",\n      \"start\": 41,\n      \"end\": 41\n    },\n    {\n      \"pattern\": \"급변\",\n      \"start\": 69,\n      \"end\": 69\n    },\n    {\n      \"pattern\": \"급변\",\n      \"start\": 70,\n      \"end\": 70\n    },\n    {\n      \"pattern\": \"급변\",\n      \"start\": 74,\n      \"end\": 74\n    },\n    {\n      \"pattern\": \"급변\",\n      \"start\": 75,\n      \"end\": 75\n    },\n    {\n      \"pattern\": \"급변\",\n      \"start\": 77,\n      \"end\": 77\n    },\n    {\n      \"pattern\": \"추세\",\n      \"start\": 1,\n      \"end\": 6\n    },\n    {\n      \"pattern\": \"추세\",\n      \"start\": 68,\n      \"end\": 74\n    },\n    {\n      \"pattern\": \"치우침\",\n      \"start\": 1,\n      \"end\": 8\n    },\n    {\n      \"pattern\": \"치우침\",\n      \"start\": 71,\n      \"end\": 79\n    }\n  ]\n}",
+       "error": null,
+       "latency_s": 3.28,
+       "usage": {
+        "prompt_tokens": 948,
+        "completion_tokens": 298
+       },
+       "issues": [],
+       "created": "2026-09-25T23:48:41",
+       "events": [
+        {
+         "pattern": "spike",
+         "start": 9,
+         "end": 9,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 41,
+         "end": 41,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 69,
+         "end": 69,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 70,
+         "end": 70,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 74,
+         "end": 74,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 75,
+         "end": 75,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 77,
+         "end": 77,
+         "direction": null
+        },
+        {
+         "pattern": "trend",
+         "start": 1,
+         "end": 6,
+         "direction": null
+        },
+        {
+         "pattern": "trend",
+         "start": 68,
+         "end": 74,
+         "direction": null
+        },
+        {
+         "pattern": "shift",
+         "start": 1,
+         "end": 8,
+         "direction": null
+        },
+        {
+         "pattern": "shift",
+         "start": 71,
+         "end": 79,
+         "direction": null
+        }
+       ]
+      },
+      {
+       "run": 2,
+       "text": "{\n  \"detections\": [\n    {\n      \"pattern\": \"급변\",\n      \"start\": 9,\n      \"end\": 9\n    },\n    {\n      \"pattern\": \"급변\",\n      \"start\": 41,\n      \"end\": 41\n    },\n    {\n      \"pattern\": \"급변\",\n      \"start\": 69,\n      \"end\": 69\n    },\n    {\n      \"pattern\": \"급변\",\n      \"start\": 70,\n      \"end\": 70\n    },\n    {\n      \"pattern\": \"급변\",\n      \"start\": 74,\n      \"end\": 74\n    },\n    {\n      \"pattern\": \"급변\",\n      \"start\": 75,\n      \"end\": 75\n    },\n    {\n      \"pattern\": \"급변\",\n      \"start\": 77,\n      \"end\": 77\n    },\n    {\n      \"pattern\": \"추세\",\n      \"start\": 1,\n      \"end\": 6\n    },\n    {\n      \"pattern\": \"추세\",\n      \"start\": 68,\n      \"end\": 74\n    },\n    {\n      \"pattern\": \"치우침\",\n      \"start\": 1,\n      \"end\": 8\n    },\n    {\n      \"pattern\": \"치우침\",\n      \"start\": 42,\n      \"end\": 49\n    },\n    {\n      \"pattern\": \"치우침\",\n      \"start\": 55,\n      \"end\": 63\n    }\n  ]\n}",
+       "error": null,
+       "latency_s": 3.47,
+       "usage": {
+        "prompt_tokens": 948,
+        "completion_tokens": 325
+       },
+       "issues": [],
+       "created": "2026-09-25T23:48:41",
+       "events": [
+        {
+         "pattern": "spike",
+         "start": 9,
+         "end": 9,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 41,
+         "end": 41,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 69,
+         "end": 69,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 70,
+         "end": 70,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 74,
+         "end": 74,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 75,
+         "end": 75,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 77,
+         "end": 77,
+         "direction": null
+        },
+        {
+         "pattern": "trend",
+         "start": 1,
+         "end": 6,
+         "direction": null
+        },
+        {
+         "pattern": "trend",
+         "start": 68,
+         "end": 74,
+         "direction": null
+        },
+        {
+         "pattern": "shift",
+         "start": 1,
+         "end": 8,
+         "direction": null
+        },
+        {
+         "pattern": "shift",
+         "start": 42,
+         "end": 49,
+         "direction": null
+        },
+        {
+         "pattern": "shift",
+         "start": 55,
+         "end": 63,
+         "direction": null
+        }
+       ]
+      }
+     ]
+    },
+    "13": {
+     "input_hash": "4d501dfc4d1f752c",
+     "runs": [
+      {
+       "run": 0,
+       "text": "{\n  \"detections\": [\n    {\"pattern\": \"급변\", \"start\": 7, \"end\": 7},\n    {\"pattern\": \"급변\", \"start\": 27, \"end\": 27},\n    {\"pattern\": \"급변\", \"start\": 35, \"end\": 35},\n    {\"pattern\": \"급변\", \"start\": 39, \"end\": 39},\n    {\"pattern\": \"급변\", \"start\": 43, \"end\": 43},\n    {\"pattern\": \"급변\", \"start\": 49, \"end\": 49},\n    {\"pattern\": \"급변\", \"start\": 61, \"end\": 61},\n    {\"pattern\": \"급변\", \"start\": 63, \"end\": 63},\n    {\"pattern\": \"급변\", \"start\": 66, \"end\": 66},\n    {\"pattern\": \"급변\", \"start\": 86, \"end\": 86},\n    {\"pattern\": \"급변\", \"start\": 87, \"end\": 87},\n    {\"pattern\": \"추세\", \"start\": 1, \"end\": 6},\n    {\"pattern\": \"추세\", \"start\": 41, \"end\": 44},\n    {\"pattern\": \"추세\", \"start\": 88, \"end\": 92}\n  ]\n}",
+       "error": null,
+       "latency_s": 2.94,
+       "usage": {
+        "prompt_tokens": 948,
+        "completion_tokens": 290
+       },
+       "issues": [],
+       "created": "2026-09-25T23:48:41",
+       "events": [
+        {
+         "pattern": "spike",
+         "start": 7,
+         "end": 7,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 27,
+         "end": 27,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 35,
+         "end": 35,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 39,
+         "end": 39,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 43,
+         "end": 43,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 49,
+         "end": 49,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 61,
+         "end": 61,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 63,
+         "end": 63,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 66,
+         "end": 66,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 86,
+         "end": 86,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 87,
+         "end": 87,
+         "direction": null
+        },
+        {
+         "pattern": "trend",
+         "start": 1,
+         "end": 6,
+         "direction": null
+        },
+        {
+         "pattern": "trend",
+         "start": 41,
+         "end": 44,
+         "direction": null
+        },
+        {
+         "pattern": "trend",
+         "start": 88,
+         "end": 92,
+         "direction": null
+        }
+       ]
+      },
+      {
+       "run": 1,
+       "text": "{\n  \"detections\": [\n    {\"pattern\": \"급변\", \"start\": 7, \"end\": 7},\n    {\"pattern\": \"급변\", \"start\": 27, \"end\": 27},\n    {\"pattern\": \"급변\", \"start\": 35, \"end\": 35},\n    {\"pattern\": \"급변\", \"start\": 39, \"end\": 39},\n    {\"pattern\": \"급변\", \"start\": 43, \"end\": 43},\n    {\"pattern\": \"급변\", \"start\": 49, \"end\": 49},\n    {\"pattern\": \"급변\", \"start\": 61, \"end\": 61},\n    {\"pattern\": \"급변\", \"start\": 63, \"end\": 63},\n    {\"pattern\": \"급변\", \"start\": 66, \"end\": 66},\n    {\"pattern\": \"급변\", \"start\": 86, \"end\": 86},\n    {\"pattern\": \"급변\", \"start\": 87, \"end\": 87},\n    {\"pattern\": \"추세\", \"start\": 1, \"end\": 6},\n    {\"pattern\": \"추세\", \"start\": 12, \"end\": 15},\n    {\"pattern\": \"추세\", \"start\": 18, \"end\": 21},\n    {\"pattern\": \"추세\", \"start\": 25, \"end\": 26},\n    {\"pattern\": \"추세\", \"start\": 28, \"end\": 32},\n    {\"pattern\": \"추세\", \"start\": 36, \"end\": 38},\n    {\"pattern\": \"추세\", \"start\": 41, \"end\": 42},\n    {\"pattern\": \"추세\", \"start\": 54, \"end\": 55},\n    {\"pattern\": \"추세\", \"start\": 72, \"end\": 74},\n    {\"pattern\": \"추세\", \"start\": 89, \"end\": 92}\n  ]\n}",
+       "error": null,
+       "latency_s": 3.87,
+       "usage": {
+        "prompt_tokens": 948,
+        "completion_tokens": 430
+       },
+       "issues": [],
+       "created": "2026-09-25T23:48:41",
+       "events": [
+        {
+         "pattern": "spike",
+         "start": 7,
+         "end": 7,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 27,
+         "end": 27,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 35,
+         "end": 35,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 39,
+         "end": 39,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 43,
+         "end": 43,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 49,
+         "end": 49,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 61,
+         "end": 61,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 63,
+         "end": 63,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 66,
+         "end": 66,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 86,
+         "end": 86,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 87,
+         "end": 87,
+         "direction": null
+        },
+        {
+         "pattern": "trend",
+         "start": 1,
+         "end": 6,
+         "direction": null
+        },
+        {
+         "pattern": "trend",
+         "start": 12,
+         "end": 15,
+         "direction": null
+        },
+        {
+         "pattern": "trend",
+         "start": 18,
+         "end": 21,
+         "direction": null
+        },
+        {
+         "pattern": "trend",
+         "start": 25,
+         "end": 26,
+         "direction": null
+        },
+        {
+         "pattern": "trend",
+         "start": 28,
+         "end": 32,
+         "direction": null
+        },
+        {
+         "pattern": "trend",
+         "start": 36,
+         "end": 38,
+         "direction": null
+        },
+        {
+         "pattern": "trend",
+         "start": 41,
+         "end": 42,
+         "direction": null
+        },
+        {
+         "pattern": "trend",
+         "start": 54,
+         "end": 55,
+         "direction": null
+        },
+        {
+         "pattern": "trend",
+         "start": 72,
+         "end": 74,
+         "direction": null
+        },
+        {
+         "pattern": "trend",
+         "start": 89,
+         "end": 92,
+         "direction": null
+        }
+       ]
+      },
+      {
+       "run": 2,
+       "text": "{\n  \"detections\": [\n    {\"pattern\": \"급변\", \"start\": 7, \"end\": 7},\n    {\"pattern\": \"급변\", \"start\": 27, \"end\": 27},\n    {\"pattern\": \"급변\", \"start\": 35, \"end\": 35},\n    {\"pattern\": \"급변\", \"start\": 39, \"end\": 39},\n    {\"pattern\": \"급변\", \"start\": 43, \"end\": 43},\n    {\"pattern\": \"급변\", \"start\": 49, \"end\": 49},\n    {\"pattern\": \"급변\", \"start\": 61, \"end\": 61},\n    {\"pattern\": \"급변\", \"start\": 63, \"end\": 63},\n    {\"pattern\": \"급변\", \"start\": 66, \"end\": 66},\n    {\"pattern\": \"급변\", \"start\": 86, \"end\": 86},\n    {\"pattern\": \"급변\", \"start\": 87, \"end\": 87},\n    {\"pattern\": \"추세\", \"start\": 1, \"end\": 6},\n    {\"pattern\": \"추세\", \"start\": 9, \"end\": 14},\n    {\"pattern\": \"추세\", \"start\": 16, \"end\": 21},\n    {\"pattern\": \"추세\", \"start\": 25, \"end\": 32},\n    {\"pattern\": \"추세\", \"start\": 36, \"end\": 41},\n    {\"pattern\": \"추세\", \"start\": 45, \"end\": 50},\n    {\"pattern\": \"추세\", \"start\": 52, \"end\": 57},\n    {\"pattern\": \"추세\", \"start\": 62, \"end\": 67},\n    {\"pattern\": \"추세\", \"start\": 69, \"end\": 74},\n    {\"pattern\": \"추세\", \"start\": 76, \"end\": 81},\n    {\"pattern\": \"추세\", \"start\": 88, \"end\": 92}\n  ]\n}",
+       "error": null,
+       "latency_s": 3.92,
+       "usage": {
+        "prompt_tokens": 948,
+        "completion_tokens": 450
+       },
+       "issues": [],
+       "created": "2026-09-25T23:48:41",
+       "events": [
+        {
+         "pattern": "spike",
+         "start": 7,
+         "end": 7,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 27,
+         "end": 27,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 35,
+         "end": 35,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 39,
+         "end": 39,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 43,
+         "end": 43,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 49,
+         "end": 49,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 61,
+         "end": 61,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 63,
+         "end": 63,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 66,
+         "end": 66,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 86,
+         "end": 86,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 87,
+         "end": 87,
+         "direction": null
+        },
+        {
+         "pattern": "trend",
+         "start": 1,
+         "end": 6,
+         "direction": null
+        },
+        {
+         "pattern": "trend",
+         "start": 9,
+         "end": 14,
+         "direction": null
+        },
+        {
+         "pattern": "trend",
+         "start": 16,
+         "end": 21,
+         "direction": null
+        },
+        {
+         "pattern": "trend",
+         "start": 25,
+         "end": 32,
+         "direction": null
+        },
+        {
+         "pattern": "trend",
+         "start": 36,
+         "end": 41,
+         "direction": null
+        },
+        {
+         "pattern": "trend",
+         "start": 45,
+         "end": 50,
+         "direction": null
+        },
+        {
+         "pattern": "trend",
+         "start": 52,
+         "end": 57,
+         "direction": null
+        },
+        {
+         "pattern": "trend",
+         "start": 62,
+         "end": 67,
+         "direction": null
+        },
+        {
+         "pattern": "trend",
+         "start": 69,
+         "end": 74,
+         "direction": null
+        },
+        {
+         "pattern": "trend",
+         "start": 76,
+         "end": 81,
+         "direction": null
+        },
+        {
+         "pattern": "trend",
+         "start": 88,
+         "end": 92,
+         "direction": null
+        }
+       ]
+      }
+     ]
+    },
+    "14": {
+     "input_hash": "fc6763b663fd8e0b",
+     "runs": [
+      {
+       "run": 0,
+       "text": "{\n  \"detections\": [\n    {\"pattern\": \"급변\", \"start\": 23, \"end\": 23},\n    {\"pattern\": \"급변\", \"start\": 43, \"end\": 43},\n    {\"pattern\": \"급변\", \"start\": 52, \"end\": 52},\n    {\"pattern\": \"급변\", \"start\": 56, \"end\": 56},\n    {\"pattern\": \"급변\", \"start\": 66, \"end\": 66},\n    {\"pattern\": \"급변\", \"start\": 93, \"end\": 93},\n    {\"pattern\": \"추세\", \"start\": 80, \"end\": 85},\n    {\"pattern\": \"추세\", \"start\": 89, \"end\": 93}\n  ]\n}",
+       "error": null,
+       "latency_s": 1.89,
+       "usage": {
+        "prompt_tokens": 948,
+        "completion_tokens": 170
+       },
+       "issues": [],
+       "created": "2026-09-25T23:48:41",
+       "events": [
+        {
+         "pattern": "spike",
+         "start": 23,
+         "end": 23,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 43,
+         "end": 43,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 52,
+         "end": 52,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 56,
+         "end": 56,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 66,
+         "end": 66,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 93,
+         "end": 93,
+         "direction": null
+        },
+        {
+         "pattern": "trend",
+         "start": 80,
+         "end": 85,
+         "direction": null
+        },
+        {
+         "pattern": "trend",
+         "start": 89,
+         "end": 93,
+         "direction": null
+        }
+       ]
+      },
+      {
+       "run": 1,
+       "text": "{\n  \"detections\": [\n    {\n      \"pattern\": \"급변\",\n      \"start\": 93,\n      \"end\": 93\n    },\n    {\n      \"pattern\": \"급변\",\n      \"start\": 52,\n      \"end\": 52\n    },\n    {\n      \"pattern\": \"급변\",\n      \"start\": 43,\n      \"end\": 43\n    },\n    {\n      \"pattern\": \"급변\",\n      \"start\": 35,\n      \"end\": 35\n    },\n    {\n      \"pattern\": \"급변\",\n      \"start\": 23,\n      \"end\": 23\n    }\n  ]\n}",
+       "error": null,
+       "latency_s": 1.59,
+       "usage": {
+        "prompt_tokens": 948,
+        "completion_tokens": 140
+       },
+       "issues": [],
+       "created": "2026-09-25T23:48:41",
+       "events": [
+        {
+         "pattern": "spike",
+         "start": 93,
+         "end": 93,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 52,
+         "end": 52,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 43,
+         "end": 43,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 35,
+         "end": 35,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 23,
+         "end": 23,
+         "direction": null
+        }
+       ]
+      },
+      {
+       "run": 2,
+       "text": "{\n  \"detections\": [\n    {\n      \"pattern\": \"급변\",\n      \"start\": 93,\n      \"end\": 93\n    },\n    {\n      \"pattern\": \"급변\",\n      \"start\": 52,\n      \"end\": 52\n    },\n    {\n      \"pattern\": \"급변\",\n      \"start\": 43,\n      \"end\": 43\n    },\n    {\n      \"pattern\": \"급변\",\n      \"start\": 35,\n      \"end\": 35\n    },\n    {\n      \"pattern\": \"급변\",\n      \"start\": 89,\n      \"end\": 89\n    },\n    {\n      \"pattern\": \"추세\",\n      \"start\": 61,\n      \"end\": 66\n    },\n    {\n      \"pattern\": \"치우침\",\n      \"start\": 33,\n      \"end\": 37\n    }\n  ]\n}",
+       "error": null,
+       "latency_s": 2.03,
+       "usage": {
+        "prompt_tokens": 948,
+        "completion_tokens": 193
+       },
+       "issues": [],
+       "created": "2026-09-25T23:48:41",
+       "events": [
+        {
+         "pattern": "spike",
+         "start": 93,
+         "end": 93,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 52,
+         "end": 52,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 43,
+         "end": 43,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 35,
+         "end": 35,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 89,
+         "end": 89,
+         "direction": null
+        },
+        {
+         "pattern": "trend",
+         "start": 61,
+         "end": 66,
+         "direction": null
+        },
+        {
+         "pattern": "shift",
+         "start": 33,
+         "end": 37,
+         "direction": null
+        }
+       ]
+      }
+     ]
+    },
+    "15": {
+     "input_hash": "3478fe5d83bb0c42",
+     "runs": [
+      {
+       "run": 0,
+       "text": "{\n  \"detections\": [\n    {\n      \"pattern\": \"급변\",\n      \"start\": 54,\n      \"end\": 54\n    },\n    {\n      \"pattern\": \"급변\",\n      \"start\": 53,\n      \"end\": 53\n    },\n    {\n      \"pattern\": \"급변\",\n      \"start\": 80,\n      \"end\": 80\n    },\n    {\n      \"pattern\": \"급변\",\n      \"start\": 84,\n      \"end\": 84\n    },\n    {\n      \"pattern\": \"급변\",\n      \"start\": 89,\n      \"end\": 89\n    },\n    {\n      \"pattern\": \"급변\",\n      \"start\": 90,\n      \"end\": 90\n    },\n    {\n      \"pattern\": \"급변\",\n      \"start\": 97,\n      \"end\": 97\n    },\n    {\n      \"pattern\": \"추세\",\n      \"start\": 29,\n      \"end\": 34\n    },\n    {\n      \"pattern\": \"추세\",\n      \"start\": 50,\n      \"end\": 52\n    },\n    {\n      \"pattern\": \"추세\",\n      \"start\": 70,\n      \"end\": 72\n    },\n    {\n      \"pattern\": \"치우침\",\n      \"start\": 16,\n      \"end\": 25\n    }\n  ]\n}",
+       "error": null,
+       "latency_s": 3.49,
+       "usage": {
+        "prompt_tokens": 948,
+        "completion_tokens": 297
+       },
+       "issues": [],
+       "created": "2026-09-25T23:48:41",
+       "events": [
+        {
+         "pattern": "spike",
+         "start": 54,
+         "end": 54,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 53,
+         "end": 53,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 80,
+         "end": 80,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 84,
+         "end": 84,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 89,
+         "end": 89,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 90,
+         "end": 90,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 97,
+         "end": 97,
+         "direction": null
+        },
+        {
+         "pattern": "trend",
+         "start": 29,
+         "end": 34,
+         "direction": null
+        },
+        {
+         "pattern": "trend",
+         "start": 50,
+         "end": 52,
+         "direction": null
+        },
+        {
+         "pattern": "trend",
+         "start": 70,
+         "end": 72,
+         "direction": null
+        },
+        {
+         "pattern": "shift",
+         "start": 16,
+         "end": 25,
+         "direction": null
+        }
+       ]
+      },
+      {
+       "run": 1,
+       "text": "{\n  \"detections\": [\n    {\n      \"pattern\": \"급변\",\n      \"start\": 53,\n      \"end\": 53\n    },\n    {\n      \"pattern\": \"급변\",\n      \"start\": 54,\n      \"end\": 54\n    }\n  ]\n}",
+       "error": null,
+       "latency_s": 1.13,
+       "usage": {
+        "prompt_tokens": 948,
+        "completion_tokens": 62
+       },
+       "issues": [],
+       "created": "2026-09-25T23:48:41",
+       "events": [
+        {
+         "pattern": "spike",
+         "start": 53,
+         "end": 53,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 54,
+         "end": 54,
+         "direction": null
+        }
+       ]
+      },
+      {
+       "run": 2,
+       "text": "{\n  \"detections\": [\n    {\n      \"pattern\": \"급변\",\n      \"start\": 54,\n      \"end\": 54\n    },\n    {\n      \"pattern\": \"급변\",\n      \"start\": 53,\n      \"end\": 53\n    },\n    {\n      \"pattern\": \"급변\",\n      \"start\": 80,\n      \"end\": 80\n    },\n    {\n      \"pattern\": \"급변\",\n      \"start\": 84,\n      \"end\": 84\n    },\n    {\n      \"pattern\": \"급변\",\n      \"start\": 89,\n      \"end\": 89\n    },\n    {\n      \"pattern\": \"급변\",\n      \"start\": 90,\n      \"end\": 90\n    },\n    {\n      \"pattern\": \"급변\",\n      \"start\": 97,\n      \"end\": 97\n    },\n    {\n      \"pattern\": \"추세\",\n      \"start\": 29,\n      \"end\": 34\n    },\n    {\n      \"pattern\": \"추세\",\n      \"start\": 50,\n      \"end\": 52\n    },\n    {\n      \"pattern\": \"추세\",\n      \"start\": 70,\n      \"end\": 72\n    },\n    {\n      \"pattern\": \"치우침\",\n      \"start\": 5,\n      \"end\": 35\n    }\n  ]\n}",
+       "error": null,
+       "latency_s": 4.01,
+       "usage": {
+        "prompt_tokens": 948,
+        "completion_tokens": 297
+       },
+       "issues": [],
+       "created": "2026-09-25T23:48:41",
+       "events": [
+        {
+         "pattern": "spike",
+         "start": 54,
+         "end": 54,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 53,
+         "end": 53,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 80,
+         "end": 80,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 84,
+         "end": 84,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 89,
+         "end": 89,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 90,
+         "end": 90,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 97,
+         "end": 97,
+         "direction": null
+        },
+        {
+         "pattern": "trend",
+         "start": 29,
+         "end": 34,
+         "direction": null
+        },
+        {
+         "pattern": "trend",
+         "start": 50,
+         "end": 52,
+         "direction": null
+        },
+        {
+         "pattern": "trend",
+         "start": 70,
+         "end": 72,
+         "direction": null
+        },
+        {
+         "pattern": "shift",
+         "start": 5,
+         "end": 35,
+         "direction": null
+        }
+       ]
+      }
+     ]
+    },
+    "16": {
+     "input_hash": "4987aaa7b316a2a7",
+     "runs": [
+      {
+       "run": 0,
+       "text": "{\n  \"detections\": [\n    {\n      \"pattern\": \"급변\",\n      \"start\": 31,\n      \"end\": 31\n    },\n    {\n      \"pattern\": \"급변\",\n      \"start\": 82,\n      \"end\": 82\n    },\n    {\n      \"pattern\": \"급변\",\n      \"start\": 94,\n      \"end\": 94\n    }\n  ]\n}",
+       "error": null,
+       "latency_s": 1.15,
+       "usage": {
+        "prompt_tokens": 948,
+        "completion_tokens": 88
+       },
+       "issues": [],
+       "created": "2026-09-25T23:48:41",
+       "events": [
+        {
+         "pattern": "spike",
+         "start": 31,
+         "end": 31,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 82,
+         "end": 82,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 94,
+         "end": 94,
+         "direction": null
+        }
+       ]
+      },
+      {
+       "run": 1,
+       "text": "{\n  \"detections\": [\n    {\n      \"pattern\": \"급변\",\n      \"start\": 31,\n      \"end\": 31\n    },\n    {\n      \"pattern\": \"급변\",\n      \"start\": 82,\n      \"end\": 82\n    },\n    {\n      \"pattern\": \"급변\",\n      \"start\": 94,\n      \"end\": 94\n    }\n  ]\n}",
+       "error": null,
+       "latency_s": 1.34,
+       "usage": {
+        "prompt_tokens": 948,
+        "completion_tokens": 88
+       },
+       "issues": [],
+       "created": "2026-09-25T23:48:41",
+       "events": [
+        {
+         "pattern": "spike",
+         "start": 31,
+         "end": 31,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 82,
+         "end": 82,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 94,
+         "end": 94,
+         "direction": null
+        }
+       ]
+      },
+      {
+       "run": 2,
+       "text": "{\n  \"detections\": [\n    {\n      \"pattern\": \"급변\",\n      \"start\": 31,\n      \"end\": 31\n    },\n    {\n      \"pattern\": \"급변\",\n      \"start\": 82,\n      \"end\": 82\n    },\n    {\n      \"pattern\": \"급변\",\n      \"start\": 90,\n      \"end\": 90\n    },\n    {\n      \"pattern\": \"급변\",\n      \"start\": 94,\n      \"end\": 94\n    }\n  ]\n}",
+       "error": null,
+       "latency_s": 1.43,
+       "usage": {
+        "prompt_tokens": 948,
+        "completion_tokens": 114
+       },
+       "issues": [],
+       "created": "2026-09-25T23:48:41",
+       "events": [
+        {
+         "pattern": "spike",
+         "start": 31,
+         "end": 31,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 82,
+         "end": 82,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 90,
+         "end": 90,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 94,
+         "end": 94,
+         "direction": null
+        }
+       ]
+      }
+     ]
+    },
+    "17": {
+     "input_hash": "66612ba7a784eb85",
+     "runs": [
+      {
+       "run": 0,
+       "text": "{\n  \"detections\": [\n    {\"pattern\": \"급변\", \"start\": 64, \"end\": 64},\n    {\"pattern\": \"급변\", \"start\": 69, \"end\": 69},\n    {\"pattern\": \"급변\", \"start\": 84, \"end\": 84},\n    {\"pattern\": \"급변\", \"start\": 60, \"end\": 60},\n    {\"pattern\": \"급변\", \"start\": 54, \"end\": 54},\n    {\"pattern\": \"급변\", \"start\": 63, \"end\": 63},\n    {\"pattern\": \"급변\", \"start\": 55, \"end\": 55},\n    {\"pattern\": \"급변\", \"start\": 35, \"end\": 35},\n    {\"pattern\": \"급변\", \"start\": 30, \"end\": 30},\n    {\"pattern\": \"급변\", \"start\": 31, \"end\": 31},\n    {\"pattern\": \"급변\", \"start\": 86, \"end\": 86},\n    {\"pattern\": \"급변\", \"start\": 47, \"end\": 47},\n    {\"pattern\": \"급변\", \"start\": 27, \"end\": 27},\n    {\"pattern\": \"급변\", \"start\": 28, \"end\": 28},\n    {\"pattern\": \"급변\", \"start\": 65, \"end\": 65},\n    {\"pattern\": \"급변\", \"start\": 69, \"end\": 69},\n    {\"pattern\": \"급변\", \"start\": 60, \"end\": 60},\n    {\"pattern\": \"급변\", \"start\": 64, \"end\": 64},\n    {\"pattern\": \"급변\", \"start\": 54, \"end\": 54},\n    {\"pattern\": \"급변\", \"start\": 63, \"end\": 63},\n    {\"pattern\": \"급변\", \"start\": 55, \"end\": 55},\n    {\"pattern\": \"급변\", \"start\": 35, \"end\": 35},\n    {\"pattern\": \"급변\", \"start\": 30, \"end\": 30},\n    {\"pattern\": \"급변\", \"start\": 31, \"end\": 31},\n    {\"pattern\": \"급변\", \"start\": 86, \"end\": 86},\n    {\"pattern\": \"급변\", \"start\": 47, \"end\": 47},\n    {\"pattern\": \"급변\", \"start\": 27, \"end\": 28},\n    {\"pattern\": \"추세\", \"start\": 71, \"end\": 75},\n    {\"pattern\": \"추세\", \"start\": 92, \"end\": 94}\n  ]\n}",
+       "error": null,
+       "latency_s": 4.5,
+       "usage": {
+        "prompt_tokens": 948,
+        "completion_tokens": 590
+       },
+       "issues": [],
+       "created": "2026-09-25T23:48:41",
+       "events": [
+        {
+         "pattern": "spike",
+         "start": 64,
+         "end": 64,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 69,
+         "end": 69,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 84,
+         "end": 84,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 60,
+         "end": 60,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 54,
+         "end": 54,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 63,
+         "end": 63,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 55,
+         "end": 55,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 35,
+         "end": 35,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 30,
+         "end": 30,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 31,
+         "end": 31,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 86,
+         "end": 86,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 47,
+         "end": 47,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 27,
+         "end": 27,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 28,
+         "end": 28,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 65,
+         "end": 65,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 69,
+         "end": 69,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 60,
+         "end": 60,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 64,
+         "end": 64,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 54,
+         "end": 54,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 63,
+         "end": 63,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 55,
+         "end": 55,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 35,
+         "end": 35,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 30,
+         "end": 30,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 31,
+         "end": 31,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 86,
+         "end": 86,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 47,
+         "end": 47,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 27,
+         "end": 28,
+         "direction": null
+        },
+        {
+         "pattern": "trend",
+         "start": 71,
+         "end": 75,
+         "direction": null
+        },
+        {
+         "pattern": "trend",
+         "start": 92,
+         "end": 94,
+         "direction": null
+        }
+       ]
+      },
+      {
+       "run": 1,
+       "text": "{\n  \"detections\": [\n    {\"pattern\": \"급변\", \"start\": 64, \"end\": 64},\n    {\"pattern\": \"급변\", \"start\": 69, \"end\": 69},\n    {\"pattern\": \"급변\", \"start\": 84, \"end\": 84}\n  ]\n}",
+       "error": null,
+       "latency_s": 1.09,
+       "usage": {
+        "prompt_tokens": 948,
+        "completion_tokens": 70
+       },
+       "issues": [],
+       "created": "2026-09-25T23:48:41",
+       "events": [
+        {
+         "pattern": "spike",
+         "start": 64,
+         "end": 64,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 69,
+         "end": 69,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 84,
+         "end": 84,
+         "direction": null
+        }
+       ]
+      },
+      {
+       "run": 2,
+       "text": "{\n  \"detections\": [\n    {\"pattern\": \"급변\", \"start\": 64, \"end\": 64},\n    {\"pattern\": \"급변\", \"start\": 69, \"end\": 69},\n    {\"pattern\": \"급변\", \"start\": 84, \"end\": 84},\n    {\"pattern\": \"추세\", \"start\": 70, \"end\": 75}\n  ]\n}",
+       "error": null,
+       "latency_s": 1.22,
+       "usage": {
+        "prompt_tokens": 948,
+        "completion_tokens": 90
+       },
+       "issues": [],
+       "created": "2026-09-25T23:48:41",
+       "events": [
+        {
+         "pattern": "spike",
+         "start": 64,
+         "end": 64,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 69,
+         "end": 69,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 84,
+         "end": 84,
+         "direction": null
+        },
+        {
+         "pattern": "trend",
+         "start": 70,
+         "end": 75,
+         "direction": null
+        }
+       ]
+      }
+     ]
+    },
+    "18": {
+     "input_hash": "77f5a823efa42407",
+     "runs": [
+      {
+       "run": 0,
+       "text": "{\n  \"detections\": [\n    {\"pattern\": \"급변\", \"start\": 3, \"end\": 3},\n    {\"pattern\": \"급변\", \"start\": 43, \"end\": 43},\n    {\"pattern\": \"급변\", \"start\": 50, \"end\": 50},\n    {\"pattern\": \"급변\", \"start\": 72, \"end\": 72},\n    {\"pattern\": \"추세\", \"start\": 12, \"end\": 17},\n    {\"pattern\": \"추세\", \"start\": 37, \"end\": 40},\n    {\"pattern\": \"추세\", \"start\": 83, \"end\": 89}\n  ]\n}",
+       "error": null,
+       "latency_s": 1.68,
+       "usage": {
+        "prompt_tokens": 948,
+        "completion_tokens": 150
+       },
+       "issues": [],
+       "created": "2026-09-25T23:48:41",
+       "events": [
+        {
+         "pattern": "spike",
+         "start": 3,
+         "end": 3,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 43,
+         "end": 43,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 50,
+         "end": 50,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 72,
+         "end": 72,
+         "direction": null
+        },
+        {
+         "pattern": "trend",
+         "start": 12,
+         "end": 17,
+         "direction": null
+        },
+        {
+         "pattern": "trend",
+         "start": 37,
+         "end": 40,
+         "direction": null
+        },
+        {
+         "pattern": "trend",
+         "start": 83,
+         "end": 89,
+         "direction": null
+        }
+       ]
+      },
+      {
+       "run": 1,
+       "text": "{\n  \"detections\": [\n    {\"pattern\": \"급변\", \"start\": 3, \"end\": 3},\n    {\"pattern\": \"급변\", \"start\": 43, \"end\": 43},\n    {\"pattern\": \"급변\", \"start\": 50, \"end\": 50},\n    {\"pattern\": \"급변\", \"start\": 72, \"end\": 72},\n    {\"pattern\": \"급변\", \"start\": 89, \"end\": 89},\n    {\n      \"pattern\": \"추세\",\n      \"start\": 12,\n      \"end\": 17\n    },\n    {\n      \"pattern\": \"추세\",\n      \"start\": 38,\n      \"end\": 40\n    },\n    {\n      \"pattern\": \"추세\",\n      \"start\": 79,\n      \"end\": 84\n    },\n    {\n      \"pattern\": \"추세\",\n      \"start\": 91,\n      \"end\": 95\n    }\n  ]\n}",
+       "error": null,
+       "latency_s": 2.07,
+       "usage": {
+        "prompt_tokens": 948,
+        "completion_tokens": 214
+       },
+       "issues": [],
+       "created": "2026-09-25T23:48:41",
+       "events": [
+        {
+         "pattern": "spike",
+         "start": 3,
+         "end": 3,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 43,
+         "end": 43,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 50,
+         "end": 50,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 72,
+         "end": 72,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 89,
+         "end": 89,
+         "direction": null
+        },
+        {
+         "pattern": "trend",
+         "start": 12,
+         "end": 17,
+         "direction": null
+        },
+        {
+         "pattern": "trend",
+         "start": 38,
+         "end": 40,
+         "direction": null
+        },
+        {
+         "pattern": "trend",
+         "start": 79,
+         "end": 84,
+         "direction": null
+        },
+        {
+         "pattern": "trend",
+         "start": 91,
+         "end": 95,
+         "direction": null
+        }
+       ]
+      },
+      {
+       "run": 2,
+       "text": "{\n  \"detections\": [\n    {\"pattern\": \"급변\", \"start\": 3, \"end\": 3},\n    {\"pattern\": \"급변\", \"start\": 43, \"end\": 43},\n    {\"pattern\": \"급변\", \"start\": 50, \"end\": 50},\n    {\"pattern\": \"급변\", \"start\": 72, \"end\": 72},\n    {\"pattern\": \"추세\", \"start\": 12, \"end\": 17},\n    {\"pattern\": \"추세\", \"start\": 37, \"end\": 40},\n    {\"pattern\": \"추세\", \"start\": 83, \"end\": 89},\n    {\"pattern\": \"치우침\", \"start\": 7, \"end\": 15},\n    {\"pattern\": \"치우침\", \"start\": 79, \"end\": 89}\n  ]\n}",
+       "error": null,
+       "latency_s": 1.94,
+       "usage": {
+        "prompt_tokens": 948,
+        "completion_tokens": 192
+       },
+       "issues": [],
+       "created": "2026-09-25T23:48:41",
+       "events": [
+        {
+         "pattern": "spike",
+         "start": 3,
+         "end": 3,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 43,
+         "end": 43,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 50,
+         "end": 50,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 72,
+         "end": 72,
+         "direction": null
+        },
+        {
+         "pattern": "trend",
+         "start": 12,
+         "end": 17,
+         "direction": null
+        },
+        {
+         "pattern": "trend",
+         "start": 37,
+         "end": 40,
+         "direction": null
+        },
+        {
+         "pattern": "trend",
+         "start": 83,
+         "end": 89,
+         "direction": null
+        },
+        {
+         "pattern": "shift",
+         "start": 7,
+         "end": 15,
+         "direction": null
+        },
+        {
+         "pattern": "shift",
+         "start": 79,
+         "end": 89,
+         "direction": null
+        }
+       ]
+      }
+     ]
+    },
+    "19": {
+     "input_hash": "36051331eb03e3c6",
+     "runs": [
+      {
+       "run": 0,
+       "text": "{\n  \"detections\": [\n    {\n      \"pattern\": \"급변\",\n      \"start\": 91,\n      \"end\": 91\n    },\n    {\n      \"pattern\": \"급변\",\n      \"start\": 71,\n      \"end\": 71\n    },\n    {\n      \"pattern\": \"급변\",\n      \"start\": 54,\n      \"end\": 54\n    },\n    {\n      \"pattern\": \"급변\",\n      \"start\": 52,\n      \"end\": 52\n    },\n    {\n      \"pattern\": \"급변\",\n      \"start\": 60,\n      \"end\": 60\n    },\n    {\n      \"pattern\": \"급변\",\n      \"start\": 58,\n      \"end\": 58\n    },\n    {\n      \"pattern\": \"급변\",\n      \"start\": 97,\n      \"end\": 97\n    },\n    {\n      \"pattern\": \"추세\",\n      \"start\": 16,\n      \"end\": 22\n    },\n    {\n      \"pattern\": \"추세\",\n      \"start\": 62,\n      \"end\": 69\n    },\n    {\n      \"pattern\": \"추세\",\n      \"start\": 72,\n      \"end\": 73\n    },\n    {\n      \"pattern\": \"치우침\",\n      \"start\": 7,\n      \"end\": 23\n    }\n  ]\n}",
+       "error": null,
+       "latency_s": 2.6,
+       "usage": {
+        "prompt_tokens": 948,
+        "completion_tokens": 297
+       },
+       "issues": [],
+       "created": "2026-09-25T23:48:41",
+       "events": [
+        {
+         "pattern": "spike",
+         "start": 91,
+         "end": 91,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 71,
+         "end": 71,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 54,
+         "end": 54,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 52,
+         "end": 52,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 60,
+         "end": 60,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 58,
+         "end": 58,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 97,
+         "end": 97,
+         "direction": null
+        },
+        {
+         "pattern": "trend",
+         "start": 16,
+         "end": 22,
+         "direction": null
+        },
+        {
+         "pattern": "trend",
+         "start": 62,
+         "end": 69,
+         "direction": null
+        },
+        {
+         "pattern": "trend",
+         "start": 72,
+         "end": 73,
+         "direction": null
+        },
+        {
+         "pattern": "shift",
+         "start": 7,
+         "end": 23,
+         "direction": null
+        }
+       ]
+      },
+      {
+       "run": 1,
+       "text": "{\n  \"detections\": [\n    {\n      \"pattern\": \"급변\",\n      \"start\": 91,\n      \"end\": 91\n    },\n    {\n      \"pattern\": \"급변\",\n      \"start\": 52,\n      \"end\": 52\n    },\n    {\n      \"pattern\": \"급변\",\n      \"start\": 54,\n      \"end\": 54\n    },\n    {\n      \"pattern\": \"급변\",\n      \"start\": 58,\n      \"end\": 58\n    },\n    {\n      \"pattern\": \"급변\",\n      \"start\": 60,\n      \"end\": 60\n    },\n    {\n      \"pattern\": \"급변\",\n      \"start\": 71,\n      \"end\": 71\n    },\n    {\n      \"pattern\": \"추세\",\n      \"start\": 16,\n      \"end\": 22\n    },\n    {\n      \"pattern\": \"추세\",\n      \"start\": 62,\n      \"end\": 69\n    }\n  ]\n}",
+       "error": null,
+       "latency_s": 2.22,
+       "usage": {
+        "prompt_tokens": 948,
+        "completion_tokens": 218
+       },
+       "issues": [],
+       "created": "2026-09-25T23:48:41",
+       "events": [
+        {
+         "pattern": "spike",
+         "start": 91,
+         "end": 91,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 52,
+         "end": 52,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 54,
+         "end": 54,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 58,
+         "end": 58,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 60,
+         "end": 60,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 71,
+         "end": 71,
+         "direction": null
+        },
+        {
+         "pattern": "trend",
+         "start": 16,
+         "end": 22,
+         "direction": null
+        },
+        {
+         "pattern": "trend",
+         "start": 62,
+         "end": 69,
+         "direction": null
+        }
+       ]
+      },
+      {
+       "run": 2,
+       "text": "{\n  \"detections\": [\n    {\n      \"pattern\": \"급변\",\n      \"start\": 91,\n      \"end\": 91\n    },\n    {\n      \"pattern\": \"급변\",\n      \"start\": 71,\n      \"end\": 71\n    },\n    {\n      \"pattern\": \"급변\",\n      \"start\": 54,\n      \"end\": 54\n    },\n    {\n      \"pattern\": \"급변\",\n      \"start\": 52,\n      \"end\": 52\n    },\n    {\n      \"pattern\": \"급변\",\n      \"start\": 60,\n      \"end\": 61\n    },\n    {\n      \"pattern\": \"급변\",\n      \"start\": 58,\n      \"end\": 58\n    },\n    {\n      \"pattern\": \"급변\",\n      \"start\": 53,\n      \"end\": 53\n    },\n    {\n      \"pattern\": \"급변\",\n      \"start\": 97,\n      \"end\": 97\n    },\n    {\n      \"pattern\": \"추세\",\n      \"start\": 16,\n      \"end\": 22\n    },\n    {\n      \"pattern\": \"추세\",\n      \"start\": 62,\n      \"end\": 69\n    }\n  ]\n}",
+       "error": null,
+       "latency_s": 3.31,
+       "usage": {
+        "prompt_tokens": 948,
+        "completion_tokens": 270
+       },
+       "issues": [],
+       "created": "2026-09-25T23:48:41",
+       "events": [
+        {
+         "pattern": "spike",
+         "start": 91,
+         "end": 91,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 71,
+         "end": 71,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 54,
+         "end": 54,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 52,
+         "end": 52,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 60,
+         "end": 61,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 58,
+         "end": 58,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 53,
+         "end": 53,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 97,
+         "end": 97,
+         "direction": null
+        },
+        {
+         "pattern": "trend",
+         "start": 16,
+         "end": 22,
+         "direction": null
+        },
+        {
+         "pattern": "trend",
+         "start": 62,
+         "end": 69,
+         "direction": null
+        }
+       ]
+      }
+     ]
+    }
+   }
+  },
+  "gpt-6-sol": {
+   "config": {
+    "name": "gpt-6-sol",
+    "temperature": null,
+    "repeats": 3,
+    "enabled": true
+   },
+   "series": {
+    "0": {
+     "input_hash": "b38060e74a8ce6b2",
+     "runs": [
+      {
+       "run": 0,
+       "text": "{\"detections\": []}",
+       "error": null,
+       "latency_s": 12.18,
+       "usage": {
+        "prompt_tokens": 947,
+        "completion_tokens": 528
+       },
+       "issues": [],
+       "created": "2026-09-25T23:48:41",
+       "events": []
+      },
+      {
+       "run": 1,
+       "text": "{\"detections\": []}",
+       "error": null,
+       "latency_s": 9.54,
+       "usage": {
+        "prompt_tokens": 947,
+        "completion_tokens": 425
+       },
+       "issues": [],
+       "created": "2026-09-25T23:48:41",
+       "events": []
+      },
+      {
+       "run": 2,
+       "text": "{\"detections\":[]}",
+       "error": null,
+       "latency_s": 11.65,
+       "usage": {
+        "prompt_tokens": 947,
+        "completion_tokens": 705
+       },
+       "issues": [],
+       "created": "2026-09-25T23:48:41",
+       "events": []
+      }
+     ]
+    },
+    "1": {
+     "input_hash": "ec8657b1ee079e40",
+     "runs": [
+      {
+       "run": 0,
+       "text": "{\"detections\": []}",
+       "error": null,
+       "latency_s": 9.75,
+       "usage": {
+        "prompt_tokens": 947,
+        "completion_tokens": 453
+       },
+       "issues": [],
+       "created": "2026-09-25T23:48:41",
+       "events": []
+      },
+      {
+       "run": 1,
+       "text": "{\"detections\":[]}",
+       "error": null,
+       "latency_s": 8.47,
+       "usage": {
+        "prompt_tokens": 947,
+        "completion_tokens": 488
+       },
+       "issues": [],
+       "created": "2026-09-25T23:48:41",
+       "events": []
+      },
+      {
+       "run": 2,
+       "text": "{\"detections\": []}",
+       "error": null,
+       "latency_s": 8.18,
+       "usage": {
+        "prompt_tokens": 947,
+        "completion_tokens": 464
+       },
+       "issues": [],
+       "created": "2026-09-25T23:48:41",
+       "events": []
+      }
+     ]
+    },
+    "2": {
+     "input_hash": "17e0b3b67c4c10ce",
+     "runs": [
+      {
+       "run": 0,
+       "text": "{\"detections\": []}",
+       "error": null,
+       "latency_s": 9.45,
+       "usage": {
+        "prompt_tokens": 947,
+        "completion_tokens": 390
+       },
+       "issues": [],
+       "created": "2026-09-25T23:48:41",
+       "events": []
+      },
+      {
+       "run": 1,
+       "text": "{\"detections\": []}",
+       "error": null,
+       "latency_s": 7.65,
+       "usage": {
+        "prompt_tokens": 947,
+        "completion_tokens": 400
+       },
+       "issues": [],
+       "created": "2026-09-25T23:48:41",
+       "events": []
+      },
+      {
+       "run": 2,
+       "text": "{\"detections\": []}",
+       "error": null,
+       "latency_s": 11.47,
+       "usage": {
+        "prompt_tokens": 947,
+        "completion_tokens": 613
+       },
+       "issues": [],
+       "created": "2026-09-25T23:48:41",
+       "events": []
+      }
+     ]
+    },
+    "3": {
+     "input_hash": "f5708a571671a6cf",
+     "runs": [
+      {
+       "run": 0,
+       "text": "{\"detections\":[{\"pattern\":\"급변\",\"start\":63,\"end\":63}]}",
+       "error": null,
+       "latency_s": 13.64,
+       "usage": {
+        "prompt_tokens": 947,
+        "completion_tokens": 793
+       },
+       "issues": [],
+       "created": "2026-09-25T23:48:41",
+       "events": [
+        {
+         "pattern": "spike",
+         "start": 63,
+         "end": 63,
+         "direction": null
+        }
+       ]
+      },
+      {
+       "run": 1,
+       "text": "{\"detections\":[{\"pattern\":\"급변\",\"start\":63,\"end\":63}]}",
+       "error": null,
+       "latency_s": 10.14,
+       "usage": {
+        "prompt_tokens": 947,
+        "completion_tokens": 543
+       },
+       "issues": [],
+       "created": "2026-09-25T23:48:41",
+       "events": [
+        {
+         "pattern": "spike",
+         "start": 63,
+         "end": 63,
+         "direction": null
+        }
+       ]
+      },
+      {
+       "run": 2,
+       "text": "{\"detections\":[{\"pattern\":\"급변\",\"start\":63,\"end\":63}]}",
+       "error": null,
+       "latency_s": 13.16,
+       "usage": {
+        "prompt_tokens": 947,
+        "completion_tokens": 728
+       },
+       "issues": [],
+       "created": "2026-09-25T23:48:41",
+       "events": [
+        {
+         "pattern": "spike",
+         "start": 63,
+         "end": 63,
+         "direction": null
+        }
+       ]
+      }
+     ]
+    },
+    "4": {
+     "input_hash": "7cec44ecfd9331fe",
+     "runs": [
+      {
+       "run": 0,
+       "text": "{\"detections\": []}",
+       "error": null,
+       "latency_s": 10.18,
+       "usage": {
+        "prompt_tokens": 947,
+        "completion_tokens": 395
+       },
+       "issues": [],
+       "created": "2026-09-25T23:48:41",
+       "events": []
+      },
+      {
+       "run": 1,
+       "text": "{\"detections\": []}",
+       "error": null,
+       "latency_s": 9.42,
+       "usage": {
+        "prompt_tokens": 947,
+        "completion_tokens": 520
+       },
+       "issues": [],
+       "created": "2026-09-25T23:48:41",
+       "events": []
+      },
+      {
+       "run": 2,
+       "text": "{\"detections\": []}",
+       "error": null,
+       "latency_s": 14.23,
+       "usage": {
+        "prompt_tokens": 947,
+        "completion_tokens": 658
+       },
+       "issues": [],
+       "created": "2026-09-25T23:48:41",
+       "events": []
+      }
+     ]
+    },
+    "5": {
+     "input_hash": "0aa0c810c014302f",
+     "runs": [
+      {
+       "run": 0,
+       "text": "{\"detections\":[{\"pattern\":\"급변\",\"start\":87,\"end\":87}]}",
+       "error": null,
+       "latency_s": 9.88,
+       "usage": {
+        "prompt_tokens": 947,
+        "completion_tokens": 543
+       },
+       "issues": [],
+       "created": "2026-09-25T23:48:41",
+       "events": [
+        {
+         "pattern": "spike",
+         "start": 87,
+         "end": 87,
+         "direction": null
+        }
+       ]
+      },
+      {
+       "run": 1,
+       "text": "{\"detections\":[{\"pattern\":\"급변\",\"start\":87,\"end\":87}]}",
+       "error": null,
+       "latency_s": 10.0,
+       "usage": {
+        "prompt_tokens": 947,
+        "completion_tokens": 503
+       },
+       "issues": [],
+       "created": "2026-09-25T23:48:41",
+       "events": [
+        {
+         "pattern": "spike",
+         "start": 87,
+         "end": 87,
+         "direction": null
+        }
+       ]
+      },
+      {
+       "run": 2,
+       "text": "{\"detections\":[{\"pattern\":\"급변\",\"start\":87,\"end\":87}]}",
+       "error": null,
+       "latency_s": 9.47,
+       "usage": {
+        "prompt_tokens": 947,
+        "completion_tokens": 527
+       },
+       "issues": [],
+       "created": "2026-09-25T23:48:41",
+       "events": [
+        {
+         "pattern": "spike",
+         "start": 87,
+         "end": 87,
+         "direction": null
+        }
+       ]
+      }
+     ]
+    },
+    "6": {
+     "input_hash": "34d13204207ab8bf",
+     "runs": [
+      {
+       "run": 0,
+       "text": "{\"detections\":[{\"pattern\":\"급변\",\"start\":54,\"end\":54}]}",
+       "error": null,
+       "latency_s": 12.37,
+       "usage": {
+        "prompt_tokens": 947,
+        "completion_tokens": 646
+       },
+       "issues": [],
+       "created": "2026-09-25T23:48:41",
+       "events": [
+        {
+         "pattern": "spike",
+         "start": 54,
+         "end": 54,
+         "direction": null
+        }
+       ]
+      },
+      {
+       "run": 1,
+       "text": "{\"detections\":[{\"pattern\":\"급변\",\"start\":54,\"end\":54}]}",
+       "error": null,
+       "latency_s": 9.94,
+       "usage": {
+        "prompt_tokens": 947,
+        "completion_tokens": 541
+       },
+       "issues": [],
+       "created": "2026-09-25T23:48:41",
+       "events": [
+        {
+         "pattern": "spike",
+         "start": 54,
+         "end": 54,
+         "direction": null
+        }
+       ]
+      },
+      {
+       "run": 2,
+       "text": "{\"detections\":[{\"pattern\":\"급변\",\"start\":54,\"end\":54}]}",
+       "error": null,
+       "latency_s": 8.91,
+       "usage": {
+        "prompt_tokens": 947,
+        "completion_tokens": 476
+       },
+       "issues": [],
+       "created": "2026-09-25T23:48:41",
+       "events": [
+        {
+         "pattern": "spike",
+         "start": 54,
+         "end": 54,
+         "direction": null
+        }
+       ]
+      }
+     ]
+    },
+    "7": {
+     "input_hash": "9e3383c0ebbe30e1",
+     "runs": [
+      {
+       "run": 0,
+       "text": "{\"detections\":[{\"pattern\":\"급변\",\"start\":29,\"end\":29},{\"pattern\":\"급변\",\"start\":98,\"end\":98}]}",
+       "error": null,
+       "latency_s": 9.56,
+       "usage": {
+        "prompt_tokens": 947,
+        "completion_tokens": 510
+       },
+       "issues": [],
+       "created": "2026-09-25T23:48:41",
+       "events": [
+        {
+         "pattern": "spike",
+         "start": 29,
+         "end": 29,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 98,
+         "end": 98,
+         "direction": null
+        }
+       ]
+      },
+      {
+       "run": 1,
+       "text": "{\"detections\":[{\"pattern\":\"급변\",\"start\":29,\"end\":29},{\"pattern\":\"급변\",\"start\":98,\"end\":98}]}",
+       "error": null,
+       "latency_s": 11.68,
+       "usage": {
+        "prompt_tokens": 947,
+        "completion_tokens": 476
+       },
+       "issues": [],
+       "created": "2026-09-25T23:48:41",
+       "events": [
+        {
+         "pattern": "spike",
+         "start": 29,
+         "end": 29,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 98,
+         "end": 98,
+         "direction": null
+        }
+       ]
+      },
+      {
+       "run": 2,
+       "text": "{\"detections\":[{\"pattern\":\"급변\",\"start\":29,\"end\":29},{\"pattern\":\"급변\",\"start\":98,\"end\":98}]}",
+       "error": null,
+       "latency_s": 7.36,
+       "usage": {
+        "prompt_tokens": 947,
+        "completion_tokens": 392
+       },
+       "issues": [],
+       "created": "2026-09-25T23:48:41",
+       "events": [
+        {
+         "pattern": "spike",
+         "start": 29,
+         "end": 29,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 98,
+         "end": 98,
+         "direction": null
+        }
+       ]
+      }
+     ]
+    },
+    "8": {
+     "input_hash": "b7c272782d0df154",
+     "runs": [
+      {
+       "run": 0,
+       "text": "{\"detections\":[{\"pattern\":\"추세\",\"start\":61,\"end\":68}]}",
+       "error": null,
+       "latency_s": 8.53,
+       "usage": {
+        "prompt_tokens": 947,
+        "completion_tokens": 414
+       },
+       "issues": [],
+       "created": "2026-09-25T23:48:41",
+       "events": [
+        {
+         "pattern": "trend",
+         "start": 61,
+         "end": 68,
+         "direction": null
+        }
+       ]
+      },
+      {
+       "run": 1,
+       "text": "{\"detections\":[{\"pattern\":\"추세\",\"start\":61,\"end\":68}]}",
+       "error": null,
+       "latency_s": 9.68,
+       "usage": {
+        "prompt_tokens": 947,
+        "completion_tokens": 543
+       },
+       "issues": [],
+       "created": "2026-09-25T23:48:41",
+       "events": [
+        {
+         "pattern": "trend",
+         "start": 61,
+         "end": 68,
+         "direction": null
+        }
+       ]
+      },
+      {
+       "run": 2,
+       "text": "{\"detections\":[{\"pattern\":\"추세\",\"start\":61,\"end\":68}]}",
+       "error": null,
+       "latency_s": 8.04,
+       "usage": {
+        "prompt_tokens": 947,
+        "completion_tokens": 427
+       },
+       "issues": [],
+       "created": "2026-09-25T23:48:41",
+       "events": [
+        {
+         "pattern": "trend",
+         "start": 61,
+         "end": 68,
+         "direction": null
+        }
+       ]
+      }
+     ]
+    },
+    "9": {
+     "input_hash": "629a4851aac15d24",
+     "runs": [
+      {
+       "run": 0,
+       "text": "{\"detections\":[{\"pattern\":\"추세\",\"start\":17,\"end\":25}]}",
+       "error": null,
+       "latency_s": 8.53,
+       "usage": {
+        "prompt_tokens": 947,
+        "completion_tokens": 438
+       },
+       "issues": [],
+       "created": "2026-09-25T23:48:41",
+       "events": [
+        {
+         "pattern": "trend",
+         "start": 17,
+         "end": 25,
+         "direction": null
+        }
+       ]
+      },
+      {
+       "run": 1,
+       "text": "{\"detections\":[{\"pattern\":\"추세\",\"start\":17,\"end\":25}]}",
+       "error": null,
+       "latency_s": 8.6,
+       "usage": {
+        "prompt_tokens": 947,
+        "completion_tokens": 375
+       },
+       "issues": [],
+       "created": "2026-09-25T23:48:41",
+       "events": [
+        {
+         "pattern": "trend",
+         "start": 17,
+         "end": 25,
+         "direction": null
+        }
+       ]
+      },
+      {
+       "run": 2,
+       "text": "{\"detections\":[{\"pattern\":\"추세\",\"start\":17,\"end\":25}]}",
+       "error": null,
+       "latency_s": 8.05,
+       "usage": {
+        "prompt_tokens": 947,
+        "completion_tokens": 434
+       },
+       "issues": [],
+       "created": "2026-09-25T23:48:41",
+       "events": [
+        {
+         "pattern": "trend",
+         "start": 17,
+         "end": 25,
+         "direction": null
+        }
+       ]
+      }
+     ]
+    },
+    "10": {
+     "input_hash": "cb07594702906484",
+     "runs": [
+      {
+       "run": 0,
+       "text": "{\"detections\":[{\"pattern\":\"추세\",\"start\":91,\"end\":98}]}",
+       "error": null,
+       "latency_s": 8.88,
+       "usage": {
+        "prompt_tokens": 947,
+        "completion_tokens": 465
+       },
+       "issues": [],
+       "created": "2026-09-25T23:48:41",
+       "events": [
+        {
+         "pattern": "trend",
+         "start": 91,
+         "end": 98,
+         "direction": null
+        }
+       ]
+      },
+      {
+       "run": 1,
+       "text": "{\"detections\":[{\"pattern\":\"추세\",\"start\":91,\"end\":98}]}",
+       "error": null,
+       "latency_s": 9.67,
+       "usage": {
+        "prompt_tokens": 947,
+        "completion_tokens": 543
+       },
+       "issues": [],
+       "created": "2026-09-25T23:48:41",
+       "events": [
+        {
+         "pattern": "trend",
+         "start": 91,
+         "end": 98,
+         "direction": null
+        }
+       ]
+      },
+      {
+       "run": 2,
+       "text": "{\"detections\":[{\"pattern\":\"추세\",\"start\":91,\"end\":98}]}",
+       "error": null,
+       "latency_s": 10.51,
+       "usage": {
+        "prompt_tokens": 947,
+        "completion_tokens": 543
+       },
+       "issues": [],
+       "created": "2026-09-25T23:48:41",
+       "events": [
+        {
+         "pattern": "trend",
+         "start": 91,
+         "end": 98,
+         "direction": null
+        }
+       ]
+      }
+     ]
+    },
+    "11": {
+     "input_hash": "2b1a50b20812f936",
+     "runs": [
+      {
+       "run": 0,
+       "text": "{\"detections\":[{\"pattern\":\"급변\",\"start\":45,\"end\":45},{\"pattern\":\"치우침\",\"start\":48,\"end\":59},{\"pattern\":\"추세\",\"start\":76,\"end\":81}]}",
+       "error": null,
+       "latency_s": 8.07,
+       "usage": {
+        "prompt_tokens": 947,
+        "completion_tokens": 430
+       },
+       "issues": [],
+       "created": "2026-09-25T23:48:41",
+       "events": [
+        {
+         "pattern": "spike",
+         "start": 45,
+         "end": 45,
+         "direction": null
+        },
+        {
+         "pattern": "shift",
+         "start": 48,
+         "end": 59,
+         "direction": null
+        },
+        {
+         "pattern": "trend",
+         "start": 76,
+         "end": 81,
+         "direction": null
+        }
+       ]
+      },
+      {
+       "run": 1,
+       "text": "{\"detections\":[{\"pattern\":\"급변\",\"start\":45,\"end\":45},{\"pattern\":\"치우침\",\"start\":48,\"end\":59},{\"pattern\":\"추세\",\"start\":76,\"end\":81}]}",
+       "error": null,
+       "latency_s": 9.55,
+       "usage": {
+        "prompt_tokens": 947,
+        "completion_tokens": 570
+       },
+       "issues": [],
+       "created": "2026-09-25T23:48:41",
+       "events": [
+        {
+         "pattern": "spike",
+         "start": 45,
+         "end": 45,
+         "direction": null
+        },
+        {
+         "pattern": "shift",
+         "start": 48,
+         "end": 59,
+         "direction": null
+        },
+        {
+         "pattern": "trend",
+         "start": 76,
+         "end": 81,
+         "direction": null
+        }
+       ]
+      },
+      {
+       "run": 2,
+       "text": "{\"detections\":[{\"pattern\":\"급변\",\"start\":45,\"end\":45},{\"pattern\":\"치우침\",\"start\":48,\"end\":59},{\"pattern\":\"추세\",\"start\":76,\"end\":81}]}",
+       "error": null,
+       "latency_s": 7.92,
+       "usage": {
+        "prompt_tokens": 947,
+        "completion_tokens": 462
+       },
+       "issues": [],
+       "created": "2026-09-25T23:48:41",
+       "events": [
+        {
+         "pattern": "spike",
+         "start": 45,
+         "end": 45,
+         "direction": null
+        },
+        {
+         "pattern": "shift",
+         "start": 48,
+         "end": 59,
+         "direction": null
+        },
+        {
+         "pattern": "trend",
+         "start": 76,
+         "end": 81,
+         "direction": null
+        }
+       ]
+      }
+     ]
+    },
+    "12": {
+     "input_hash": "6792f935fbf267e1",
+     "runs": [
+      {
+       "run": 0,
+       "text": "{\"detections\":[{\"pattern\":\"치우침\",\"start\":68,\"end\":79},{\"pattern\":\"치우침\",\"start\":83,\"end\":92}]}",
+       "error": null,
+       "latency_s": 16.74,
+       "usage": {
+        "prompt_tokens": 947,
+        "completion_tokens": 920
+       },
+       "issues": [],
+       "created": "2026-09-25T23:48:41",
+       "events": [
+        {
+         "pattern": "shift",
+         "start": 68,
+         "end": 79,
+         "direction": null
+        },
+        {
+         "pattern": "shift",
+         "start": 83,
+         "end": 92,
+         "direction": null
+        }
+       ]
+      },
+      {
+       "run": 1,
+       "text": "{\"detections\":[{\"pattern\":\"치우침\",\"start\":68,\"end\":79},{\"pattern\":\"치우침\",\"start\":83,\"end\":92}]}",
+       "error": null,
+       "latency_s": 18.09,
+       "usage": {
+        "prompt_tokens": 947,
+        "completion_tokens": 1038
+       },
+       "issues": [],
+       "created": "2026-09-25T23:48:41",
+       "events": [
+        {
+         "pattern": "shift",
+         "start": 68,
+         "end": 79,
+         "direction": null
+        },
+        {
+         "pattern": "shift",
+         "start": 83,
+         "end": 92,
+         "direction": null
+        }
+       ]
+      },
+      {
+       "run": 2,
+       "text": "{\"detections\":[{\"pattern\":\"치우침\",\"start\":69,\"end\":79},{\"pattern\":\"치우침\",\"start\":83,\"end\":92}]}",
+       "error": null,
+       "latency_s": 11.06,
+       "usage": {
+        "prompt_tokens": 947,
+        "completion_tokens": 558
+       },
+       "issues": [],
+       "created": "2026-09-25T23:48:41",
+       "events": [
+        {
+         "pattern": "shift",
+         "start": 69,
+         "end": 79,
+         "direction": null
+        },
+        {
+         "pattern": "shift",
+         "start": 83,
+         "end": 92,
+         "direction": null
+        }
+       ]
+      }
+     ]
+    },
+    "13": {
+     "input_hash": "8b726d285f72807b",
+     "runs": [
+      {
+       "run": 0,
+       "text": "{\"detections\":[{\"pattern\":\"치우침\",\"start\":60,\"end\":71},{\"pattern\":\"추세\",\"start\":87,\"end\":92}]}",
+       "error": null,
+       "latency_s": 16.13,
+       "usage": {
+        "prompt_tokens": 947,
+        "completion_tokens": 1044
+       },
+       "issues": [],
+       "created": "2026-09-25T23:48:41",
+       "events": [
+        {
+         "pattern": "shift",
+         "start": 60,
+         "end": 71,
+         "direction": null
+        },
+        {
+         "pattern": "trend",
+         "start": 87,
+         "end": 92,
+         "direction": null
+        }
+       ]
+      },
+      {
+       "run": 1,
+       "text": "{\"detections\":[{\"pattern\":\"치우침\",\"start\":60,\"end\":71},{\"pattern\":\"추세\",\"start\":87,\"end\":92}]}",
+       "error": null,
+       "latency_s": 12.71,
+       "usage": {
+        "prompt_tokens": 947,
+        "completion_tokens": 782
+       },
+       "issues": [],
+       "created": "2026-09-25T23:48:41",
+       "events": [
+        {
+         "pattern": "shift",
+         "start": 60,
+         "end": 71,
+         "direction": null
+        },
+        {
+         "pattern": "trend",
+         "start": 87,
+         "end": 92,
+         "direction": null
+        }
+       ]
+      },
+      {
+       "run": 2,
+       "text": "{\"detections\":[{\"pattern\":\"치우침\",\"start\":60,\"end\":71},{\"pattern\":\"추세\",\"start\":87,\"end\":92}]}",
+       "error": null,
+       "latency_s": 11.36,
+       "usage": {
+        "prompt_tokens": 947,
+        "completion_tokens": 557
+       },
+       "issues": [],
+       "created": "2026-09-25T23:48:41",
+       "events": [
+        {
+         "pattern": "shift",
+         "start": 60,
+         "end": 71,
+         "direction": null
+        },
+        {
+         "pattern": "trend",
+         "start": 87,
+         "end": 92,
+         "direction": null
+        }
+       ]
+      }
+     ]
+    },
+    "14": {
+     "input_hash": "634a422f747da596",
+     "runs": [
+      {
+       "run": 0,
+       "text": "{\"detections\":[{\"pattern\":\"추세\",\"start\":45,\"end\":52},{\"pattern\":\"급변\",\"start\":93,\"end\":93}]}",
+       "error": null,
+       "latency_s": 10.01,
+       "usage": {
+        "prompt_tokens": 947,
+        "completion_tokens": 556
+       },
+       "issues": [],
+       "created": "2026-09-25T23:48:41",
+       "events": [
+        {
+         "pattern": "trend",
+         "start": 45,
+         "end": 52,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 93,
+         "end": 93,
+         "direction": null
+        }
+       ]
+      },
+      {
+       "run": 1,
+       "text": "{\"detections\":[{\"pattern\":\"추세\",\"start\":45,\"end\":52},{\"pattern\":\"급변\",\"start\":93,\"end\":93}]}",
+       "error": null,
+       "latency_s": 12.37,
+       "usage": {
+        "prompt_tokens": 947,
+        "completion_tokens": 747
+       },
+       "issues": [],
+       "created": "2026-09-25T23:48:41",
+       "events": [
+        {
+         "pattern": "trend",
+         "start": 45,
+         "end": 52,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 93,
+         "end": 93,
+         "direction": null
+        }
+       ]
+      },
+      {
+       "run": 2,
+       "text": "{\"detections\":[{\"pattern\":\"추세\",\"start\":45,\"end\":52},{\"pattern\":\"급변\",\"start\":93,\"end\":93}]}",
+       "error": null,
+       "latency_s": 15.23,
+       "usage": {
+        "prompt_tokens": 947,
+        "completion_tokens": 787
+       },
+       "issues": [],
+       "created": "2026-09-25T23:48:41",
+       "events": [
+        {
+         "pattern": "trend",
+         "start": 45,
+         "end": 52,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 93,
+         "end": 93,
+         "direction": null
+        }
+       ]
+      }
+     ]
+    },
+    "15": {
+     "input_hash": "7ac8dd1d2da7d7ee",
+     "runs": [
+      {
+       "run": 0,
+       "text": "{\"detections\":[{\"pattern\":\"추세\",\"start\":28,\"end\":35},{\"pattern\":\"급변\",\"start\":54,\"end\":54}]}",
+       "error": null,
+       "latency_s": 11.55,
+       "usage": {
+        "prompt_tokens": 947,
+        "completion_tokens": 556
+       },
+       "issues": [],
+       "created": "2026-09-25T23:48:41",
+       "events": [
+        {
+         "pattern": "trend",
+         "start": 28,
+         "end": 35,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 54,
+         "end": 54,
+         "direction": null
+        }
+       ]
+      },
+      {
+       "run": 1,
+       "text": "{\"detections\":[{\"pattern\":\"추세\",\"start\":28,\"end\":35},{\"pattern\":\"급변\",\"start\":54,\"end\":54}]}",
+       "error": null,
+       "latency_s": 10.02,
+       "usage": {
+        "prompt_tokens": 947,
+        "completion_tokens": 487
+       },
+       "issues": [],
+       "created": "2026-09-25T23:48:41",
+       "events": [
+        {
+         "pattern": "trend",
+         "start": 28,
+         "end": 35,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 54,
+         "end": 54,
+         "direction": null
+        }
+       ]
+      },
+      {
+       "run": 2,
+       "text": "{\"detections\":[{\"pattern\":\"추세\",\"start\":28,\"end\":35},{\"pattern\":\"급변\",\"start\":54,\"end\":54}]}",
+       "error": null,
+       "latency_s": 10.58,
+       "usage": {
+        "prompt_tokens": 947,
+        "completion_tokens": 556
+       },
+       "issues": [],
+       "created": "2026-09-25T23:48:41",
+       "events": [
+        {
+         "pattern": "trend",
+         "start": 28,
+         "end": 35,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 54,
+         "end": 54,
+         "direction": null
+        }
+       ]
+      }
+     ]
+    },
+    "16": {
+     "input_hash": "5b33888985453860",
+     "runs": [
+      {
+       "run": 0,
+       "text": "{\"detections\":[{\"pattern\":\"급변\",\"start\":31,\"end\":31},{\"pattern\":\"치우침\",\"start\":89,\"end\":99}]}",
+       "error": null,
+       "latency_s": 14.19,
+       "usage": {
+        "prompt_tokens": 947,
+        "completion_tokens": 818
+       },
+       "issues": [],
+       "created": "2026-09-25T23:48:41",
+       "events": [
+        {
+         "pattern": "spike",
+         "start": 31,
+         "end": 31,
+         "direction": null
+        },
+        {
+         "pattern": "shift",
+         "start": 89,
+         "end": 99,
+         "direction": null
+        }
+       ]
+      },
+      {
+       "run": 1,
+       "text": "{\"detections\":[{\"pattern\":\"급변\",\"start\":31,\"end\":31},{\"pattern\":\"치우침\",\"start\":89,\"end\":99}]}",
+       "error": null,
+       "latency_s": 12.45,
+       "usage": {
+        "prompt_tokens": 947,
+        "completion_tokens": 706
+       },
+       "issues": [],
+       "created": "2026-09-25T23:48:41",
+       "events": [
+        {
+         "pattern": "spike",
+         "start": 31,
+         "end": 31,
+         "direction": null
+        },
+        {
+         "pattern": "shift",
+         "start": 89,
+         "end": 99,
+         "direction": null
+        }
+       ]
+      },
+      {
+       "run": 2,
+       "text": "{\"detections\":[{\"pattern\":\"급변\",\"start\":31,\"end\":31},{\"pattern\":\"치우침\",\"start\":89,\"end\":99}]}",
+       "error": null,
+       "latency_s": 10.64,
+       "usage": {
+        "prompt_tokens": 947,
+        "completion_tokens": 557
+       },
+       "issues": [],
+       "created": "2026-09-25T23:48:41",
+       "events": [
+        {
+         "pattern": "spike",
+         "start": 31,
+         "end": 31,
+         "direction": null
+        },
+        {
+         "pattern": "shift",
+         "start": 89,
+         "end": 99,
+         "direction": null
+        }
+       ]
+      }
+     ]
+    },
+    "17": {
+     "input_hash": "7feee503c09512cc",
+     "runs": [
+      {
+       "run": 0,
+       "text": "{\"detections\":[{\"pattern\":\"치우침\",\"start\":26,\"end\":36},{\"pattern\":\"급변\",\"start\":64,\"end\":64}]}",
+       "error": null,
+       "latency_s": 12.55,
+       "usage": {
+        "prompt_tokens": 947,
+        "completion_tokens": 771
+       },
+       "issues": [],
+       "created": "2026-09-25T23:48:41",
+       "events": [
+        {
+         "pattern": "shift",
+         "start": 26,
+         "end": 36,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 64,
+         "end": 64,
+         "direction": null
+        }
+       ]
+      },
+      {
+       "run": 1,
+       "text": "{\"detections\":[{\"pattern\":\"치우침\",\"start\":26,\"end\":36},{\"pattern\":\"급변\",\"start\":64,\"end\":64}]}",
+       "error": null,
+       "latency_s": 9.72,
+       "usage": {
+        "prompt_tokens": 947,
+        "completion_tokens": 557
+       },
+       "issues": [],
+       "created": "2026-09-25T23:48:41",
+       "events": [
+        {
+         "pattern": "shift",
+         "start": 26,
+         "end": 36,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 64,
+         "end": 64,
+         "direction": null
+        }
+       ]
+      },
+      {
+       "run": 2,
+       "text": "{\"detections\":[{\"pattern\":\"치우침\",\"start\":26,\"end\":36},{\"pattern\":\"급변\",\"start\":64,\"end\":64}]}",
+       "error": null,
+       "latency_s": 12.08,
+       "usage": {
+        "prompt_tokens": 947,
+        "completion_tokens": 539
+       },
+       "issues": [],
+       "created": "2026-09-25T23:48:41",
+       "events": [
+        {
+         "pattern": "shift",
+         "start": 26,
+         "end": 36,
+         "direction": null
+        },
+        {
+         "pattern": "spike",
+         "start": 64,
+         "end": 64,
+         "direction": null
+        }
+       ]
+      }
+     ]
+    },
+    "18": {
+     "input_hash": "f744503d46aabc93",
+     "runs": [
+      {
+       "run": 0,
+       "text": "{\"detections\":[{\"pattern\":\"추세\",\"start\":9,\"end\":17},{\"pattern\":\"치우침\",\"start\":79,\"end\":89}]}",
+       "error": null,
+       "latency_s": 11.77,
+       "usage": {
+        "prompt_tokens": 947,
+        "completion_tokens": 725
+       },
+       "issues": [],
+       "created": "2026-09-25T23:48:41",
+       "events": [
+        {
+         "pattern": "trend",
+         "start": 9,
+         "end": 17,
+         "direction": null
+        },
+        {
+         "pattern": "shift",
+         "start": 79,
+         "end": 89,
+         "direction": null
+        }
+       ]
+      },
+      {
+       "run": 1,
+       "text": "{\"detections\":[{\"pattern\":\"추세\",\"start\":9,\"end\":17},{\"pattern\":\"치우침\",\"start\":79,\"end\":89}]}",
+       "error": null,
+       "latency_s": 11.05,
+       "usage": {
+        "prompt_tokens": 947,
+        "completion_tokens": 629
+       },
+       "issues": [],
+       "created": "2026-09-25T23:48:41",
+       "events": [
+        {
+         "pattern": "trend",
+         "start": 9,
+         "end": 17,
+         "direction": null
+        },
+        {
+         "pattern": "shift",
+         "start": 79,
+         "end": 89,
+         "direction": null
+        }
+       ]
+      },
+      {
+       "run": 2,
+       "text": "{\"detections\":[{\"pattern\":\"추세\",\"start\":9,\"end\":17},{\"pattern\":\"치우침\",\"start\":79,\"end\":89}]}",
+       "error": null,
+       "latency_s": 9.72,
+       "usage": {
+        "prompt_tokens": 947,
+        "completion_tokens": 503
+       },
+       "issues": [],
+       "created": "2026-09-25T23:48:41",
+       "events": [
+        {
+         "pattern": "trend",
+         "start": 9,
+         "end": 17,
+         "direction": null
+        },
+        {
+         "pattern": "shift",
+         "start": 79,
+         "end": 89,
+         "direction": null
+        }
+       ]
+      }
+     ]
+    },
+    "19": {
+     "input_hash": "6af627fe21e169c9",
+     "runs": [
+      {
+       "run": 0,
+       "text": "{\"detections\":[{\"pattern\":\"추세\",\"start\":16,\"end\":23},{\"pattern\":\"치우침\",\"start\":47,\"end\":64}]}",
+       "error": null,
+       "latency_s": 11.56,
+       "usage": {
+        "prompt_tokens": 947,
+        "completion_tokens": 621
+       },
+       "issues": [],
+       "created": "2026-09-25T23:48:41",
+       "events": [
+        {
+         "pattern": "trend",
+         "start": 16,
+         "end": 23,
+         "direction": null
+        },
+        {
+         "pattern": "shift",
+         "start": 47,
+         "end": 64,
+         "direction": null
+        }
+       ]
+      },
+      {
+       "run": 1,
+       "text": "{\"detections\":[{\"pattern\":\"추세\",\"start\":16,\"end\":23},{\"pattern\":\"치우침\",\"start\":47,\"end\":64}]}",
+       "error": null,
+       "latency_s": 10.01,
+       "usage": {
+        "prompt_tokens": 947,
+        "completion_tokens": 557
+       },
+       "issues": [],
+       "created": "2026-09-25T23:48:41",
+       "events": [
+        {
+         "pattern": "trend",
+         "start": 16,
+         "end": 23,
+         "direction": null
+        },
+        {
+         "pattern": "shift",
+         "start": 47,
+         "end": 64,
+         "direction": null
+        }
+       ]
+      },
+      {
+       "run": 2,
+       "text": "{\"detections\":[{\"pattern\":\"추세\",\"start\":16,\"end\":23},{\"pattern\":\"치우침\",\"start\":47,\"end\":64}]}",
+       "error": null,
+       "latency_s": 13.42,
+       "usage": {
+        "prompt_tokens": 947,
+        "completion_tokens": 693
+       },
+       "issues": [],
+       "created": "2026-09-25T23:48:41",
+       "events": [
+        {
+         "pattern": "trend",
+         "start": 16,
+         "end": 23,
+         "direction": null
+        },
+        {
+         "pattern": "shift",
+         "start": 47,
+         "end": 64,
+         "direction": null
+        }
+       ]
+      }
+     ]
+    }
+   }
+  }
+ }
+}

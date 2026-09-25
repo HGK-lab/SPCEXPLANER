@@ -1,0 +1,2658 @@
+{
+ "generated_at": "2026-09-25T23:48:41",
+ "dataset": {
+  "seed": 20260925,
+  "n_series": 20,
+  "n_normal": 5,
+  "n_points": 100,
+  "injected": {
+   "spike": 7,
+   "trend": 7,
+   "shift": 7
+  }
+ },
+ "rules": {
+  "per_pattern": {
+   "spike": {
+    "injected": 7,
+    "detected": 7
+   },
+   "trend": {
+    "injected": 7,
+    "detected": 7
+   },
+   "shift": {
+    "injected": 7,
+    "detected": 7
+   }
+  },
+  "injected": 21,
+  "detected": 21,
+  "rate": 1.0,
+  "normal": {
+   "series": 5,
+   "alarmed_series": 1,
+   "false_events": {
+    "spike": 1,
+    "trend": 0,
+    "shift": 0
+   }
+  },
+  "anomalous": {
+   "false_events": {
+    "spike": 2,
+    "trend": 2,
+    "shift": 1
+   },
+   "confusions": 0
+  },
+  "false_list": [
+   {
+    "series": 3,
+    "pattern": "spike",
+    "start": 63,
+    "end": 63,
+    "direction": "down"
+   },
+   {
+    "series": 7,
+    "pattern": "spike",
+    "start": 98,
+    "end": 98,
+    "direction": "up"
+   },
+   {
+    "series": 11,
+    "pattern": "spike",
+    "start": 45,
+    "end": 45,
+    "direction": "up"
+   },
+   {
+    "series": 11,
+    "pattern": "trend",
+    "start": 76,
+    "end": 81,
+    "direction": "up"
+   },
+   {
+    "series": 12,
+    "pattern": "shift",
+    "start": 83,
+    "end": 92,
+    "direction": "down"
+   },
+   {
+    "series": 13,
+    "pattern": "trend",
+    "start": 87,
+    "end": 92,
+    "direction": "up"
+   }
+  ]
+ },
+ "detect": [
+  {
+   "model": "gpt-4.1-mini",
+   "temperature": 0,
+   "repeats": 3,
+   "prompt_version": "detect-v1",
+   "runs": [
+    {
+     "per_pattern": {
+      "spike": {
+       "injected": 7,
+       "detected": 7
+      },
+      "trend": {
+       "injected": 7,
+       "detected": 6
+      },
+      "shift": {
+       "injected": 7,
+       "detected": 1
+      }
+     },
+     "injected": 21,
+     "detected": 14,
+     "rate": 0.6666666666666666,
+     "normal": {
+      "series": 5,
+      "alarmed_series": 5,
+      "false_events": {
+       "spike": 16,
+       "trend": 16,
+       "shift": 0
+      }
+     },
+     "anomalous": {
+      "false_events": {
+       "spike": 66,
+       "trend": 14,
+       "shift": 3
+      },
+      "confusions": 28
+     },
+     "false_list": [
+      {
+       "series": 0,
+       "pattern": "spike",
+       "start": 19,
+       "end": 19,
+       "direction": null
+      },
+      {
+       "series": 0,
+       "pattern": "spike",
+       "start": 66,
+       "end": 66,
+       "direction": null
+      },
+      {
+       "series": 0,
+       "pattern": "trend",
+       "start": 31,
+       "end": 36,
+       "direction": null
+      },
+      {
+       "series": 0,
+       "pattern": "trend",
+       "start": 84,
+       "end": 89,
+       "direction": null
+      },
+      {
+       "series": 1,
+       "pattern": "spike",
+       "start": 78,
+       "end": 78,
+       "direction": null
+      },
+      {
+       "series": 1,
+       "pattern": "spike",
+       "start": 83,
+       "end": 83,
+       "direction": null
+      },
+      {
+       "series": 1,
+       "pattern": "spike",
+       "start": 85,
+       "end": 85,
+       "direction": null
+      },
+      {
+       "series": 1,
+       "pattern": "spike",
+       "start": 86,
+       "end": 86,
+       "direction": null
+      },
+      {
+       "series": 1,
+       "pattern": "spike",
+       "start": 98,
+       "end": 98,
+       "direction": null
+      },
+      {
+       "series": 1,
+       "pattern": "trend",
+       "start": 10,
+       "end": 15,
+       "direction": null
+      },
+      {
+       "series": 1,
+       "pattern": "trend",
+       "start": 51,
+       "end": 55,
+       "direction": null
+      },
+      {
+       "series": 1,
+       "pattern": "trend",
+       "start": 71,
+       "end": 76,
+       "direction": null
+      },
+      {
+       "series": 2,
+       "pattern": "spike",
+       "start": 48,
+       "end": 48,
+       "direction": null
+      },
+      {
+       "series": 2,
+       "pattern": "spike",
+       "start": 69,
+       "end": 69,
+       "direction": null
+      },
+      {
+       "series": 2,
+       "pattern": "spike",
+       "start": 84,
+       "end": 84,
+       "direction": null
+      },
+      {
+       "series": 2,
+       "pattern": "trend",
+       "start": 11,
+       "end": 16,
+       "direction": null
+      },
+      {
+       "series": 2,
+       "pattern": "trend",
+       "start": 72,
+       "end": 77,
+       "direction": null
+      },
+      {
+       "series": 3,
+       "pattern": "spike",
+       "start": 63,
+       "end": 63,
+       "direction": null
+      },
+      {
+       "series": 3,
+       "pattern": "spike",
+       "start": 92,
+       "end": 92,
+       "direction": null
+      },
+      {
+       "series": 3,
+       "pattern": "trend",
+       "start": 3,
+       "end": 8,
+       "direction": null
+      },
+      {
+       "series": 3,
+       "pattern": "trend",
+       "start": 12,
+       "end": 17,
+       "direction": null
+      },
+      {
+       "series": 3,
+       "pattern": "trend",
+       "start": 27,
+       "end": 32,
+       "direction": null
+      },
+      {
+       "series": 3,
+       "pattern": "trend",
+       "start": 42,
+       "end": 47,
+       "direction": null
+      },
+      {
+       "series": 3,
+       "pattern": "trend",
+       "start": 54,
+       "end": 59,
+       "direction": null
+      },
+      {
+       "series": 3,
+       "pattern": "trend",
+       "start": 69,
+       "end": 74,
+       "direction": null
+      },
+      {
+       "series": 4,
+       "pattern": "spike",
+       "start": 21,
+       "end": 21,
+       "direction": null
+      },
+      {
+       "series": 4,
+       "pattern": "spike",
+       "start": 30,
+       "end": 30,
+       "direction": null
+      },
+      {
+       "series": 4,
+       "pattern": "spike",
+       "start": 34,
+       "end": 34,
+       "direction": null
+      },
+      {
+       "series": 4,
+       "pattern": "spike",
+       "start": 69,
+       "end": 69,
+       "direction": null
+      },
+      {
+       "series": 4,
+       "pattern": "trend",
+       "start": 31,
+       "end": 36,
+       "direction": null
+      },
+      {
+       "series": 4,
+       "pattern": "trend",
+       "start": 55,
+       "end": 59,
+       "direction": null
+      },
+      {
+       "series": 4,
+       "pattern": "trend",
+       "start": 87,
+       "end": 91,
+       "direction": null
+      },
+      {
+       "series": 5,
+       "pattern": "spike",
+       "start": 10,
+       "end": 10,
+       "direction": null
+      },
+      {
+       "series": 5,
+       "pattern": "spike",
+       "start": 51,
+       "end": 51,
+       "direction": null
+      },
+      {
+       "series": 6,
+       "pattern": "spike",
+       "start": 57,
+       "end": 57,
+       "direction": null
+      },
+      {
+       "series": 7,
+       "pattern": "spike",
+       "start": 98,
+       "end": 98,
+       "direction": null
+      },
+      {
+       "series": 8,
+       "pattern": "spike",
+       "start": 6,
+       "end": 6,
+       "direction": null
+      },
+      {
+       "series": 8,
+       "pattern": "spike",
+       "start": 46,
+       "end": 46,
+       "direction": null
+      },
+      {
+       "series": 8,
+       "pattern": "spike",
+       "start": 48,
+       "end": 48,
+       "direction": null
+      },
+      {
+       "series": 8,
+       "pattern": "spike",
+       "start": 59,
+       "end": 59,
+       "direction": null
+      },
+      {
+       "series": 8,
+       "pattern": "spike",
+       "start": 80,
+       "end": 80,
+       "direction": null
+      },
+      {
+       "series": 9,
+       "pattern": "spike",
+       "start": 9,
+       "end": 9,
+       "direction": null
+      },
+      {
+       "series": 9,
+       "pattern": "spike",
+       "start": 12,
+       "end": 12,
+       "direction": null
+      },
+      {
+       "series": 9,
+       "pattern": "spike",
+       "start": 30,
+       "end": 30,
+       "direction": null
+      },
+      {
+       "series": 9,
+       "pattern": "spike",
+       "start": 40,
+       "end": 40,
+       "direction": null
+      },
+      {
+       "series": 9,
+       "pattern": "spike",
+       "start": 45,
+       "end": 45,
+       "direction": null
+      },
+      {
+       "series": 9,
+       "pattern": "spike",
+       "start": 91,
+       "end": 91,
+       "direction": null
+      },
+      {
+       "series": 9,
+       "pattern": "trend",
+       "start": 26,
+       "end": 31,
+       "direction": null
+      },
+      {
+       "series": 9,
+       "pattern": "trend",
+       "start": 62,
+       "end": 67,
+       "direction": null
+      },
+      {
+       "series": 9,
+       "pattern": "trend",
+       "start": 70,
+       "end": 75,
+       "direction": null
+      },
+      {
+       "series": 9,
+       "pattern": "shift",
+       "start": 50,
+       "end": 58,
+       "direction": null
+      },
+      {
+       "series": 10,
+       "pattern": "spike",
+       "start": 51,
+       "end": 51,
+       "direction": null
+      },
+      {
+       "series": 10,
+       "pattern": "spike",
+       "start": 54,
+       "end": 54,
+       "direction": null
+      },
+      {
+       "series": 10,
+       "pattern": "spike",
+       "start": 80,
+       "end": 80,
+       "direction": null
+      },
+      {
+       "series": 11,
+       "pattern": "spike",
+       "start": 45,
+       "end": 45,
+       "direction": null
+      },
+      {
+       "series": 11,
+       "pattern": "spike",
+       "start": 63,
+       "end": 63,
+       "direction": null
+      },
+      {
+       "series": 11,
+       "pattern": "spike",
+       "start": 34,
+       "end": 34,
+       "direction": null
+      },
+      {
+       "series": 12,
+       "pattern": "spike",
+       "start": 9,
+       "end": 9,
+       "direction": null
+      },
+      {
+       "series": 12,
+       "pattern": "spike",
+       "start": 41,
+       "end": 41,
+       "direction": null
+      },
+      {
+       "series": 12,
+       "pattern": "trend",
+       "start": 1,
+       "end": 6,
+       "direction": null
+      },
+      {
+       "series": 12,
+       "pattern": "shift",
+       "start": 1,
+       "end": 8,
+       "direction": null
+      },
+      {
+       "series": 13,
+       "pattern": "spike",
+       "start": 7,
+       "end": 7,
+       "direction": null
+      },
+      {
+       "series": 13,
+       "pattern": "spike",
+       "start": 27,
+       "end": 27,
+       "direction": null
+      },
+      {
+       "series": 13,
+       "pattern": "spike",
+       "start": 35,
+       "end": 35,
+       "direction": null
+      },
+      {
+       "series": 13,
+       "pattern": "spike",
+       "start": 39,
+       "end": 39,
+       "direction": null
+      },
+      {
+       "series": 13,
+       "pattern": "spike",
+       "start": 43,
+       "end": 43,
+       "direction": null
+      },
+      {
+       "series": 13,
+       "pattern": "spike",
+       "start": 49,
+       "end": 49,
+       "direction": null
+      },
+      {
+       "series": 13,
+       "pattern": "spike",
+       "start": 86,
+       "end": 86,
+       "direction": null
+      },
+      {
+       "series": 13,
+       "pattern": "spike",
+       "start": 87,
+       "end": 87,
+       "direction": null
+      },
+      {
+       "series": 13,
+       "pattern": "trend",
+       "start": 1,
+       "end": 6,
+       "direction": null
+      },
+      {
+       "series": 13,
+       "pattern": "trend",
+       "start": 41,
+       "end": 44,
+       "direction": null
+      },
+      {
+       "series": 13,
+       "pattern": "trend",
+       "start": 88,
+       "end": 92,
+       "direction": null
+      },
+      {
+       "series": 14,
+       "pattern": "spike",
+       "start": 23,
+       "end": 23,
+       "direction": null
+      },
+      {
+       "series": 14,
+       "pattern": "spike",
+       "start": 43,
+       "end": 43,
+       "direction": null
+      },
+      {
+       "series": 14,
+       "pattern": "spike",
+       "start": 56,
+       "end": 56,
+       "direction": null
+      },
+      {
+       "series": 14,
+       "pattern": "spike",
+       "start": 66,
+       "end": 66,
+       "direction": null
+      },
+      {
+       "series": 14,
+       "pattern": "trend",
+       "start": 80,
+       "end": 85,
+       "direction": null
+      },
+      {
+       "series": 15,
+       "pattern": "spike",
+       "start": 53,
+       "end": 53,
+       "direction": null
+      },
+      {
+       "series": 15,
+       "pattern": "spike",
+       "start": 80,
+       "end": 80,
+       "direction": null
+      },
+      {
+       "series": 15,
+       "pattern": "spike",
+       "start": 84,
+       "end": 84,
+       "direction": null
+      },
+      {
+       "series": 15,
+       "pattern": "spike",
+       "start": 89,
+       "end": 89,
+       "direction": null
+      },
+      {
+       "series": 15,
+       "pattern": "spike",
+       "start": 90,
+       "end": 90,
+       "direction": null
+      },
+      {
+       "series": 15,
+       "pattern": "spike",
+       "start": 97,
+       "end": 97,
+       "direction": null
+      },
+      {
+       "series": 15,
+       "pattern": "trend",
+       "start": 50,
+       "end": 52,
+       "direction": null
+      },
+      {
+       "series": 15,
+       "pattern": "trend",
+       "start": 70,
+       "end": 72,
+       "direction": null
+      },
+      {
+       "series": 15,
+       "pattern": "shift",
+       "start": 16,
+       "end": 25,
+       "direction": null
+      },
+      {
+       "series": 16,
+       "pattern": "spike",
+       "start": 82,
+       "end": 82,
+       "direction": null
+      },
+      {
+       "series": 17,
+       "pattern": "spike",
+       "start": 69,
+       "end": 69,
+       "direction": null
+      },
+      {
+       "series": 17,
+       "pattern": "spike",
+       "start": 84,
+       "end": 84,
+       "direction": null
+      },
+      {
+       "series": 17,
+       "pattern": "spike",
+       "start": 60,
+       "end": 60,
+       "direction": null
+      },
+      {
+       "series": 17,
+       "pattern": "spike",
+       "start": 54,
+       "end": 54,
+       "direction": null
+      },
+      {
+       "series": 17,
+       "pattern": "spike",
+       "start": 63,
+       "end": 63,
+       "direction": null
+      },
+      {
+       "series": 17,
+       "pattern": "spike",
+       "start": 55,
+       "end": 55,
+       "direction": null
+      },
+      {
+       "series": 17,
+       "pattern": "spike",
+       "start": 86,
+       "end": 86,
+       "direction": null
+      },
+      {
+       "series": 17,
+       "pattern": "spike",
+       "start": 47,
+       "end": 47,
+       "direction": null
+      },
+      {
+       "series": 17,
+       "pattern": "spike",
+       "start": 65,
+       "end": 65,
+       "direction": null
+      },
+      {
+       "series": 17,
+       "pattern": "spike",
+       "start": 69,
+       "end": 69,
+       "direction": null
+      },
+      {
+       "series": 17,
+       "pattern": "spike",
+       "start": 60,
+       "end": 60,
+       "direction": null
+      },
+      {
+       "series": 17,
+       "pattern": "spike",
+       "start": 54,
+       "end": 54,
+       "direction": null
+      },
+      {
+       "series": 17,
+       "pattern": "spike",
+       "start": 63,
+       "end": 63,
+       "direction": null
+      },
+      {
+       "series": 17,
+       "pattern": "spike",
+       "start": 55,
+       "end": 55,
+       "direction": null
+      },
+      {
+       "series": 17,
+       "pattern": "spike",
+       "start": 86,
+       "end": 86,
+       "direction": null
+      },
+      {
+       "series": 17,
+       "pattern": "spike",
+       "start": 47,
+       "end": 47,
+       "direction": null
+      },
+      {
+       "series": 17,
+       "pattern": "trend",
+       "start": 71,
+       "end": 75,
+       "direction": null
+      },
+      {
+       "series": 17,
+       "pattern": "trend",
+       "start": 92,
+       "end": 94,
+       "direction": null
+      },
+      {
+       "series": 18,
+       "pattern": "spike",
+       "start": 3,
+       "end": 3,
+       "direction": null
+      },
+      {
+       "series": 18,
+       "pattern": "spike",
+       "start": 43,
+       "end": 43,
+       "direction": null
+      },
+      {
+       "series": 18,
+       "pattern": "spike",
+       "start": 50,
+       "end": 50,
+       "direction": null
+      },
+      {
+       "series": 18,
+       "pattern": "spike",
+       "start": 72,
+       "end": 72,
+       "direction": null
+      },
+      {
+       "series": 18,
+       "pattern": "trend",
+       "start": 37,
+       "end": 40,
+       "direction": null
+      },
+      {
+       "series": 19,
+       "pattern": "spike",
+       "start": 91,
+       "end": 91,
+       "direction": null
+      },
+      {
+       "series": 19,
+       "pattern": "spike",
+       "start": 71,
+       "end": 71,
+       "direction": null
+      },
+      {
+       "series": 19,
+       "pattern": "spike",
+       "start": 52,
+       "end": 52,
+       "direction": null
+      },
+      {
+       "series": 19,
+       "pattern": "spike",
+       "start": 97,
+       "end": 97,
+       "direction": null
+      },
+      {
+       "series": 19,
+       "pattern": "trend",
+       "start": 72,
+       "end": 73,
+       "direction": null
+      }
+     ],
+     "format_violations": 0,
+     "call_errors": 0
+    },
+    {
+     "per_pattern": {
+      "spike": {
+       "injected": 7,
+       "detected": 7
+      },
+      "trend": {
+       "injected": 7,
+       "detected": 5
+      },
+      "shift": {
+       "injected": 7,
+       "detected": 2
+      }
+     },
+     "injected": 21,
+     "detected": 14,
+     "rate": 0.6666666666666666,
+     "normal": {
+      "series": 5,
+      "alarmed_series": 5,
+      "false_events": {
+       "spike": 17,
+       "trend": 13,
+       "shift": 0
+      }
+     },
+     "anomalous": {
+      "false_events": {
+       "spike": 49,
+       "trend": 17,
+       "shift": 2
+      },
+      "confusions": 18
+     },
+     "false_list": [
+      {
+       "series": 0,
+       "pattern": "spike",
+       "start": 19,
+       "end": 19,
+       "direction": null
+      },
+      {
+       "series": 0,
+       "pattern": "spike",
+       "start": 66,
+       "end": 66,
+       "direction": null
+      },
+      {
+       "series": 0,
+       "pattern": "trend",
+       "start": 72,
+       "end": 78,
+       "direction": null
+      },
+      {
+       "series": 1,
+       "pattern": "spike",
+       "start": 49,
+       "end": 49,
+       "direction": null
+      },
+      {
+       "series": 1,
+       "pattern": "spike",
+       "start": 78,
+       "end": 78,
+       "direction": null
+      },
+      {
+       "series": 1,
+       "pattern": "spike",
+       "start": 83,
+       "end": 85,
+       "direction": null
+      },
+      {
+       "series": 1,
+       "pattern": "spike",
+       "start": 86,
+       "end": 86,
+       "direction": null
+      },
+      {
+       "series": 1,
+       "pattern": "spike",
+       "start": 95,
+       "end": 95,
+       "direction": null
+      },
+      {
+       "series": 1,
+       "pattern": "spike",
+       "start": 98,
+       "end": 98,
+       "direction": null
+      },
+      {
+       "series": 1,
+       "pattern": "trend",
+       "start": 10,
+       "end": 15,
+       "direction": null
+      },
+      {
+       "series": 1,
+       "pattern": "trend",
+       "start": 51,
+       "end": 57,
+       "direction": null
+      },
+      {
+       "series": 1,
+       "pattern": "trend",
+       "start": 71,
+       "end": 76,
+       "direction": null
+      },
+      {
+       "series": 1,
+       "pattern": "trend",
+       "start": 87,
+       "end": 95,
+       "direction": null
+      },
+      {
+       "series": 2,
+       "pattern": "spike",
+       "start": 48,
+       "end": 48,
+       "direction": null
+      },
+      {
+       "series": 2,
+       "pattern": "spike",
+       "start": 69,
+       "end": 69,
+       "direction": null
+      },
+      {
+       "series": 2,
+       "pattern": "spike",
+       "start": 84,
+       "end": 84,
+       "direction": null
+      },
+      {
+       "series": 2,
+       "pattern": "trend",
+       "start": 11,
+       "end": 16,
+       "direction": null
+      },
+      {
+       "series": 2,
+       "pattern": "trend",
+       "start": 72,
+       "end": 77,
+       "direction": null
+      },
+      {
+       "series": 3,
+       "pattern": "spike",
+       "start": 63,
+       "end": 63,
+       "direction": null
+      },
+      {
+       "series": 3,
+       "pattern": "spike",
+       "start": 92,
+       "end": 92,
+       "direction": null
+      },
+      {
+       "series": 3,
+       "pattern": "trend",
+       "start": 3,
+       "end": 8,
+       "direction": null
+      },
+      {
+       "series": 3,
+       "pattern": "trend",
+       "start": 54,
+       "end": 57,
+       "direction": null
+      },
+      {
+       "series": 3,
+       "pattern": "trend",
+       "start": 71,
+       "end": 75,
+       "direction": null
+      },
+      {
+       "series": 4,
+       "pattern": "spike",
+       "start": 21,
+       "end": 21,
+       "direction": null
+      },
+      {
+       "series": 4,
+       "pattern": "spike",
+       "start": 30,
+       "end": 30,
+       "direction": null
+      },
+      {
+       "series": 4,
+       "pattern": "spike",
+       "start": 34,
+       "end": 34,
+       "direction": null
+      },
+      {
+       "series": 4,
+       "pattern": "spike",
+       "start": 69,
+       "end": 69,
+       "direction": null
+      },
+      {
+       "series": 4,
+       "pattern": "trend",
+       "start": 31,
+       "end": 36,
+       "direction": null
+      },
+      {
+       "series": 4,
+       "pattern": "trend",
+       "start": 55,
+       "end": 59,
+       "direction": null
+      },
+      {
+       "series": 4,
+       "pattern": "trend",
+       "start": 87,
+       "end": 91,
+       "direction": null
+      },
+      {
+       "series": 5,
+       "pattern": "trend",
+       "start": 71,
+       "end": 76,
+       "direction": null
+      },
+      {
+       "series": 6,
+       "pattern": "spike",
+       "start": 57,
+       "end": 57,
+       "direction": null
+      },
+      {
+       "series": 7,
+       "pattern": "spike",
+       "start": 33,
+       "end": 33,
+       "direction": null
+      },
+      {
+       "series": 7,
+       "pattern": "spike",
+       "start": 40,
+       "end": 40,
+       "direction": null
+      },
+      {
+       "series": 7,
+       "pattern": "spike",
+       "start": 47,
+       "end": 47,
+       "direction": null
+      },
+      {
+       "series": 7,
+       "pattern": "spike",
+       "start": 50,
+       "end": 50,
+       "direction": null
+      },
+      {
+       "series": 7,
+       "pattern": "spike",
+       "start": 61,
+       "end": 61,
+       "direction": null
+      },
+      {
+       "series": 7,
+       "pattern": "spike",
+       "start": 71,
+       "end": 71,
+       "direction": null
+      },
+      {
+       "series": 7,
+       "pattern": "spike",
+       "start": 90,
+       "end": 90,
+       "direction": null
+      },
+      {
+       "series": 7,
+       "pattern": "spike",
+       "start": 96,
+       "end": 96,
+       "direction": null
+      },
+      {
+       "series": 7,
+       "pattern": "spike",
+       "start": 98,
+       "end": 98,
+       "direction": null
+      },
+      {
+       "series": 8,
+       "pattern": "spike",
+       "start": 6,
+       "end": 6,
+       "direction": null
+      },
+      {
+       "series": 8,
+       "pattern": "spike",
+       "start": 46,
+       "end": 46,
+       "direction": null
+      },
+      {
+       "series": 8,
+       "pattern": "spike",
+       "start": 48,
+       "end": 48,
+       "direction": null
+      },
+      {
+       "series": 8,
+       "pattern": "spike",
+       "start": 59,
+       "end": 59,
+       "direction": null
+      },
+      {
+       "series": 8,
+       "pattern": "spike",
+       "start": 80,
+       "end": 80,
+       "direction": null
+      },
+      {
+       "series": 9,
+       "pattern": "spike",
+       "start": 9,
+       "end": 9,
+       "direction": null
+      },
+      {
+       "series": 9,
+       "pattern": "spike",
+       "start": 12,
+       "end": 12,
+       "direction": null
+      },
+      {
+       "series": 9,
+       "pattern": "spike",
+       "start": 30,
+       "end": 30,
+       "direction": null
+      },
+      {
+       "series": 9,
+       "pattern": "spike",
+       "start": 40,
+       "end": 40,
+       "direction": null
+      },
+      {
+       "series": 9,
+       "pattern": "spike",
+       "start": 45,
+       "end": 45,
+       "direction": null
+      },
+      {
+       "series": 9,
+       "pattern": "spike",
+       "start": 91,
+       "end": 91,
+       "direction": null
+      },
+      {
+       "series": 9,
+       "pattern": "trend",
+       "start": 26,
+       "end": 31,
+       "direction": null
+      },
+      {
+       "series": 9,
+       "pattern": "trend",
+       "start": 64,
+       "end": 69,
+       "direction": null
+      },
+      {
+       "series": 9,
+       "pattern": "trend",
+       "start": 71,
+       "end": 75,
+       "direction": null
+      },
+      {
+       "series": 10,
+       "pattern": "spike",
+       "start": 80,
+       "end": 80,
+       "direction": null
+      },
+      {
+       "series": 11,
+       "pattern": "spike",
+       "start": 45,
+       "end": 45,
+       "direction": null
+      },
+      {
+       "series": 11,
+       "pattern": "spike",
+       "start": 63,
+       "end": 63,
+       "direction": null
+      },
+      {
+       "series": 11,
+       "pattern": "spike",
+       "start": 34,
+       "end": 34,
+       "direction": null
+      },
+      {
+       "series": 11,
+       "pattern": "shift",
+       "start": 68,
+       "end": 70,
+       "direction": null
+      },
+      {
+       "series": 12,
+       "pattern": "spike",
+       "start": 9,
+       "end": 9,
+       "direction": null
+      },
+      {
+       "series": 12,
+       "pattern": "spike",
+       "start": 41,
+       "end": 41,
+       "direction": null
+      },
+      {
+       "series": 12,
+       "pattern": "trend",
+       "start": 1,
+       "end": 6,
+       "direction": null
+      },
+      {
+       "series": 12,
+       "pattern": "shift",
+       "start": 1,
+       "end": 8,
+       "direction": null
+      },
+      {
+       "series": 13,
+       "pattern": "spike",
+       "start": 7,
+       "end": 7,
+       "direction": null
+      },
+      {
+       "series": 13,
+       "pattern": "spike",
+       "start": 27,
+       "end": 27,
+       "direction": null
+      },
+      {
+       "series": 13,
+       "pattern": "spike",
+       "start": 35,
+       "end": 35,
+       "direction": null
+      },
+      {
+       "series": 13,
+       "pattern": "spike",
+       "start": 39,
+       "end": 39,
+       "direction": null
+      },
+      {
+       "series": 13,
+       "pattern": "spike",
+       "start": 43,
+       "end": 43,
+       "direction": null
+      },
+      {
+       "series": 13,
+       "pattern": "spike",
+       "start": 49,
+       "end": 49,
+       "direction": null
+      },
+      {
+       "series": 13,
+       "pattern": "spike",
+       "start": 86,
+       "end": 86,
+       "direction": null
+      },
+      {
+       "series": 13,
+       "pattern": "spike",
+       "start": 87,
+       "end": 87,
+       "direction": null
+      },
+      {
+       "series": 13,
+       "pattern": "trend",
+       "start": 1,
+       "end": 6,
+       "direction": null
+      },
+      {
+       "series": 13,
+       "pattern": "trend",
+       "start": 12,
+       "end": 15,
+       "direction": null
+      },
+      {
+       "series": 13,
+       "pattern": "trend",
+       "start": 18,
+       "end": 21,
+       "direction": null
+      },
+      {
+       "series": 13,
+       "pattern": "trend",
+       "start": 25,
+       "end": 26,
+       "direction": null
+      },
+      {
+       "series": 13,
+       "pattern": "trend",
+       "start": 28,
+       "end": 32,
+       "direction": null
+      },
+      {
+       "series": 13,
+       "pattern": "trend",
+       "start": 36,
+       "end": 38,
+       "direction": null
+      },
+      {
+       "series": 13,
+       "pattern": "trend",
+       "start": 41,
+       "end": 42,
+       "direction": null
+      },
+      {
+       "series": 13,
+       "pattern": "trend",
+       "start": 54,
+       "end": 55,
+       "direction": null
+      },
+      {
+       "series": 13,
+       "pattern": "trend",
+       "start": 72,
+       "end": 74,
+       "direction": null
+      },
+      {
+       "series": 13,
+       "pattern": "trend",
+       "start": 89,
+       "end": 92,
+       "direction": null
+      },
+      {
+       "series": 14,
+       "pattern": "spike",
+       "start": 43,
+       "end": 43,
+       "direction": null
+      },
+      {
+       "series": 14,
+       "pattern": "spike",
+       "start": 35,
+       "end": 35,
+       "direction": null
+      },
+      {
+       "series": 14,
+       "pattern": "spike",
+       "start": 23,
+       "end": 23,
+       "direction": null
+      },
+      {
+       "series": 15,
+       "pattern": "spike",
+       "start": 53,
+       "end": 53,
+       "direction": null
+      },
+      {
+       "series": 16,
+       "pattern": "spike",
+       "start": 82,
+       "end": 82,
+       "direction": null
+      },
+      {
+       "series": 17,
+       "pattern": "spike",
+       "start": 69,
+       "end": 69,
+       "direction": null
+      },
+      {
+       "series": 17,
+       "pattern": "spike",
+       "start": 84,
+       "end": 84,
+       "direction": null
+      },
+      {
+       "series": 18,
+       "pattern": "spike",
+       "start": 3,
+       "end": 3,
+       "direction": null
+      },
+      {
+       "series": 18,
+       "pattern": "spike",
+       "start": 43,
+       "end": 43,
+       "direction": null
+      },
+      {
+       "series": 18,
+       "pattern": "spike",
+       "start": 50,
+       "end": 50,
+       "direction": null
+      },
+      {
+       "series": 18,
+       "pattern": "spike",
+       "start": 72,
+       "end": 72,
+       "direction": null
+      },
+      {
+       "series": 18,
+       "pattern": "trend",
+       "start": 38,
+       "end": 40,
+       "direction": null
+      },
+      {
+       "series": 18,
+       "pattern": "trend",
+       "start": 91,
+       "end": 95,
+       "direction": null
+      },
+      {
+       "series": 19,
+       "pattern": "spike",
+       "start": 91,
+       "end": 91,
+       "direction": null
+      },
+      {
+       "series": 19,
+       "pattern": "spike",
+       "start": 52,
+       "end": 52,
+       "direction": null
+      },
+      {
+       "series": 19,
+       "pattern": "spike",
+       "start": 71,
+       "end": 71,
+       "direction": null
+      }
+     ],
+     "format_violations": 0,
+     "call_errors": 0
+    },
+    {
+     "per_pattern": {
+      "spike": {
+       "injected": 7,
+       "detected": 7
+      },
+      "trend": {
+       "injected": 7,
+       "detected": 6
+      },
+      "shift": {
+       "injected": 7,
+       "detected": 1
+      }
+     },
+     "injected": 21,
+     "detected": 14,
+     "rate": 0.6666666666666666,
+     "normal": {
+      "series": 5,
+      "alarmed_series": 5,
+      "false_events": {
+       "spike": 17,
+       "trend": 8,
+       "shift": 0
+      }
+     },
+     "anomalous": {
+      "false_events": {
+       "spike": 48,
+       "trend": 18,
+       "shift": 5
+      },
+      "confusions": 23
+     },
+     "false_list": [
+      {
+       "series": 0,
+       "pattern": "spike",
+       "start": 19,
+       "end": 19,
+       "direction": null
+      },
+      {
+       "series": 0,
+       "pattern": "spike",
+       "start": 66,
+       "end": 66,
+       "direction": null
+      },
+      {
+       "series": 1,
+       "pattern": "spike",
+       "start": 49,
+       "end": 49,
+       "direction": null
+      },
+      {
+       "series": 1,
+       "pattern": "spike",
+       "start": 78,
+       "end": 78,
+       "direction": null
+      },
+      {
+       "series": 1,
+       "pattern": "spike",
+       "start": 83,
+       "end": 85,
+       "direction": null
+      },
+      {
+       "series": 1,
+       "pattern": "spike",
+       "start": 86,
+       "end": 86,
+       "direction": null
+      },
+      {
+       "series": 1,
+       "pattern": "spike",
+       "start": 95,
+       "end": 95,
+       "direction": null
+      },
+      {
+       "series": 1,
+       "pattern": "spike",
+       "start": 98,
+       "end": 98,
+       "direction": null
+      },
+      {
+       "series": 2,
+       "pattern": "spike",
+       "start": 48,
+       "end": 48,
+       "direction": null
+      },
+      {
+       "series": 2,
+       "pattern": "spike",
+       "start": 69,
+       "end": 69,
+       "direction": null
+      },
+      {
+       "series": 2,
+       "pattern": "spike",
+       "start": 84,
+       "end": 84,
+       "direction": null
+      },
+      {
+       "series": 2,
+       "pattern": "trend",
+       "start": 11,
+       "end": 16,
+       "direction": null
+      },
+      {
+       "series": 2,
+       "pattern": "trend",
+       "start": 71,
+       "end": 75,
+       "direction": null
+      },
+      {
+       "series": 3,
+       "pattern": "spike",
+       "start": 63,
+       "end": 63,
+       "direction": null
+      },
+      {
+       "series": 3,
+       "pattern": "spike",
+       "start": 92,
+       "end": 92,
+       "direction": null
+      },
+      {
+       "series": 3,
+       "pattern": "trend",
+       "start": 3,
+       "end": 8,
+       "direction": null
+      },
+      {
+       "series": 3,
+       "pattern": "trend",
+       "start": 54,
+       "end": 57,
+       "direction": null
+      },
+      {
+       "series": 3,
+       "pattern": "trend",
+       "start": 71,
+       "end": 75,
+       "direction": null
+      },
+      {
+       "series": 4,
+       "pattern": "spike",
+       "start": 21,
+       "end": 21,
+       "direction": null
+      },
+      {
+       "series": 4,
+       "pattern": "spike",
+       "start": 30,
+       "end": 30,
+       "direction": null
+      },
+      {
+       "series": 4,
+       "pattern": "spike",
+       "start": 34,
+       "end": 34,
+       "direction": null
+      },
+      {
+       "series": 4,
+       "pattern": "spike",
+       "start": 69,
+       "end": 69,
+       "direction": null
+      },
+      {
+       "series": 4,
+       "pattern": "trend",
+       "start": 31,
+       "end": 36,
+       "direction": null
+      },
+      {
+       "series": 4,
+       "pattern": "trend",
+       "start": 55,
+       "end": 59,
+       "direction": null
+      },
+      {
+       "series": 4,
+       "pattern": "trend",
+       "start": 87,
+       "end": 91,
+       "direction": null
+      },
+      {
+       "series": 5,
+       "pattern": "spike",
+       "start": 10,
+       "end": 10,
+       "direction": null
+      },
+      {
+       "series": 6,
+       "pattern": "spike",
+       "start": 57,
+       "end": 57,
+       "direction": null
+      },
+      {
+       "series": 7,
+       "pattern": "spike",
+       "start": 98,
+       "end": 98,
+       "direction": null
+      },
+      {
+       "series": 8,
+       "pattern": "spike",
+       "start": 6,
+       "end": 6,
+       "direction": null
+      },
+      {
+       "series": 8,
+       "pattern": "spike",
+       "start": 46,
+       "end": 46,
+       "direction": null
+      },
+      {
+       "series": 8,
+       "pattern": "spike",
+       "start": 48,
+       "end": 48,
+       "direction": null
+      },
+      {
+       "series": 8,
+       "pattern": "spike",
+       "start": 59,
+       "end": 59,
+       "direction": null
+      },
+      {
+       "series": 8,
+       "pattern": "spike",
+       "start": 80,
+       "end": 80,
+       "direction": null
+      },
+      {
+       "series": 9,
+       "pattern": "spike",
+       "start": 9,
+       "end": 9,
+       "direction": null
+      },
+      {
+       "series": 9,
+       "pattern": "spike",
+       "start": 12,
+       "end": 12,
+       "direction": null
+      },
+      {
+       "series": 9,
+       "pattern": "spike",
+       "start": 30,
+       "end": 30,
+       "direction": null
+      },
+      {
+       "series": 9,
+       "pattern": "spike",
+       "start": 40,
+       "end": 40,
+       "direction": null
+      },
+      {
+       "series": 9,
+       "pattern": "spike",
+       "start": 45,
+       "end": 45,
+       "direction": null
+      },
+      {
+       "series": 9,
+       "pattern": "spike",
+       "start": 91,
+       "end": 91,
+       "direction": null
+      },
+      {
+       "series": 9,
+       "pattern": "trend",
+       "start": 26,
+       "end": 30,
+       "direction": null
+      },
+      {
+       "series": 9,
+       "pattern": "trend",
+       "start": 62,
+       "end": 68,
+       "direction": null
+      },
+      {
+       "series": 9,
+       "pattern": "trend",
+       "start": 70,
+       "end": 75,
+       "direction": null
+      },
+      {
+       "series": 9,
+       "pattern": "shift",
+       "start": 50,
+       "end": 58,
+       "direction": null
+      },
+      {
+       "series": 10,
+       "pattern": "spike",
+       "start": 80,
+       "end": 80,
+       "direction": null
+      },
+      {
+       "series": 11,
+       "pattern": "spike",
+       "start": 45,
+       "end": 45,
+       "direction": null
+      },
+      {
+       "series": 11,
+       "pattern": "spike",
+       "start": 63,
+       "end": 63,
+       "direction": null
+      },
+      {
+       "series": 11,
+       "pattern": "spike",
+       "start": 34,
+       "end": 34,
+       "direction": null
+      },
+      {
+       "series": 12,
+       "pattern": "spike",
+       "start": 9,
+       "end": 9,
+       "direction": null
+      },
+      {
+       "series": 12,
+       "pattern": "spike",
+       "start": 41,
+       "end": 41,
+       "direction": null
+      },
+      {
+       "series": 12,
+       "pattern": "trend",
+       "start": 1,
+       "end": 6,
+       "direction": null
+      },
+      {
+       "series": 12,
+       "pattern": "shift",
+       "start": 1,
+       "end": 8,
+       "direction": null
+      },
+      {
+       "series": 12,
+       "pattern": "shift",
+       "start": 42,
+       "end": 49,
+       "direction": null
+      },
+      {
+       "series": 12,
+       "pattern": "shift",
+       "start": 55,
+       "end": 63,
+       "direction": null
+      },
+      {
+       "series": 13,
+       "pattern": "spike",
+       "start": 7,
+       "end": 7,
+       "direction": null
+      },
+      {
+       "series": 13,
+       "pattern": "spike",
+       "start": 27,
+       "end": 27,
+       "direction": null
+      },
+      {
+       "series": 13,
+       "pattern": "spike",
+       "start": 35,
+       "end": 35,
+       "direction": null
+      },
+      {
+       "series": 13,
+       "pattern": "spike",
+       "start": 39,
+       "end": 39,
+       "direction": null
+      },
+      {
+       "series": 13,
+       "pattern": "spike",
+       "start": 43,
+       "end": 43,
+       "direction": null
+      },
+      {
+       "series": 13,
+       "pattern": "spike",
+       "start": 49,
+       "end": 49,
+       "direction": null
+      },
+      {
+       "series": 13,
+       "pattern": "spike",
+       "start": 86,
+       "end": 86,
+       "direction": null
+      },
+      {
+       "series": 13,
+       "pattern": "spike",
+       "start": 87,
+       "end": 87,
+       "direction": null
+      },
+      {
+       "series": 13,
+       "pattern": "trend",
+       "start": 1,
+       "end": 6,
+       "direction": null
+      },
+      {
+       "series": 13,
+       "pattern": "trend",
+       "start": 9,
+       "end": 14,
+       "direction": null
+      },
+      {
+       "series": 13,
+       "pattern": "trend",
+       "start": 16,
+       "end": 21,
+       "direction": null
+      },
+      {
+       "series": 13,
+       "pattern": "trend",
+       "start": 25,
+       "end": 32,
+       "direction": null
+      },
+      {
+       "series": 13,
+       "pattern": "trend",
+       "start": 36,
+       "end": 41,
+       "direction": null
+      },
+      {
+       "series": 13,
+       "pattern": "trend",
+       "start": 45,
+       "end": 50,
+       "direction": null
+      },
+      {
+       "series": 13,
+       "pattern": "trend",
+       "start": 52,
+       "end": 57,
+       "direction": null
+      },
+      {
+       "series": 13,
+       "pattern": "trend",
+       "start": 76,
+       "end": 81,
+       "direction": null
+      },
+      {
+       "series": 13,
+       "pattern": "trend",
+       "start": 88,
+       "end": 92,
+       "direction": null
+      },
+      {
+       "series": 14,
+       "pattern": "spike",
+       "start": 43,
+       "end": 43,
+       "direction": null
+      },
+      {
+       "series": 14,
+       "pattern": "spike",
+       "start": 35,
+       "end": 35,
+       "direction": null
+      },
+      {
+       "series": 14,
+       "pattern": "spike",
+       "start": 89,
+       "end": 89,
+       "direction": null
+      },
+      {
+       "series": 14,
+       "pattern": "trend",
+       "start": 61,
+       "end": 66,
+       "direction": null
+      },
+      {
+       "series": 14,
+       "pattern": "shift",
+       "start": 33,
+       "end": 37,
+       "direction": null
+      },
+      {
+       "series": 15,
+       "pattern": "spike",
+       "start": 53,
+       "end": 53,
+       "direction": null
+      },
+      {
+       "series": 15,
+       "pattern": "spike",
+       "start": 80,
+       "end": 80,
+       "direction": null
+      },
+      {
+       "series": 15,
+       "pattern": "spike",
+       "start": 84,
+       "end": 84,
+       "direction": null
+      },
+      {
+       "series": 15,
+       "pattern": "spike",
+       "start": 89,
+       "end": 89,
+       "direction": null
+      },
+      {
+       "series": 15,
+       "pattern": "spike",
+       "start": 90,
+       "end": 90,
+       "direction": null
+      },
+      {
+       "series": 15,
+       "pattern": "spike",
+       "start": 97,
+       "end": 97,
+       "direction": null
+      },
+      {
+       "series": 15,
+       "pattern": "trend",
+       "start": 50,
+       "end": 52,
+       "direction": null
+      },
+      {
+       "series": 15,
+       "pattern": "trend",
+       "start": 70,
+       "end": 72,
+       "direction": null
+      },
+      {
+       "series": 16,
+       "pattern": "spike",
+       "start": 82,
+       "end": 82,
+       "direction": null
+      },
+      {
+       "series": 17,
+       "pattern": "spike",
+       "start": 69,
+       "end": 69,
+       "direction": null
+      },
+      {
+       "series": 17,
+       "pattern": "spike",
+       "start": 84,
+       "end": 84,
+       "direction": null
+      },
+      {
+       "series": 17,
+       "pattern": "trend",
+       "start": 70,
+       "end": 75,
+       "direction": null
+      },
+      {
+       "series": 18,
+       "pattern": "spike",
+       "start": 3,
+       "end": 3,
+       "direction": null
+      },
+      {
+       "series": 18,
+       "pattern": "spike",
+       "start": 43,
+       "end": 43,
+       "direction": null
+      },
+      {
+       "series": 18,
+       "pattern": "spike",
+       "start": 50,
+       "end": 50,
+       "direction": null
+      },
+      {
+       "series": 18,
+       "pattern": "spike",
+       "start": 72,
+       "end": 72,
+       "direction": null
+      },
+      {
+       "series": 18,
+       "pattern": "trend",
+       "start": 37,
+       "end": 40,
+       "direction": null
+      },
+      {
+       "series": 19,
+       "pattern": "spike",
+       "start": 91,
+       "end": 91,
+       "direction": null
+      },
+      {
+       "series": 19,
+       "pattern": "spike",
+       "start": 71,
+       "end": 71,
+       "direction": null
+      },
+      {
+       "series": 19,
+       "pattern": "spike",
+       "start": 52,
+       "end": 52,
+       "direction": null
+      },
+      {
+       "series": 19,
+       "pattern": "spike",
+       "start": 97,
+       "end": 97,
+       "direction": null
+      }
+     ],
+     "format_violations": 0,
+     "call_errors": 0
+    }
+   ]
+  },
+  {
+   "model": "gpt-6-sol",
+   "temperature": null,
+   "repeats": 3,
+   "prompt_version": "detect-v1",
+   "runs": [
+    {
+     "per_pattern": {
+      "spike": {
+       "injected": 7,
+       "detected": 7
+      },
+      "trend": {
+       "injected": 7,
+       "detected": 7
+      },
+      "shift": {
+       "injected": 7,
+       "detected": 7
+      }
+     },
+     "injected": 21,
+     "detected": 21,
+     "rate": 1.0,
+     "normal": {
+      "series": 5,
+      "alarmed_series": 1,
+      "false_events": {
+       "spike": 1,
+       "trend": 0,
+       "shift": 0
+      }
+     },
+     "anomalous": {
+      "false_events": {
+       "spike": 2,
+       "trend": 2,
+       "shift": 1
+      },
+      "confusions": 0
+     },
+     "false_list": [
+      {
+       "series": 3,
+       "pattern": "spike",
+       "start": 63,
+       "end": 63,
+       "direction": null
+      },
+      {
+       "series": 7,
+       "pattern": "spike",
+       "start": 98,
+       "end": 98,
+       "direction": null
+      },
+      {
+       "series": 11,
+       "pattern": "spike",
+       "start": 45,
+       "end": 45,
+       "direction": null
+      },
+      {
+       "series": 11,
+       "pattern": "trend",
+       "start": 76,
+       "end": 81,
+       "direction": null
+      },
+      {
+       "series": 12,
+       "pattern": "shift",
+       "start": 83,
+       "end": 92,
+       "direction": null
+      },
+      {
+       "series": 13,
+       "pattern": "trend",
+       "start": 87,
+       "end": 92,
+       "direction": null
+      }
+     ],
+     "format_violations": 0,
+     "call_errors": 0
+    },
+    {
+     "per_pattern": {
+      "spike": {
+       "injected": 7,
+       "detected": 7
+      },
+      "trend": {
+       "injected": 7,
+       "detected": 7
+      },
+      "shift": {
+       "injected": 7,
+       "detected": 7
+      }
+     },
+     "injected": 21,
+     "detected": 21,
+     "rate": 1.0,
+     "normal": {
+      "series": 5,
+      "alarmed_series": 1,
+      "false_events": {
+       "spike": 1,
+       "trend": 0,
+       "shift": 0
+      }
+     },
+     "anomalous": {
+      "false_events": {
+       "spike": 2,
+       "trend": 2,
+       "shift": 1
+      },
+      "confusions": 0
+     },
+     "false_list": [
+      {
+       "series": 3,
+       "pattern": "spike",
+       "start": 63,
+       "end": 63,
+       "direction": null
+      },
+      {
+       "series": 7,
+       "pattern": "spike",
+       "start": 98,
+       "end": 98,
+       "direction": null
+      },
+      {
+       "series": 11,
+       "pattern": "spike",
+       "start": 45,
+       "end": 45,
+       "direction": null
+      },
+      {
+       "series": 11,
+       "pattern": "trend",
+       "start": 76,
+       "end": 81,
+       "direction": null
+      },
+      {
+       "series": 12,
+       "pattern": "shift",
+       "start": 83,
+       "end": 92,
+       "direction": null
+      },
+      {
+       "series": 13,
+       "pattern": "trend",
+       "start": 87,
+       "end": 92,
+       "direction": null
+      }
+     ],
+     "format_violations": 0,
+     "call_errors": 0
+    },
+    {
+     "per_pattern": {
+      "spike": {
+       "injected": 7,
+       "detected": 7
+      },
+      "trend": {
+       "injected": 7,
+       "detected": 7
+      },
+      "shift": {
+       "injected": 7,
+       "detected": 7
+      }
+     },
+     "injected": 21,
+     "detected": 21,
+     "rate": 1.0,
+     "normal": {
+      "series": 5,
+      "alarmed_series": 1,
+      "false_events": {
+       "spike": 1,
+       "trend": 0,
+       "shift": 0
+      }
+     },
+     "anomalous": {
+      "false_events": {
+       "spike": 2,
+       "trend": 2,
+       "shift": 1
+      },
+      "confusions": 0
+     },
+     "false_list": [
+      {
+       "series": 3,
+       "pattern": "spike",
+       "start": 63,
+       "end": 63,
+       "direction": null
+      },
+      {
+       "series": 7,
+       "pattern": "spike",
+       "start": 98,
+       "end": 98,
+       "direction": null
+      },
+      {
+       "series": 11,
+       "pattern": "spike",
+       "start": 45,
+       "end": 45,
+       "direction": null
+      },
+      {
+       "series": 11,
+       "pattern": "trend",
+       "start": 76,
+       "end": 81,
+       "direction": null
+      },
+      {
+       "series": 12,
+       "pattern": "shift",
+       "start": 83,
+       "end": 92,
+       "direction": null
+      },
+      {
+       "series": 13,
+       "pattern": "trend",
+       "start": 87,
+       "end": 92,
+       "direction": null
+      }
+     ],
+     "format_violations": 0,
+     "call_errors": 0
+    }
+   ]
+  }
+ ],
+ "explain": {
+  "model": "gpt-4.1-mini",
+  "temperature": 0,
+  "repeats": 3,
+  "prompt_version": "explain-v1",
+  "series_called": 16,
+  "outputs": 48,
+  "passed": 48,
+  "issue_outputs": {
+   "format": 0,
+   "cause": 0,
+   "mismatch": 0
+  },
+  "call_errors": 0,
+  "repeat_changed_series": 0
+ },
+ "secom": null
+}

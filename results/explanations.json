@@ -1,0 +1,1896 @@
+{
+ "prompt_version": "explain-v1",
+ "model": {
+  "name": "gpt-4.1-mini",
+  "temperature": 0,
+  "repeats": 3
+ },
+ "series": {
+  "3": {
+   "input": {
+    "process": {
+     "name": "증착 막 두께",
+     "unit": "nm",
+     "target": 100.0,
+     "ucl": 103.0,
+     "lcl": 97.0
+    },
+    "events": [
+     {
+      "event_id": "E1",
+      "pattern": "급변",
+      "direction": "아래",
+      "start": 63,
+      "end": 63,
+      "rule": "관리한계 밖 1점 (63번 95.90nm, LCL 97nm 미만)",
+      "values": [
+       95.9
+      ]
+     }
+    ],
+    "cause_table": [
+     {
+      "cause_id": "SP-1",
+      "pattern": "급변",
+      "cause": "계측 오류 (측정 위치 오정렬, 계측기 순간 오류)",
+      "check": "같은 웨이퍼 재측정"
+     },
+     {
+      "cause_id": "SP-2",
+      "pattern": "급변",
+      "cause": "파티클·이물로 인한 국부 이상",
+      "check": "파티클·결함 검사 결과 확인"
+     },
+     {
+      "cause_id": "SP-3",
+      "pattern": "급변",
+      "cause": "가스 유량 순간 이상 (MFC 스파이크)",
+      "check": "해당 런의 MFC 유량 로그 확인"
+     },
+     {
+      "cause_id": "SP-4",
+      "pattern": "급변",
+      "cause": "웨이퍼 로딩·척(chuck) 이상",
+      "check": "로딩 로그와 척 상태 확인"
+     },
+     {
+      "cause_id": "SP-5",
+      "pattern": "급변",
+      "cause": "레시피·작업 입력 오류",
+      "check": "해당 런의 레시피·작업 이력 확인"
+     }
+    ]
+   },
+   "input_hash": "9fcd57da939ad76a",
+   "runs": [
+    {
+     "run": 0,
+     "text": "{\n  \"summary\": \"증착 막 두께 공정에서 63번째 측정값이 관리한계 하한선(97nm) 아래인 95.9nm로 급격히 감소하는 급변 현상이 발생했습니다. 이에 따라 원인으로 의심되는 사항들을 순서대로 점검해야 합니다.\",\n  \"events\": [\n    {\n      \"event_id\": \"E1\",\n      \"pattern\": \"급변\",\n      \"rule\": \"관리한계 밖 1점 (63번 95.90nm, LCL 97nm 미만)\",\n      \"checks\": [\n        {\n          \"cause_id\": \"SP-1\",\n          \"reason\": \"계측 오류 가능성이 가장 높으므로, 같은 웨이퍼를 재측정하여 오류 여부를 먼저 확인합니다.\"\n        },\n        {\n          \"cause_id\": \"SP-2\",\n          \"reason\": \"파티클이나 이물에 의한 국부 이상 가능성을 점검하기 위해 파티클 및 결함 검사 결과를 확인합니다.\"\n        },\n        {\n          \"cause_id\": \"SP-3\",\n          \"reason\": \"가스 유량의 순간 이상 여부를 확인하기 위해 해당 런의 MFC 유량 로그를 점검합니다.\"\n        }\n      ]\n    }\n  ],\n  \"priority\": [\"E1\"]\n}",
+     "error": null,
+     "latency_s": 4.22,
+     "usage": {
+      "prompt_tokens": 735,
+      "completion_tokens": 282
+     },
+     "issues": [],
+     "created": "2026-09-25T23:46:27"
+    },
+    {
+     "run": 1,
+     "text": "{\n  \"summary\": \"증착 막 두께 공정에서 63번째 측정값이 관리한계 하한선(97nm) 아래인 95.9nm로 급변 현상이 발생했습니다. 이로 인해 공정 이상 가능성을 점검해야 합니다.\",\n  \"events\": [\n    {\n      \"event_id\": \"E1\",\n      \"pattern\": \"급변\",\n      \"rule\": \"관리한계 밖 1점 (63번 95.90nm, LCL 97nm 미만)\",\n      \"checks\": [\n        {\n          \"cause_id\": \"SP-1\",\n          \"reason\": \"계측 오류 가능성이 가장 흔하므로, 같은 웨이퍼를 재측정하여 오류 여부를 먼저 확인합니다.\"\n        },\n        {\n          \"cause_id\": \"SP-2\",\n          \"reason\": \"파티클이나 이물에 의한 국부 이상 가능성이 있으므로, 파티클 및 결함 검사 결과를 점검합니다.\"\n        },\n        {\n          \"cause_id\": \"SP-3\",\n          \"reason\": \"가스 유량의 순간 이상으로 인한 문제 가능성을 확인하기 위해 해당 런의 MFC 유량 로그를 검토합니다.\"\n        }\n      ]\n    }\n  ],\n  \"priority\": [\"E1\"]\n}",
+     "error": null,
+     "latency_s": 6.52,
+     "usage": {
+      "prompt_tokens": 735,
+      "completion_tokens": 276
+     },
+     "issues": [],
+     "created": "2026-09-25T23:46:27"
+    },
+    {
+     "run": 2,
+     "text": "{\"summary\": \"증착 막 두께 공정에서 63번째 측정값이 관리한계 하한선(97nm)보다 낮은 95.9nm로 급변 현상이 발생했습니다. 이에 따라 원인으로 의심되는 사항들을 순서대로 점검해야 합니다.\",\"events\": [{\"event_id\": \"E1\", \"pattern\": \"급변\", \"rule\": \"관리한계 밖 1점 (63번 95.90nm, LCL 97nm 미만)\", \"checks\": [{\"cause_id\": \"SP-1\", \"reason\": \"계측 오류 가능성이 가장 흔하므로 먼저 같은 웨이퍼를 재측정하여 확인합니다.\"}, {\"cause_id\": \"SP-2\", \"reason\": \"파티클이나 이물로 인한 국부 이상 여부를 파티클·결함 검사 결과로 점검합니다.\"}, {\"cause_id\": \"SP-3\", \"reason\": \"가스 유량의 순간 이상 가능성을 MFC 유량 로그를 통해 확인합니다.\"}]}], \"priority\": [\"E1\"]}",
+     "error": null,
+     "latency_s": 3.9,
+     "usage": {
+      "prompt_tokens": 735,
+      "completion_tokens": 232
+     },
+     "issues": [],
+     "created": "2026-09-25T23:46:27"
+    }
+   ]
+  },
+  "5": {
+   "input": {
+    "process": {
+     "name": "증착 막 두께",
+     "unit": "nm",
+     "target": 100.0,
+     "ucl": 103.0,
+     "lcl": 97.0
+    },
+    "events": [
+     {
+      "event_id": "E1",
+      "pattern": "급변",
+      "direction": "아래",
+      "start": 87,
+      "end": 87,
+      "rule": "관리한계 밖 1점 (87번 95.53nm, LCL 97nm 미만)",
+      "values": [
+       95.53
+      ]
+     }
+    ],
+    "cause_table": [
+     {
+      "cause_id": "SP-1",
+      "pattern": "급변",
+      "cause": "계측 오류 (측정 위치 오정렬, 계측기 순간 오류)",
+      "check": "같은 웨이퍼 재측정"
+     },
+     {
+      "cause_id": "SP-2",
+      "pattern": "급변",
+      "cause": "파티클·이물로 인한 국부 이상",
+      "check": "파티클·결함 검사 결과 확인"
+     },
+     {
+      "cause_id": "SP-3",
+      "pattern": "급변",
+      "cause": "가스 유량 순간 이상 (MFC 스파이크)",
+      "check": "해당 런의 MFC 유량 로그 확인"
+     },
+     {
+      "cause_id": "SP-4",
+      "pattern": "급변",
+      "cause": "웨이퍼 로딩·척(chuck) 이상",
+      "check": "로딩 로그와 척 상태 확인"
+     },
+     {
+      "cause_id": "SP-5",
+      "pattern": "급변",
+      "cause": "레시피·작업 입력 오류",
+      "check": "해당 런의 레시피·작업 이력 확인"
+     }
+    ]
+   },
+   "input_hash": "f21e463eda78d58d",
+   "runs": [
+    {
+     "run": 0,
+     "text": "{\n  \"summary\": \"증착 막 두께 공정에서 87번째 측정값이 관리한계 하한선(97nm)보다 낮은 95.53nm로 급변 하락이 발생했습니다. 이로 인해 공정 안정성에 문제가 있을 수 있으니 원인 점검이 필요합니다.\",\n  \"events\": [\n    {\n      \"event_id\": \"E1\",\n      \"pattern\": \"급변\",\n      \"rule\": \"관리한계 밖 1점 (87번 95.53nm, LCL 97nm 미만)\",\n      \"checks\": [\n        {\n          \"cause_id\": \"SP-1\",\n          \"reason\": \"계측 오류 가능성이 가장 흔하므로 먼저 같은 웨이퍼를 재측정하여 확인합니다.\"\n        },\n        {\n          \"cause_id\": \"SP-2\",\n          \"reason\": \"파티클이나 이물로 인한 국부 이상 여부를 파티클·결함 검사 결과로 점검합니다.\"\n        },\n        {\n          \"cause_id\": \"SP-3\",\n          \"reason\": \"가스 유량의 순간 이상 가능성을 MFC 유량 로그를 통해 확인합니다.\"\n        }\n      ]\n    }\n  ],\n  \"priority\": [\n    \"E1\"\n  ]\n}",
+     "error": null,
+     "latency_s": 3.94,
+     "usage": {
+      "prompt_tokens": 735,
+      "completion_tokens": 272
+     },
+     "issues": [],
+     "created": "2026-09-25T23:46:27"
+    },
+    {
+     "run": 1,
+     "text": "{\n  \"summary\": \"증착 막 두께에서 87번째 측정값이 관리한계 하한선(97nm) 아래인 95.53nm로 급격히 감소하는 급변 현상이 발생했습니다. 이 현상에 대해 원인별 점검 순서를 안내합니다.\",\n  \"events\": [\n    {\n      \"event_id\": \"E1\",\n      \"pattern\": \"급변\",\n      \"rule\": \"관리한계 밖 1점 (87번 95.53nm, LCL 97nm 미만)\",\n      \"checks\": [\n        {\n          \"cause_id\": \"SP-1\",\n          \"reason\": \"계측 오류 가능성이 가장 높으므로, 같은 웨이퍼를 재측정하여 계측기 이상 여부를 먼저 확인합니다.\"\n        },\n        {\n          \"cause_id\": \"SP-2\",\n          \"reason\": \"파티클이나 이물에 의한 국부 이상 가능성을 점검하기 위해 파티클 및 결함 검사 결과를 확인합니다.\"\n        },\n        {\n          \"cause_id\": \"SP-3\",\n          \"reason\": \"가스 유량의 순간 이상 여부를 확인하기 위해 해당 런의 MFC 유량 로그를 점검합니다.\"\n        }\n      ]\n    }\n  ],\n  \"priority\": [\"E1\"]\n}",
+     "error": null,
+     "latency_s": 4.13,
+     "usage": {
+      "prompt_tokens": 735,
+      "completion_tokens": 280
+     },
+     "issues": [],
+     "created": "2026-09-25T23:46:27"
+    },
+    {
+     "run": 2,
+     "text": "{\n  \"summary\": \"증착 막 두께에서 87번째 측정값이 관리한계 하한선(97nm) 아래인 95.53nm로 급격히 감소하는 급변 현상이 발생했습니다. 이 문제의 원인을 차례로 점검해야 합니다.\",\n  \"events\": [\n    {\n      \"event_id\": \"E1\",\n      \"pattern\": \"급변\",\n      \"rule\": \"관리한계 밖 1점 (87번 95.53nm, LCL 97nm 미만)\",\n      \"checks\": [\n        {\n          \"cause_id\": \"SP-1\",\n          \"reason\": \"계측 오류 가능성이 가장 높으므로, 같은 웨이퍼를 재측정하여 확인합니다.\"\n        },\n        {\n          \"cause_id\": \"SP-2\",\n          \"reason\": \"파티클이나 이물로 인한 국부 이상 여부를 파티클 및 결함 검사 결과로 점검합니다.\"\n        },\n        {\n          \"cause_id\": \"SP-3\",\n          \"reason\": \"가스 유량의 순간 이상 가능성을 확인하기 위해 해당 런의 MFC 유량 로그를 검토합니다.\"\n        }\n      ]\n    }\n  ],\n  \"priority\": [\n    \"E1\"\n  ]\n}",
+     "error": null,
+     "latency_s": 5.16,
+     "usage": {
+      "prompt_tokens": 735,
+      "completion_tokens": 272
+     },
+     "issues": [],
+     "created": "2026-09-25T23:46:27"
+    }
+   ]
+  },
+  "6": {
+   "input": {
+    "process": {
+     "name": "증착 막 두께",
+     "unit": "nm",
+     "target": 100.0,
+     "ucl": 103.0,
+     "lcl": 97.0
+    },
+    "events": [
+     {
+      "event_id": "E1",
+      "pattern": "급변",
+      "direction": "위",
+      "start": 54,
+      "end": 54,
+      "rule": "관리한계 밖 1점 (54번 104.64nm, UCL 103nm 초과)",
+      "values": [
+       104.64
+      ]
+     }
+    ],
+    "cause_table": [
+     {
+      "cause_id": "SP-1",
+      "pattern": "급변",
+      "cause": "계측 오류 (측정 위치 오정렬, 계측기 순간 오류)",
+      "check": "같은 웨이퍼 재측정"
+     },
+     {
+      "cause_id": "SP-2",
+      "pattern": "급변",
+      "cause": "파티클·이물로 인한 국부 이상",
+      "check": "파티클·결함 검사 결과 확인"
+     },
+     {
+      "cause_id": "SP-3",
+      "pattern": "급변",
+      "cause": "가스 유량 순간 이상 (MFC 스파이크)",
+      "check": "해당 런의 MFC 유량 로그 확인"
+     },
+     {
+      "cause_id": "SP-4",
+      "pattern": "급변",
+      "cause": "웨이퍼 로딩·척(chuck) 이상",
+      "check": "로딩 로그와 척 상태 확인"
+     },
+     {
+      "cause_id": "SP-5",
+      "pattern": "급변",
+      "cause": "레시피·작업 입력 오류",
+      "check": "해당 런의 레시피·작업 이력 확인"
+     }
+    ]
+   },
+   "input_hash": "174802c0eea19f0f",
+   "runs": [
+    {
+     "run": 0,
+     "text": "{\"summary\": \"증착 막 두께에서 54번째 측정값이 관리한계 상한을 초과하는 급변 이상이 발생했습니다. 이 사건에 대해 원인별 점검 순서를 안내합니다.\",\"events\": [{\"event_id\": \"E1\", \"pattern\": \"급변\", \"rule\": \"관리한계 밖 1점 (54번 104.64nm, UCL 103nm 초과)\", \"checks\": [{\"cause_id\": \"SP-1\", \"reason\": \"계측 오류 가능성이 가장 높으므로 같은 웨이퍼를 재측정하여 확인합니다.\"}, {\"cause_id\": \"SP-2\", \"reason\": \"파티클이나 이물에 의한 국부 이상 여부를 파티클·결함 검사 결과로 점검합니다.\"}, {\"cause_id\": \"SP-3\", \"reason\": \"가스 유량의 순간 이상 가능성을 MFC 유량 로그를 통해 확인합니다.\"}]}], \"priority\": [\"E1\"]}",
+     "error": null,
+     "latency_s": 2.05,
+     "usage": {
+      "prompt_tokens": 734,
+      "completion_tokens": 215
+     },
+     "issues": [],
+     "created": "2026-09-25T23:46:27"
+    },
+    {
+     "run": 1,
+     "text": "{\"summary\": \"증착 막 두께에서 54번째 측정값이 관리한계 상한을 초과하는 급변 이상이 발생했습니다. 이 사건에 대해 원인별 점검 순서를 안내합니다.\",\"events\": [{\"event_id\": \"E1\", \"pattern\": \"급변\", \"rule\": \"관리한계 밖 1점 (54번 104.64nm, UCL 103nm 초과)\", \"checks\": [{\"cause_id\": \"SP-1\", \"reason\": \"계측 오류 가능성이 가장 높으므로 같은 웨이퍼를 재측정하여 확인합니다.\"}, {\"cause_id\": \"SP-2\", \"reason\": \"파티클이나 이물에 의한 국부 이상 여부를 파티클·결함 검사 결과로 점검합니다.\"}, {\"cause_id\": \"SP-3\", \"reason\": \"가스 유량의 순간 이상 가능성을 MFC 유량 로그를 통해 확인합니다.\"}]}], \"priority\": [\"E1\"]}",
+     "error": null,
+     "latency_s": 2.51,
+     "usage": {
+      "prompt_tokens": 734,
+      "completion_tokens": 215
+     },
+     "issues": [],
+     "created": "2026-09-25T23:46:27"
+    },
+    {
+     "run": 2,
+     "text": "{\"summary\": \"증착 막 두께에서 54번째 측정값이 관리한계 상한을 초과하는 급변 이상이 발생했습니다. 이 사건에 대해 원인별 점검 순서를 안내합니다.\",\"events\": [{\"event_id\": \"E1\", \"pattern\": \"급변\", \"rule\": \"관리한계 밖 1점 (54번 104.64nm, UCL 103nm 초과)\", \"checks\": [{\"cause_id\": \"SP-1\", \"reason\": \"계측 오류 가능성이 가장 흔하므로 같은 웨이퍼를 재측정하여 확인합니다.\"}, {\"cause_id\": \"SP-2\", \"reason\": \"파티클이나 이물에 의한 국부 이상 여부를 파티클·결함 검사 결과로 점검합니다.\"}, {\"cause_id\": \"SP-3\", \"reason\": \"가스 유량의 순간 이상 가능성을 MFC 유량 로그를 통해 확인합니다.\"}]}], \"priority\": [\"E1\"]}",
+     "error": null,
+     "latency_s": 2.08,
+     "usage": {
+      "prompt_tokens": 734,
+      "completion_tokens": 215
+     },
+     "issues": [],
+     "created": "2026-09-25T23:46:27"
+    }
+   ]
+  },
+  "7": {
+   "input": {
+    "process": {
+     "name": "증착 막 두께",
+     "unit": "nm",
+     "target": 100.0,
+     "ucl": 103.0,
+     "lcl": 97.0
+    },
+    "events": [
+     {
+      "event_id": "E1",
+      "pattern": "급변",
+      "direction": "위",
+      "start": 29,
+      "end": 29,
+      "rule": "관리한계 밖 1점 (29번 103.83nm, UCL 103nm 초과)",
+      "values": [
+       103.83
+      ]
+     },
+     {
+      "event_id": "E2",
+      "pattern": "급변",
+      "direction": "위",
+      "start": 98,
+      "end": 98,
+      "rule": "관리한계 밖 1점 (98번 103.30nm, UCL 103nm 초과)",
+      "values": [
+       103.3
+      ]
+     }
+    ],
+    "cause_table": [
+     {
+      "cause_id": "SP-1",
+      "pattern": "급변",
+      "cause": "계측 오류 (측정 위치 오정렬, 계측기 순간 오류)",
+      "check": "같은 웨이퍼 재측정"
+     },
+     {
+      "cause_id": "SP-2",
+      "pattern": "급변",
+      "cause": "파티클·이물로 인한 국부 이상",
+      "check": "파티클·결함 검사 결과 확인"
+     },
+     {
+      "cause_id": "SP-3",
+      "pattern": "급변",
+      "cause": "가스 유량 순간 이상 (MFC 스파이크)",
+      "check": "해당 런의 MFC 유량 로그 확인"
+     },
+     {
+      "cause_id": "SP-4",
+      "pattern": "급변",
+      "cause": "웨이퍼 로딩·척(chuck) 이상",
+      "check": "로딩 로그와 척 상태 확인"
+     },
+     {
+      "cause_id": "SP-5",
+      "pattern": "급변",
+      "cause": "레시피·작업 입력 오류",
+      "check": "해당 런의 레시피·작업 이력 확인"
+     }
+    ]
+   },
+   "input_hash": "1c7729dcd0952096",
+   "runs": [
+    {
+     "run": 0,
+     "text": "{\n  \"summary\": \"증착 막 두께 공정에서 29번과 98번 샘플에서 관리한계(UCL 103nm)를 초과하는 급변 이상이 발생했습니다. 두 사건 모두 급변 패턴으로, 각각 103.83nm와 103.3nm의 두께가 측정되었습니다.\",\n  \"events\": [\n    {\n      \"event_id\": \"E1\",\n      \"pattern\": \"급변\",\n      \"rule\": \"관리한계 밖 1점 (29번 103.83nm, UCL 103nm 초과)\",\n      \"checks\": [\n        {\n          \"cause_id\": \"SP-1\",\n          \"reason\": \"계측 오류 가능성이 가장 흔하므로, 같은 웨이퍼를 재측정하여 확인합니다.\"\n        },\n        {\n          \"cause_id\": \"SP-2\",\n          \"reason\": \"파티클이나 이물에 의한 국부 이상 가능성을 점검하기 위해 파티클 및 결함 검사 결과를 확인합니다.\"\n        },\n        {\n          \"cause_id\": \"SP-3\",\n          \"reason\": \"가스 유량의 순간 이상 여부를 확인하기 위해 해당 런의 MFC 유량 로그를 점검합니다.\"\n        }\n      ]\n    },\n    {\n      \"event_id\": \"E2\",\n      \"pattern\": \"급변\",\n      \"rule\": \"관리한계 밖 1점 (98번 103.30nm, UCL 103nm 초과)\",\n      \"checks\": [\n        {\n          \"cause_id\": \"SP-1\",\n          \"reason\": \"계측 오류 가능성을 우선 확인하기 위해 같은 웨이퍼를 재측정합니다.\"\n        },\n        {\n          \"cause_id\": \"SP-2\",\n          \"reason\": \"파티클이나 이물에 의한 국부 이상 가능성을 점검하기 위해 파티클 및 결함 검사 결과를 확인합니다.\"\n        },\n        {\n          \"cause_id\": \"SP-3\",\n          \"reason\": \"가스 유량의 순간 이상 여부를 확인하기 위해 해당 런의 MFC 유량 로그를 점검합니다.\"\n        }\n      ]\n    }\n  ],\n  \"priority\": [\"E1\", \"E2\"]\n}",
+     "error": null,
+     "latency_s": 4.27,
+     "usage": {
+      "prompt_tokens": 818,
+      "completion_tokens": 477
+     },
+     "issues": [],
+     "created": "2026-09-25T23:46:27"
+    },
+    {
+     "run": 1,
+     "text": "{\n  \"summary\": \"증착 막 두께 공정에서 29번과 98번 샘플에서 관리한계(UCL 103nm)를 초과하는 급변 이상이 발생했습니다. 두 사건 모두 급변 패턴으로, 원인 점검이 필요합니다.\",\n  \"events\": [\n    {\n      \"event_id\": \"E1\",\n      \"pattern\": \"급변\",\n      \"rule\": \"관리한계 밖 1점 (29번 103.83nm, UCL 103nm 초과)\",\n      \"checks\": [\n        {\n          \"cause_id\": \"SP-1\",\n          \"reason\": \"계측 오류 가능성이 가장 흔하므로 같은 웨이퍼를 재측정하여 확인합니다.\"\n        },\n        {\n          \"cause_id\": \"SP-2\",\n          \"reason\": \"파티클이나 이물에 의한 국부 이상 가능성을 파티클·결함 검사 결과로 점검합니다.\"\n        },\n        {\n          \"cause_id\": \"SP-3\",\n          \"reason\": \"가스 유량의 순간 이상 여부를 해당 런의 MFC 유량 로그로 확인합니다.\"\n        }\n      ]\n    },\n    {\n      \"event_id\": \"E2\",\n      \"pattern\": \"급변\",\n      \"rule\": \"관리한계 밖 1점 (98번 103.30nm, UCL 103nm 초과)\",\n      \"checks\": [\n        {\n          \"cause_id\": \"SP-1\",\n          \"reason\": \"계측 오류 가능성이 가장 흔하므로 같은 웨이퍼를 재측정하여 확인합니다.\"\n        },\n        {\n          \"cause_id\": \"SP-2\",\n          \"reason\": \"파티클이나 이물에 의한 국부 이상 가능성을 파티클·결함 검사 결과로 점검합니다.\"\n        },\n        {\n          \"cause_id\": \"SP-3\",\n          \"reason\": \"가스 유량의 순간 이상 여부를 해당 런의 MFC 유량 로그로 확인합니다.\"\n        }\n      ]\n    }\n  ],\n  \"priority\": [\"E1\", \"E2\"]\n}",
+     "error": null,
+     "latency_s": 3.57,
+     "usage": {
+      "prompt_tokens": 818,
+      "completion_tokens": 451
+     },
+     "issues": [],
+     "created": "2026-09-25T23:46:27"
+    },
+    {
+     "run": 2,
+     "text": "{\n  \"summary\": \"증착 막 두께 공정에서 29번과 98번 샘플에서 관리한계(UCL 103nm)를 초과하는 급변 이상이 발생했습니다. 두 사건 모두 급변 패턴으로, 원인 점검이 필요합니다.\",\n  \"events\": [\n    {\n      \"event_id\": \"E1\",\n      \"pattern\": \"급변\",\n      \"rule\": \"관리한계 밖 1점 (29번 103.83nm, UCL 103nm 초과)\",\n      \"checks\": [\n        {\n          \"cause_id\": \"SP-1\",\n          \"reason\": \"계측 오류 가능성이 가장 높으므로 같은 웨이퍼를 재측정하여 확인합니다.\"\n        },\n        {\n          \"cause_id\": \"SP-2\",\n          \"reason\": \"파티클이나 이물로 인한 국부 이상 여부를 파티클·결함 검사 결과로 점검합니다.\"\n        },\n        {\n          \"cause_id\": \"SP-3\",\n          \"reason\": \"가스 유량의 순간 이상 가능성을 MFC 유량 로그를 통해 확인합니다.\"\n        }\n      ]\n    },\n    {\n      \"event_id\": \"E2\",\n      \"pattern\": \"급변\",\n      \"rule\": \"관리한계 밖 1점 (98번 103.30nm, UCL 103nm 초과)\",\n      \"checks\": [\n        {\n          \"cause_id\": \"SP-1\",\n          \"reason\": \"계측 오류 가능성이 가장 높으므로 같은 웨이퍼를 재측정하여 확인합니다.\"\n        },\n        {\n          \"cause_id\": \"SP-2\",\n          \"reason\": \"파티클이나 이물로 인한 국부 이상 여부를 파티클·결함 검사 결과로 점검합니다.\"\n        },\n        {\n          \"cause_id\": \"SP-3\",\n          \"reason\": \"가스 유량의 순간 이상 가능성을 MFC 유량 로그를 통해 확인합니다.\"\n        }\n      ]\n    }\n  ],\n  \"priority\": [\"E1\", \"E2\"]\n}",
+     "error": null,
+     "latency_s": 3.87,
+     "usage": {
+      "prompt_tokens": 818,
+      "completion_tokens": 445
+     },
+     "issues": [],
+     "created": "2026-09-25T23:46:27"
+    }
+   ]
+  },
+  "8": {
+   "input": {
+    "process": {
+     "name": "증착 막 두께",
+     "unit": "nm",
+     "target": 100.0,
+     "ucl": 103.0,
+     "lcl": 97.0
+    },
+    "events": [
+     {
+      "event_id": "E1",
+      "pattern": "추세",
+      "direction": "상승",
+      "start": 61,
+      "end": 68,
+      "rule": "8점 연속 상승 (61~68번, 98.68→102.03nm)",
+      "first_value": 98.68,
+      "last_value": 102.03
+     }
+    ],
+    "cause_table": [
+     {
+      "cause_id": "TR-1",
+      "pattern": "추세",
+      "cause": "챔버 벽 증착물 누적 (클리닝 주기 도래)",
+      "check": "마지막 챔버 클리닝 이후 처리 매수 확인"
+     },
+     {
+      "cause_id": "TR-2",
+      "pattern": "추세",
+      "cause": "히터·온도의 점진적 변화",
+      "check": "온도 센서 로그 추이 확인"
+     },
+     {
+      "cause_id": "TR-3",
+      "pattern": "추세",
+      "cause": "소스 소모 (전구체 잔량, 타깃 수명)",
+      "check": "소모품 사용량과 교체 시점 확인"
+     },
+     {
+      "cause_id": "TR-4",
+      "pattern": "추세",
+      "cause": "펌프 성능 저하로 인한 압력 변화",
+      "check": "챔버 압력 로그 추이 확인"
+     },
+     {
+      "cause_id": "TR-5",
+      "pattern": "추세",
+      "cause": "계측기 드리프트",
+      "check": "표준 시편으로 계측기 점검"
+     }
+    ]
+   },
+   "input_hash": "1ffed374c46faea0",
+   "runs": [
+    {
+     "run": 0,
+     "text": "{\n  \"summary\": \"증착 막 두께에서 61~68번 공정까지 8점 연속 상승하는 추세가 관찰되었습니다. 이는 공정 조건이나 장비 상태의 점진적 변화가 원인일 수 있습니다.\",\n  \"events\": [\n    {\n      \"event_id\": \"E1\",\n      \"pattern\": \"추세\",\n      \"rule\": \"8점 연속 상승 (61~68번, 98.68→102.03nm)\",\n      \"checks\": [\n        {\n          \"cause_id\": \"TR-1\",\n          \"reason\": \"챔버 벽 증착물 누적으로 인한 영향 가능성이 크므로, 마지막 챔버 클리닝 이후 처리 매수를 먼저 확인합니다.\"\n        },\n        {\n          \"cause_id\": \"TR-2\",\n          \"reason\": \"히터 및 온도의 점진적 변화가 두께 상승에 영향을 줄 수 있으므로 온도 센서 로그 추이를 점검합니다.\"\n        },\n        {\n          \"cause_id\": \"TR-3\",\n          \"reason\": \"소스 소모에 따른 전구체 잔량이나 타깃 수명 변화가 원인일 수 있어 소모품 사용량과 교체 시점을 확인합니다.\"\n        }\n      ]\n    }\n  ],\n  \"priority\": [\"E1\"]\n}",
+     "error": null,
+     "latency_s": 2.46,
+     "usage": {
+      "prompt_tokens": 743,
+      "completion_tokens": 282
+     },
+     "issues": [],
+     "created": "2026-09-25T23:46:27"
+    },
+    {
+     "run": 1,
+     "text": "{\n  \"summary\": \"증착 막 두께에서 61~68번 공정까지 8점 연속 상승하는 추세가 관찰되었습니다. 이는 공정 조건이나 장비 상태의 점진적 변화가 원인일 수 있습니다.\",\n  \"events\": [\n    {\n      \"event_id\": \"E1\",\n      \"pattern\": \"추세\",\n      \"rule\": \"8점 연속 상승 (61~68번, 98.68→102.03nm)\",\n      \"checks\": [\n        {\n          \"cause_id\": \"TR-1\",\n          \"reason\": \"챔버 벽에 증착물이 누적되어 클리닝 주기가 도래했을 가능성이 있으므로 마지막 클리닝 이후 처리 매수를 먼저 확인합니다.\"\n        },\n        {\n          \"cause_id\": \"TR-2\",\n          \"reason\": \"히터나 온도의 점진적 변화가 두께 상승에 영향을 줄 수 있으므로 온도 센서 로그 추이를 점검합니다.\"\n        },\n        {\n          \"cause_id\": \"TR-3\",\n          \"reason\": \"소스 소모로 인한 전구체 잔량이나 타깃 수명이 변화했을 가능성이 있어 소모품 사용량과 교체 시점을 확인합니다.\"\n        }\n      ]\n    }\n  ],\n  \"priority\": [\"E1\"]\n}",
+     "error": null,
+     "latency_s": 2.44,
+     "usage": {
+      "prompt_tokens": 743,
+      "completion_tokens": 286
+     },
+     "issues": [],
+     "created": "2026-09-25T23:46:27"
+    },
+    {
+     "run": 2,
+     "text": "{\n  \"summary\": \"증착 막 두께에서 61~68번 공정까지 8점 연속 상승하는 추세가 관찰되었습니다. 이는 공정 조건이나 장비 상태의 점진적 변화가 원인일 수 있습니다.\",\n  \"events\": [\n    {\n      \"event_id\": \"E1\",\n      \"pattern\": \"추세\",\n      \"rule\": \"8점 연속 상승 (61~68번, 98.68→102.03nm)\",\n      \"checks\": [\n        {\n          \"cause_id\": \"TR-1\",\n          \"reason\": \"챔버 벽 증착물 누적으로 클리닝 주기 도래 여부를 먼저 확인하여 근본 원인을 파악하기 쉽기 때문입니다.\"\n        },\n        {\n          \"cause_id\": \"TR-2\",\n          \"reason\": \"히터 및 온도의 점진적 변화를 점검하여 온도 변화가 두께 상승에 영향을 주었는지 확인합니다.\"\n        },\n        {\n          \"cause_id\": \"TR-3\",\n          \"reason\": \"소스 소모 상태를 점검하여 전구체 잔량이나 타깃 수명이 두께 변화에 영향을 미쳤는지 확인합니다.\"\n        }\n      ]\n    }\n  ],\n  \"priority\": [\"E1\"]\n}",
+     "error": null,
+     "latency_s": 2.94,
+     "usage": {
+      "prompt_tokens": 743,
+      "completion_tokens": 277
+     },
+     "issues": [],
+     "created": "2026-09-25T23:46:27"
+    }
+   ]
+  },
+  "9": {
+   "input": {
+    "process": {
+     "name": "증착 막 두께",
+     "unit": "nm",
+     "target": 100.0,
+     "ucl": 103.0,
+     "lcl": 97.0
+    },
+    "events": [
+     {
+      "event_id": "E1",
+      "pattern": "추세",
+      "direction": "하강",
+      "start": 17,
+      "end": 25,
+      "rule": "9점 연속 하강 (17~25번, 102.30→98.38nm)",
+      "first_value": 102.3,
+      "last_value": 98.38
+     }
+    ],
+    "cause_table": [
+     {
+      "cause_id": "TR-1",
+      "pattern": "추세",
+      "cause": "챔버 벽 증착물 누적 (클리닝 주기 도래)",
+      "check": "마지막 챔버 클리닝 이후 처리 매수 확인"
+     },
+     {
+      "cause_id": "TR-2",
+      "pattern": "추세",
+      "cause": "히터·온도의 점진적 변화",
+      "check": "온도 센서 로그 추이 확인"
+     },
+     {
+      "cause_id": "TR-3",
+      "pattern": "추세",
+      "cause": "소스 소모 (전구체 잔량, 타깃 수명)",
+      "check": "소모품 사용량과 교체 시점 확인"
+     },
+     {
+      "cause_id": "TR-4",
+      "pattern": "추세",
+      "cause": "펌프 성능 저하로 인한 압력 변화",
+      "check": "챔버 압력 로그 추이 확인"
+     },
+     {
+      "cause_id": "TR-5",
+      "pattern": "추세",
+      "cause": "계측기 드리프트",
+      "check": "표준 시편으로 계측기 점검"
+     }
+    ]
+   },
+   "input_hash": "a7fff1bf5d7bd400",
+   "runs": [
+    {
+     "run": 0,
+     "text": "{\"summary\": \"증착 막 두께에서 17~25번 공정까지 9점 연속 하강하는 추세가 관찰되었습니다. 이는 공정 안정성에 영향을 줄 수 있으므로 원인별 점검이 필요합니다.\", \"events\": [{\"event_id\": \"E1\", \"pattern\": \"추세\", \"rule\": \"9점 연속 하강 (17~25번, 102.30→98.38nm)\", \"checks\": [{\"cause_id\": \"TR-1\", \"reason\": \"챔버 벽 증착물 누적으로 인한 영향이 가장 흔하므로 마지막 클리닝 이후 처리 매수를 먼저 확인합니다.\"}, {\"cause_id\": \"TR-2\", \"reason\": \"히터 및 온도의 점진적 변화가 두께 하강에 영향을 줄 수 있어 온도 센서 로그를 점검합니다.\"}, {\"cause_id\": \"TR-3\", \"reason\": \"소스 소모로 인한 전구체 잔량 및 타깃 수명을 확인하여 원인을 파악합니다.\"}]}], \"priority\": [\"E1\"]}",
+     "error": null,
+     "latency_s": 2.05,
+     "usage": {
+      "prompt_tokens": 744,
+      "completion_tokens": 238
+     },
+     "issues": [],
+     "created": "2026-09-25T23:46:27"
+    },
+    {
+     "run": 1,
+     "text": "{\"summary\": \"증착 막 두께에서 17~25번째 공정까지 9점 연속 하강하는 추세가 관찰되었습니다. 이는 공정 안정성에 영향을 줄 수 있으므로 원인별 점검이 필요합니다.\",\"events\": [{\"event_id\": \"E1\", \"pattern\": \"추세\", \"rule\": \"9점 연속 하강 (17~25번, 102.30→98.38nm)\", \"checks\": [{\"cause_id\": \"TR-1\", \"reason\": \"챔버 벽 증착물 누적으로 인한 영향 가능성이 높아 클리닝 주기와 처리 매수를 먼저 확인해야 합니다.\"}, {\"cause_id\": \"TR-2\", \"reason\": \"히터 및 온도의 점진적 변화가 두께 하강에 영향을 줄 수 있으므로 온도 센서 로그를 점검합니다.\"}, {\"cause_id\": \"TR-3\", \"reason\": \"소스 소모로 인한 전구체 잔량 및 타깃 수명 문제 가능성을 확인하기 위해 소모품 사용량과 교체 시점을 점검합니다.\"}]}], \"priority\": [\"E1\"]}",
+     "error": null,
+     "latency_s": 2.02,
+     "usage": {
+      "prompt_tokens": 744,
+      "completion_tokens": 251
+     },
+     "issues": [],
+     "created": "2026-09-25T23:46:27"
+    },
+    {
+     "run": 2,
+     "text": "{\"summary\": \"증착 막 두께에서 17~25번째 공정까지 9점 연속 하강하는 추세가 관찰되었습니다. 이는 공정 안정성에 영향을 줄 수 있으므로 원인별 점검이 필요합니다.\",\"events\": [{\"event_id\": \"E1\", \"pattern\": \"추세\", \"rule\": \"9점 연속 하강 (17~25번, 102.30→98.38nm)\", \"checks\": [{\"cause_id\": \"TR-1\", \"reason\": \"챔버 벽 증착물 누적으로 인한 영향이 가장 흔하므로 마지막 클리닝 이후 처리 매수를 먼저 확인합니다.\"}, {\"cause_id\": \"TR-2\", \"reason\": \"히터 및 온도의 점진적 변화가 증착 두께에 영향을 줄 수 있어 온도 센서 로그를 점검합니다.\"}, {\"cause_id\": \"TR-3\", \"reason\": \"소스 소모로 인한 전구체 잔량 및 타깃 수명을 확인하여 원인을 점검합니다.\"}]}], \"priority\": [\"E1\"]}",
+     "error": null,
+     "latency_s": 1.99,
+     "usage": {
+      "prompt_tokens": 744,
+      "completion_tokens": 237
+     },
+     "issues": [],
+     "created": "2026-09-25T23:46:27"
+    }
+   ]
+  },
+  "10": {
+   "input": {
+    "process": {
+     "name": "증착 막 두께",
+     "unit": "nm",
+     "target": 100.0,
+     "ucl": 103.0,
+     "lcl": 97.0
+    },
+    "events": [
+     {
+      "event_id": "E1",
+      "pattern": "추세",
+      "direction": "상승",
+      "start": 91,
+      "end": 98,
+      "rule": "8점 연속 상승 (91~98번, 98.82→101.97nm)",
+      "first_value": 98.82,
+      "last_value": 101.97
+     }
+    ],
+    "cause_table": [
+     {
+      "cause_id": "TR-1",
+      "pattern": "추세",
+      "cause": "챔버 벽 증착물 누적 (클리닝 주기 도래)",
+      "check": "마지막 챔버 클리닝 이후 처리 매수 확인"
+     },
+     {
+      "cause_id": "TR-2",
+      "pattern": "추세",
+      "cause": "히터·온도의 점진적 변화",
+      "check": "온도 센서 로그 추이 확인"
+     },
+     {
+      "cause_id": "TR-3",
+      "pattern": "추세",
+      "cause": "소스 소모 (전구체 잔량, 타깃 수명)",
+      "check": "소모품 사용량과 교체 시점 확인"
+     },
+     {
+      "cause_id": "TR-4",
+      "pattern": "추세",
+      "cause": "펌프 성능 저하로 인한 압력 변화",
+      "check": "챔버 압력 로그 추이 확인"
+     },
+     {
+      "cause_id": "TR-5",
+      "pattern": "추세",
+      "cause": "계측기 드리프트",
+      "check": "표준 시편으로 계측기 점검"
+     }
+    ]
+   },
+   "input_hash": "05ad7dd9635ac818",
+   "runs": [
+    {
+     "run": 0,
+     "text": "{\n  \"summary\": \"증착 막 두께에서 91번부터 98번까지 8점 연속 상승하는 추세가 관찰되었습니다. 이는 공정 조건이나 장비 상태의 점진적 변화가 원인일 수 있습니다.\",\n  \"events\": [\n    {\n      \"event_id\": \"E1\",\n      \"pattern\": \"추세\",\n      \"rule\": \"8점 연속 상승 (91~98번, 98.82→101.97nm)\",\n      \"checks\": [\n        {\n          \"cause_id\": \"TR-1\",\n          \"reason\": \"챔버 벽 증착물 누적으로 클리닝 주기가 도래했는지 먼저 확인하여 공정 오염 여부를 점검합니다.\"\n        },\n        {\n          \"cause_id\": \"TR-2\",\n          \"reason\": \"히터 및 온도의 점진적 변화를 온도 센서 로그를 통해 확인하여 온도 관련 이상 여부를 점검합니다.\"\n        },\n        {\n          \"cause_id\": \"TR-3\",\n          \"reason\": \"소스 소모 상태를 확인하여 전구체 잔량이나 타깃 수명 문제로 인한 증착 두께 변화 가능성을 점검합니다.\"\n        }\n      ]\n    }\n  ],\n  \"priority\": [\"E1\"]\n}",
+     "error": null,
+     "latency_s": 2.26,
+     "usage": {
+      "prompt_tokens": 743,
+      "completion_tokens": 278
+     },
+     "issues": [],
+     "created": "2026-09-25T23:46:27"
+    },
+    {
+     "run": 1,
+     "text": "{\n  \"summary\": \"증착 막 두께에서 91번부터 98번까지 8점 연속 상승하는 추세가 관찰되었습니다. 이는 공정 조건이나 장비 상태 변화에 따른 점진적 두께 증가를 의미합니다.\",\n  \"events\": [\n    {\n      \"event_id\": \"E1\",\n      \"pattern\": \"추세\",\n      \"rule\": \"8점 연속 상승 (91~98번, 98.82→101.97nm)\",\n      \"checks\": [\n        {\n          \"cause_id\": \"TR-1\",\n          \"reason\": \"챔버 벽에 증착물이 누적되어 클리닝 주기가 도래했을 가능성이 가장 흔하므로 먼저 점검합니다.\"\n        },\n        {\n          \"cause_id\": \"TR-2\",\n          \"reason\": \"히터나 온도의 점진적 변화가 두께 상승에 영향을 줄 수 있으므로 온도 센서 로그를 확인합니다.\"\n        },\n        {\n          \"cause_id\": \"TR-3\",\n          \"reason\": \"소스 소모로 인한 전구체 잔량이나 타깃 수명 변화가 두께에 영향을 줄 수 있어 사용량과 교체 시점을 점검합니다.\"\n        }\n      ]\n    }\n  ],\n  \"priority\": [\"E1\"]\n}",
+     "error": null,
+     "latency_s": 2.21,
+     "usage": {
+      "prompt_tokens": 743,
+      "completion_tokens": 281
+     },
+     "issues": [],
+     "created": "2026-09-25T23:46:27"
+    },
+    {
+     "run": 2,
+     "text": "{\n  \"summary\": \"증착 막 두께에서 91번부터 98번까지 8점 연속 상승하는 추세가 관찰되었습니다. 이는 공정 조건이나 장비 상태 변화에 의한 것으로 보입니다.\",\n  \"events\": [\n    {\n      \"event_id\": \"E1\",\n      \"pattern\": \"추세\",\n      \"rule\": \"8점 연속 상승 (91~98번, 98.82→101.97nm)\",\n      \"checks\": [\n        {\n          \"cause_id\": \"TR-1\",\n          \"reason\": \"챔버 벽 증착물 누적으로 클리닝 주기 도래 여부를 먼저 확인하여 근본 원인을 파악하기 쉽기 때문입니다.\"\n        },\n        {\n          \"cause_id\": \"TR-2\",\n          \"reason\": \"히터 및 온도의 점진적 변화를 온도 센서 로그로 확인하여 공정 온도 안정성을 점검합니다.\"\n        },\n        {\n          \"cause_id\": \"TR-3\",\n          \"reason\": \"소스 소모 상태를 확인하여 전구체 잔량과 타깃 수명이 공정에 영향을 주었는지 점검합니다.\"\n        }\n      ]\n    }\n  ],\n  \"priority\": [\"E1\"]\n}",
+     "error": null,
+     "latency_s": 2.2,
+     "usage": {
+      "prompt_tokens": 743,
+      "completion_tokens": 271
+     },
+     "issues": [],
+     "created": "2026-09-25T23:46:27"
+    }
+   ]
+  },
+  "11": {
+   "input": {
+    "process": {
+     "name": "증착 막 두께",
+     "unit": "nm",
+     "target": 100.0,
+     "ucl": 103.0,
+     "lcl": 97.0
+    },
+    "events": [
+     {
+      "event_id": "E1",
+      "pattern": "급변",
+      "direction": "위",
+      "start": 45,
+      "end": 45,
+      "rule": "관리한계 밖 1점 (45번 103.33nm, UCL 103nm 초과)",
+      "values": [
+       103.33
+      ]
+     },
+     {
+      "event_id": "E2",
+      "pattern": "치우침",
+      "direction": "위",
+      "start": 48,
+      "end": 59,
+      "rule": "12점 연속 중심선 위 (48~59번, 평균 100.95nm)",
+      "mean": 100.95
+     },
+     {
+      "event_id": "E3",
+      "pattern": "추세",
+      "direction": "상승",
+      "start": 76,
+      "end": 81,
+      "rule": "6점 연속 상승 (76~81번, 98.78→102.37nm)",
+      "first_value": 98.78,
+      "last_value": 102.37
+     }
+    ],
+    "cause_table": [
+     {
+      "cause_id": "SP-1",
+      "pattern": "급변",
+      "cause": "계측 오류 (측정 위치 오정렬, 계측기 순간 오류)",
+      "check": "같은 웨이퍼 재측정"
+     },
+     {
+      "cause_id": "SP-2",
+      "pattern": "급변",
+      "cause": "파티클·이물로 인한 국부 이상",
+      "check": "파티클·결함 검사 결과 확인"
+     },
+     {
+      "cause_id": "SP-3",
+      "pattern": "급변",
+      "cause": "가스 유량 순간 이상 (MFC 스파이크)",
+      "check": "해당 런의 MFC 유량 로그 확인"
+     },
+     {
+      "cause_id": "SP-4",
+      "pattern": "급변",
+      "cause": "웨이퍼 로딩·척(chuck) 이상",
+      "check": "로딩 로그와 척 상태 확인"
+     },
+     {
+      "cause_id": "SP-5",
+      "pattern": "급변",
+      "cause": "레시피·작업 입력 오류",
+      "check": "해당 런의 레시피·작업 이력 확인"
+     },
+     {
+      "cause_id": "TR-1",
+      "pattern": "추세",
+      "cause": "챔버 벽 증착물 누적 (클리닝 주기 도래)",
+      "check": "마지막 챔버 클리닝 이후 처리 매수 확인"
+     },
+     {
+      "cause_id": "TR-2",
+      "pattern": "추세",
+      "cause": "히터·온도의 점진적 변화",
+      "check": "온도 센서 로그 추이 확인"
+     },
+     {
+      "cause_id": "TR-3",
+      "pattern": "추세",
+      "cause": "소스 소모 (전구체 잔량, 타깃 수명)",
+      "check": "소모품 사용량과 교체 시점 확인"
+     },
+     {
+      "cause_id": "TR-4",
+      "pattern": "추세",
+      "cause": "펌프 성능 저하로 인한 압력 변화",
+      "check": "챔버 압력 로그 추이 확인"
+     },
+     {
+      "cause_id": "TR-5",
+      "pattern": "추세",
+      "cause": "계측기 드리프트",
+      "check": "표준 시편으로 계측기 점검"
+     },
+     {
+      "cause_id": "SH-1",
+      "pattern": "치우침",
+      "cause": "부품 교체·PM 후 조건 변화",
+      "check": "PM 이력과 치우침 시작 시점 비교"
+     },
+     {
+      "cause_id": "SH-2",
+      "pattern": "치우침",
+      "cause": "원료 가스·전구체 로트 변경",
+      "check": "원료 로트 변경 이력 확인"
+     },
+     {
+      "cause_id": "SH-3",
+      "pattern": "치우침",
+      "cause": "레시피 변경",
+      "check": "레시피 변경 이력 확인"
+     },
+     {
+      "cause_id": "SH-4",
+      "pattern": "치우침",
+      "cause": "계측기 교정값 변경",
+      "check": "계측기 교정 이력 확인"
+     },
+     {
+      "cause_id": "SH-5",
+      "pattern": "치우침",
+      "cause": "다른 챔버·장비로 전환",
+      "check": "설비 배정 이력 확인"
+     }
+    ]
+   },
+   "input_hash": "bc8f478c0302479f",
+   "runs": [
+    {
+     "run": 0,
+     "text": "{\n  \"summary\": \"증착 막 두께 공정에서 급변, 치우침, 추세의 이상 신호가 발견되었습니다. 각 사건별로 원인 후보를 점검하여 문제를 해결해야 합니다.\",\n  \"events\": [\n    {\n      \"event_id\": \"E1\",\n      \"pattern\": \"급변\",\n      \"rule\": \"관리한계 밖 1점 (45번 103.33nm, UCL 103nm 초과)\",\n      \"checks\": [\n        {\n          \"cause_id\": \"SP-1\",\n          \"reason\": \"계측 오류 가능성이 가장 흔하므로 같은 웨이퍼를 재측정하여 확인합니다.\"\n        },\n        {\n          \"cause_id\": \"SP-2\",\n          \"reason\": \"파티클이나 이물에 의한 국부 이상 가능성으로 파티클·결함 검사 결과를 확인합니다.\"\n        },\n        {\n          \"cause_id\": \"SP-3\",\n          \"reason\": \"가스 유량의 순간 이상 가능성도 있으므로 해당 런의 MFC 유량 로그를 점검합니다.\"\n        }\n      ]\n    },\n    {\n      \"event_id\": \"E2\",\n      \"pattern\": \"치우침\",\n      \"rule\": \"12점 연속 중심선 위 (48~59번, 평균 100.95nm)\",\n      \"checks\": [\n        {\n          \"cause_id\": \"SH-1\",\n          \"reason\": \"부품 교체나 PM 후 조건 변화가 흔한 원인이므로 PM 이력과 치우침 시작 시점을 비교합니다.\"\n        },\n        {\n          \"cause_id\": \"SH-2\",\n          \"reason\": \"원료 가스나 전구체 로트 변경 가능성도 있으니 원료 로트 변경 이력을 확인합니다.\"\n        },\n        {\n          \"cause_id\": \"SH-3\",\n          \"reason\": \"레시피 변경 여부도 영향을 줄 수 있어 레시피 변경 이력을 점검합니다.\"\n        }\n      ]\n    },\n    {\n      \"event_id\": \"E3\",\n      \"pattern\": \"추세\",\n      \"rule\": \"6점 연속 상승 (76~81번, 98.78→102.37nm)\",\n      \"checks\": [\n        {\n          \"cause_id\": \"TR-1\",\n          \"reason\": \"챔버 벽 증착물 누적이 흔한 원인이므로 마지막 클리닝 이후 처리 매수를 확인합니다.\"\n        },\n        {\n          \"cause_id\": \"TR-2\",\n          \"reason\": \"히터나 온도의 점진적 변화 가능성도 있으니 온도 센서 로그 추이를 점검합니다.\"\n        },\n        {\n          \"cause_id\": \"TR-3\",\n          \"reason\": \"소스 소모 상태도 영향을 줄 수 있어 소모품 사용량과 교체 시점을 확인합니다.\"\n        }\n      ]\n    }\n  ],\n  \"priority\": [\"E1\", \"E2\", \"E3\"]\n}",
+     "error": null,
+     "latency_s": 4.51,
+     "usage": {
+      "prompt_tokens": 1442,
+      "completion_tokens": 632
+     },
+     "issues": [],
+     "created": "2026-09-25T23:46:27"
+    },
+    {
+     "run": 1,
+     "text": "{\n  \"summary\": \"증착 막 두께 공정에서 급변, 치우침, 추세의 이상 신호가 발견되었습니다. 각 사건별로 가능한 원인을 점검하여 문제를 해결해야 합니다.\",\n  \"events\": [\n    {\n      \"event_id\": \"E1\",\n      \"pattern\": \"급변\",\n      \"rule\": \"관리한계 밖 1점 (45번 103.33nm, UCL 103nm 초과)\",\n      \"checks\": [\n        {\n          \"cause_id\": \"SP-1\",\n          \"reason\": \"계측 오류 가능성이 높으므로 같은 웨이퍼를 재측정하여 확인합니다.\"\n        },\n        {\n          \"cause_id\": \"SP-2\",\n          \"reason\": \"파티클이나 이물로 인한 국부 이상 여부를 파티클·결함 검사 결과로 점검합니다.\"\n        },\n        {\n          \"cause_id\": \"SP-3\",\n          \"reason\": \"가스 유량의 순간 이상 가능성을 MFC 유량 로그를 통해 확인합니다.\"\n        }\n      ]\n    },\n    {\n      \"event_id\": \"E2\",\n      \"pattern\": \"치우침\",\n      \"rule\": \"12점 연속 중심선 위 (48~59번, 평균 100.95nm)\",\n      \"checks\": [\n        {\n          \"cause_id\": \"SH-1\",\n          \"reason\": \"부품 교체나 PM 후 조건 변화가 있었는지 PM 이력과 치우침 시작 시점을 비교합니다.\"\n        },\n        {\n          \"cause_id\": \"SH-2\",\n          \"reason\": \"원료 가스나 전구체 로트 변경 여부를 원료 로트 변경 이력으로 확인합니다.\"\n        },\n        {\n          \"cause_id\": \"SH-3\",\n          \"reason\": \"레시피 변경이 있었는지 레시피 변경 이력을 점검합니다.\"\n        }\n      ]\n    },\n    {\n      \"event_id\": \"E3\",\n      \"pattern\": \"추세\",\n      \"rule\": \"6점 연속 상승 (76~81번, 98.78→102.37nm)\",\n      \"checks\": [\n        {\n          \"cause_id\": \"TR-1\",\n          \"reason\": \"챔버 벽에 증착물이 누적되어 클리닝 주기가 도래했는지 마지막 클리닝 이후 처리 매수를 확인합니다.\"\n        },\n        {\n          \"cause_id\": \"TR-2\",\n          \"reason\": \"히터나 온도의 점진적 변화를 온도 센서 로그 추이로 점검합니다.\"\n        },\n        {\n          \"cause_id\": \"TR-3\",\n          \"reason\": \"소스 소모 상태(전구체 잔량, 타깃 수명)를 사용량과 교체 시점으로 확인합니다.\"\n        }\n      ]\n    }\n  ],\n  \"priority\": [\"E1\", \"E2\", \"E3\"]\n}",
+     "error": null,
+     "latency_s": 4.67,
+     "usage": {
+      "prompt_tokens": 1442,
+      "completion_tokens": 627
+     },
+     "issues": [],
+     "created": "2026-09-25T23:46:27"
+    },
+    {
+     "run": 2,
+     "text": "{\n  \"summary\": \"증착 막 두께 공정에서 급변, 치우침, 추세의 이상 신호가 발견되었습니다. 각 사건별로 원인 후보를 점검하여 문제를 해결해야 합니다.\",\n  \"events\": [\n    {\n      \"event_id\": \"E1\",\n      \"pattern\": \"급변\",\n      \"rule\": \"관리한계 밖 1점 (45번 103.33nm, UCL 103nm 초과)\",\n      \"checks\": [\n        {\n          \"cause_id\": \"SP-1\",\n          \"reason\": \"계측 오류 가능성이 가장 높으므로 같은 웨이퍼를 재측정하여 확인합니다.\"\n        },\n        {\n          \"cause_id\": \"SP-2\",\n          \"reason\": \"파티클이나 이물에 의한 국부 이상 여부를 파티클·결함 검사 결과로 점검합니다.\"\n        },\n        {\n          \"cause_id\": \"SP-3\",\n          \"reason\": \"가스 유량의 순간 이상 가능성을 MFC 유량 로그를 통해 확인합니다.\"\n        }\n      ]\n    },\n    {\n      \"event_id\": \"E2\",\n      \"pattern\": \"치우침\",\n      \"rule\": \"12점 연속 중심선 위 (48~59번, 평균 100.95nm)\",\n      \"checks\": [\n        {\n          \"cause_id\": \"SH-1\",\n          \"reason\": \"부품 교체나 PM 후 조건 변화가 있었는지 PM 이력과 치우침 시작 시점을 비교합니다.\"\n        },\n        {\n          \"cause_id\": \"SH-2\",\n          \"reason\": \"원료 가스나 전구체 로트 변경 여부를 원료 로트 변경 이력으로 확인합니다.\"\n        },\n        {\n          \"cause_id\": \"SH-3\",\n          \"reason\": \"레시피 변경이 있었는지 레시피 변경 이력을 점검합니다.\"\n        }\n      ]\n    },\n    {\n      \"event_id\": \"E3\",\n      \"pattern\": \"추세\",\n      \"rule\": \"6점 연속 상승 (76~81번, 98.78→102.37nm)\",\n      \"checks\": [\n        {\n          \"cause_id\": \"TR-1\",\n          \"reason\": \"챔버 벽에 증착물이 누적되어 클리닝 주기가 도래했는지 마지막 클리닝 이후 처리 매수를 확인합니다.\"\n        },\n        {\n          \"cause_id\": \"TR-2\",\n          \"reason\": \"히터나 온도의 점진적 변화 가능성을 온도 센서 로그 추이로 점검합니다.\"\n        },\n        {\n          \"cause_id\": \"TR-3\",\n          \"reason\": \"소스 소모 상태(전구체 잔량, 타깃 수명)를 사용량과 교체 시점으로 확인합니다.\"\n        }\n      ]\n    }\n  ],\n  \"priority\": [\"E1\", \"E2\", \"E3\"]\n}",
+     "error": null,
+     "latency_s": 4.93,
+     "usage": {
+      "prompt_tokens": 1442,
+      "completion_tokens": 630
+     },
+     "issues": [],
+     "created": "2026-09-25T23:46:27"
+    }
+   ]
+  },
+  "12": {
+   "input": {
+    "process": {
+     "name": "증착 막 두께",
+     "unit": "nm",
+     "target": 100.0,
+     "ucl": 103.0,
+     "lcl": 97.0
+    },
+    "events": [
+     {
+      "event_id": "E1",
+      "pattern": "치우침",
+      "direction": "아래",
+      "start": 68,
+      "end": 79,
+      "rule": "12점 연속 중심선 아래 (68~79번, 평균 98.35nm)",
+      "mean": 98.35
+     },
+     {
+      "event_id": "E2",
+      "pattern": "치우침",
+      "direction": "아래",
+      "start": 83,
+      "end": 92,
+      "rule": "10점 연속 중심선 아래 (83~92번, 평균 99.25nm)",
+      "mean": 99.25
+     }
+    ],
+    "cause_table": [
+     {
+      "cause_id": "SH-1",
+      "pattern": "치우침",
+      "cause": "부품 교체·PM 후 조건 변화",
+      "check": "PM 이력과 치우침 시작 시점 비교"
+     },
+     {
+      "cause_id": "SH-2",
+      "pattern": "치우침",
+      "cause": "원료 가스·전구체 로트 변경",
+      "check": "원료 로트 변경 이력 확인"
+     },
+     {
+      "cause_id": "SH-3",
+      "pattern": "치우침",
+      "cause": "레시피 변경",
+      "check": "레시피 변경 이력 확인"
+     },
+     {
+      "cause_id": "SH-4",
+      "pattern": "치우침",
+      "cause": "계측기 교정값 변경",
+      "check": "계측기 교정 이력 확인"
+     },
+     {
+      "cause_id": "SH-5",
+      "pattern": "치우침",
+      "cause": "다른 챔버·장비로 전환",
+      "check": "설비 배정 이력 확인"
+     }
+    ]
+   },
+   "input_hash": "d3eae8aafb6f3559",
+   "runs": [
+    {
+     "run": 0,
+     "text": "{\n  \"summary\": \"증착 막 두께 공정에서 두 구간(68~79, 83~92)에서 중심선 아래로 치우침 현상이 발생했습니다. 각각 평균 두께는 98.35nm와 99.25nm로 목표치 100nm보다 낮습니다.\",\n  \"events\": [\n    {\n      \"event_id\": \"E1\",\n      \"pattern\": \"치우침\",\n      \"rule\": \"12점 연속 중심선 아래 (68~79번, 평균 98.35nm)\",\n      \"checks\": [\n        {\n          \"cause_id\": \"SH-1\",\n          \"reason\": \"PM 이력과 치우침 시작 시점을 비교하여 부품 교체나 PM 후 조건 변화를 먼저 점검해야 하기 때문입니다.\"\n        },\n        {\n          \"cause_id\": \"SH-2\",\n          \"reason\": \"원료 가스나 전구체 로트 변경 이력을 확인하여 원료 변경 가능성을 점검합니다.\"\n        },\n        {\n          \"cause_id\": \"SH-3\",\n          \"reason\": \"레시피 변경 이력을 확인하여 공정 조건 변경 여부를 점검합니다.\"\n        }\n      ]\n    },\n    {\n      \"event_id\": \"E2\",\n      \"pattern\": \"치우침\",\n      \"rule\": \"10점 연속 중심선 아래 (83~92번, 평균 99.25nm)\",\n      \"checks\": [\n        {\n          \"cause_id\": \"SH-1\",\n          \"reason\": \"PM 이력과 치우침 시작 시점을 비교하여 부품 교체나 PM 후 조건 변화를 먼저 점검해야 하기 때문입니다.\"\n        },\n        {\n          \"cause_id\": \"SH-2\",\n          \"reason\": \"원료 가스나 전구체 로트 변경 이력을 확인하여 원료 변경 가능성을 점검합니다.\"\n        },\n        {\n          \"cause_id\": \"SH-3\",\n          \"reason\": \"레시피 변경 이력을 확인하여 공정 조건 변경 여부를 점검합니다.\"\n        }\n      ]\n    }\n  ],\n  \"priority\": [\"E1\", \"E2\"]\n}",
+     "error": null,
+     "latency_s": 3.27,
+     "usage": {
+      "prompt_tokens": 784,
+      "completion_tokens": 452
+     },
+     "issues": [],
+     "created": "2026-09-25T23:46:27"
+    },
+    {
+     "run": 1,
+     "text": "{\"summary\": \"증착 막 두께 공정에서 두 구간(68~79, 83~92)에서 중심선 아래로 치우침 현상이 발생했습니다. 각각 평균 두께는 98.35nm와 99.25nm로 목표치 100nm보다 낮습니다.\",\n \"events\": [\n  {\"event_id\": \"E1\", \"pattern\": \"치우침\", \"rule\": \"12점 연속 중심선 아래 (68~79번, 평균 98.35nm)\",\n   \"checks\": [\n    {\"cause_id\": \"SH-1\", \"reason\": \"PM 후 조건 변화가 가장 흔한 원인이므로 먼저 점검합니다.\"},\n    {\"cause_id\": \"SH-2\", \"reason\": \"원료 가스나 전구체 로트 변경이 두께 변화에 영향을 줄 수 있어 다음으로 확인합니다.\"},\n    {\"cause_id\": \"SH-3\", \"reason\": \"레시피 변경 여부도 두께 치우침에 영향을 줄 수 있으므로 점검합니다.\"}\n   ]},\n  {\"event_id\": \"E2\", \"pattern\": \"치우침\", \"rule\": \"10점 연속 중심선 아래 (83~92번, 평균 99.25nm)\",\n   \"checks\": [\n    {\"cause_id\": \"SH-1\", \"reason\": \"PM 후 조건 변화가 가장 흔한 원인이므로 먼저 점검합니다.\"},\n    {\"cause_id\": \"SH-2\", \"reason\": \"원료 가스나 전구체 로트 변경이 두께 변화에 영향을 줄 수 있어 다음으로 확인합니다.\"},\n    {\"cause_id\": \"SH-3\", \"reason\": \"레시피 변경 여부도 두께 치우침에 영향을 줄 수 있으므로 점검합니다.\"}\n   ]}\n ],\n \"priority\": [\"E1\", \"E2\"]}",
+     "error": null,
+     "latency_s": 2.93,
+     "usage": {
+      "prompt_tokens": 784,
+      "completion_tokens": 392
+     },
+     "issues": [],
+     "created": "2026-09-25T23:46:27"
+    },
+    {
+     "run": 2,
+     "text": "{\"summary\": \"증착 막 두께 공정에서 두 구간(68~79, 83~92)에서 중심선 아래로 치우침 현상이 발생했습니다. 각각 평균 두께는 98.35nm와 99.25nm로 목표치 100nm보다 낮습니다.\", \"events\": [{\"event_id\": \"E1\", \"pattern\": \"치우침\", \"rule\": \"12점 연속 중심선 아래 (68~79번, 평균 98.35nm)\", \"checks\": [{\"cause_id\": \"SH-1\", \"reason\": \"PM 후 조건 변화가 가장 흔한 원인이므로 먼저 점검합니다.\"}, {\"cause_id\": \"SH-2\", \"reason\": \"원료 가스나 전구체 로트 변경이 두께 변화에 영향을 줄 수 있어 다음으로 확인합니다.\"}, {\"cause_id\": \"SH-3\", \"reason\": \"레시피 변경 여부를 점검하여 공정 조건 변화를 확인합니다.\"}]}, {\"event_id\": \"E2\", \"pattern\": \"치우침\", \"rule\": \"10점 연속 중심선 아래 (83~92번, 평균 99.25nm)\", \"checks\": [{\"cause_id\": \"SH-1\", \"reason\": \"PM 이력과 치우침 시작 시점을 비교하여 조건 변화를 우선 점검합니다.\"}, {\"cause_id\": \"SH-2\", \"reason\": \"원료 로트 변경 이력을 확인하여 원재료 영향 가능성을 점검합니다.\"}, {\"cause_id\": \"SH-3\", \"reason\": \"레시피 변경 이력을 확인하여 공정 변경 여부를 확인합니다.\"}]}], \"priority\": [\"E1\", \"E2\"]}",
+     "error": null,
+     "latency_s": 3.32,
+     "usage": {
+      "prompt_tokens": 784,
+      "completion_tokens": 366
+     },
+     "issues": [],
+     "created": "2026-09-25T23:46:27"
+    }
+   ]
+  },
+  "13": {
+   "input": {
+    "process": {
+     "name": "증착 막 두께",
+     "unit": "nm",
+     "target": 100.0,
+     "ucl": 103.0,
+     "lcl": 97.0
+    },
+    "events": [
+     {
+      "event_id": "E1",
+      "pattern": "치우침",
+      "direction": "아래",
+      "start": 60,
+      "end": 71,
+      "rule": "12점 연속 중심선 아래 (60~71번, 평균 99.02nm)",
+      "mean": 99.02
+     },
+     {
+      "event_id": "E2",
+      "pattern": "추세",
+      "direction": "상승",
+      "start": 87,
+      "end": 92,
+      "rule": "6점 연속 상승 (87~92번, 97.47→101.01nm)",
+      "first_value": 97.47,
+      "last_value": 101.01
+     }
+    ],
+    "cause_table": [
+     {
+      "cause_id": "TR-1",
+      "pattern": "추세",
+      "cause": "챔버 벽 증착물 누적 (클리닝 주기 도래)",
+      "check": "마지막 챔버 클리닝 이후 처리 매수 확인"
+     },
+     {
+      "cause_id": "TR-2",
+      "pattern": "추세",
+      "cause": "히터·온도의 점진적 변화",
+      "check": "온도 센서 로그 추이 확인"
+     },
+     {
+      "cause_id": "TR-3",
+      "pattern": "추세",
+      "cause": "소스 소모 (전구체 잔량, 타깃 수명)",
+      "check": "소모품 사용량과 교체 시점 확인"
+     },
+     {
+      "cause_id": "TR-4",
+      "pattern": "추세",
+      "cause": "펌프 성능 저하로 인한 압력 변화",
+      "check": "챔버 압력 로그 추이 확인"
+     },
+     {
+      "cause_id": "TR-5",
+      "pattern": "추세",
+      "cause": "계측기 드리프트",
+      "check": "표준 시편으로 계측기 점검"
+     },
+     {
+      "cause_id": "SH-1",
+      "pattern": "치우침",
+      "cause": "부품 교체·PM 후 조건 변화",
+      "check": "PM 이력과 치우침 시작 시점 비교"
+     },
+     {
+      "cause_id": "SH-2",
+      "pattern": "치우침",
+      "cause": "원료 가스·전구체 로트 변경",
+      "check": "원료 로트 변경 이력 확인"
+     },
+     {
+      "cause_id": "SH-3",
+      "pattern": "치우침",
+      "cause": "레시피 변경",
+      "check": "레시피 변경 이력 확인"
+     },
+     {
+      "cause_id": "SH-4",
+      "pattern": "치우침",
+      "cause": "계측기 교정값 변경",
+      "check": "계측기 교정 이력 확인"
+     },
+     {
+      "cause_id": "SH-5",
+      "pattern": "치우침",
+      "cause": "다른 챔버·장비로 전환",
+      "check": "설비 배정 이력 확인"
+     }
+    ]
+   },
+   "input_hash": "043766e00fa23010",
+   "runs": [
+    {
+     "run": 0,
+     "text": "{\"summary\": \"증착 막 두께 공정에서 두 가지 이상 징후가 발견되었습니다. 60~71번 구간에서 중심선 아래로 치우침이 나타났고, 87~92번 구간에서는 두께가 상승하는 추세가 관찰되었습니다.\", \"events\": [{\"event_id\": \"E1\", \"pattern\": \"치우침\", \"rule\": \"12점 연속 중심선 아래 (60~71번, 평균 99.02nm)\", \"checks\": [{\"cause_id\": \"SH-1\", \"reason\": \"PM 이력과 치우침 시작 시점을 비교하여 부품 교체나 PM 후 조건 변화를 먼저 점검합니다.\"}, {\"cause_id\": \"SH-2\", \"reason\": \"원료 가스나 전구체 로트 변경 이력을 확인하여 원료 변경 여부를 점검합니다.\"}, {\"cause_id\": \"SH-3\", \"reason\": \"레시피 변경 이력을 확인하여 공정 조건 변화를 점검합니다.\"}]}, {\"event_id\": \"E2\", \"pattern\": \"추세\", \"rule\": \"6점 연속 상승 (87~92번, 97.47→101.01nm)\", \"checks\": [{\"cause_id\": \"TR-1\", \"reason\": \"챔버 벽 증착물 누적 여부를 마지막 클리닝 이후 처리 매수로 먼저 점검합니다.\"}, {\"cause_id\": \"TR-2\", \"reason\": \"히터 및 온도의 점진적 변화를 온도 센서 로그 추이로 확인합니다.\"}, {\"cause_id\": \"TR-3\", \"reason\": \"소스 소모 상태를 전구체 잔량과 타깃 수명으로 점검합니다.\"}]}], \"priority\": [\"E1\", \"E2\"]}",
+     "error": null,
+     "latency_s": 3.04,
+     "usage": {
+      "prompt_tokens": 1079,
+      "completion_tokens": 388
+     },
+     "issues": [],
+     "created": "2026-09-25T23:46:27"
+    },
+    {
+     "run": 1,
+     "text": "{\"summary\": \"증착 막 두께 공정에서 두 가지 이상 징후가 발견되었습니다. 60~71번에서 중심선 아래로 치우침이 나타났고, 87~92번 구간에서는 두께가 연속 상승하는 추세가 관찰되었습니다.\", \"events\": [{\"event_id\": \"E1\", \"pattern\": \"치우침\", \"rule\": \"12점 연속 중심선 아래 (60~71번, 평균 99.02nm)\", \"checks\": [{\"cause_id\": \"SH-1\", \"reason\": \"PM 이력과 치우침 시작 시점을 비교하여 부품 교체나 PM 후 조건 변화를 먼저 확인합니다.\"}, {\"cause_id\": \"SH-2\", \"reason\": \"원료 가스나 전구체 로트 변경 이력을 확인하여 원료 변경 여부를 점검합니다.\"}, {\"cause_id\": \"SH-3\", \"reason\": \"레시피 변경 이력을 확인하여 공정 조건 변화를 점검합니다.\"}]}, {\"event_id\": \"E2\", \"pattern\": \"추세\", \"rule\": \"6점 연속 상승 (87~92번, 97.47→101.01nm)\", \"checks\": [{\"cause_id\": \"TR-1\", \"reason\": \"챔버 벽 증착물 누적 여부를 마지막 클리닝 이후 처리 매수로 먼저 확인합니다.\"}, {\"cause_id\": \"TR-2\", \"reason\": \"히터 및 온도 센서 로그를 확인하여 온도 변화 여부를 점검합니다.\"}, {\"cause_id\": \"TR-3\", \"reason\": \"소스 소모 상태와 교체 시점을 확인하여 전구체 잔량을 점검합니다.\"}]}], \"priority\": [\"E1\", \"E2\"]}",
+     "error": null,
+     "latency_s": 3.07,
+     "usage": {
+      "prompt_tokens": 1079,
+      "completion_tokens": 385
+     },
+     "issues": [],
+     "created": "2026-09-25T23:46:27"
+    },
+    {
+     "run": 2,
+     "text": "{\"summary\": \"증착 막 두께 공정에서 두 가지 이상 징후가 발견되었습니다. 60~71번에서 중심선 아래로 치우침이 나타났고, 87~92번 구간에서는 두께가 연속 상승하는 추세가 관찰되었습니다.\",\n \"events\": [\n  {\"event_id\": \"E1\", \"pattern\": \"치우침\", \"rule\": \"12점 연속 중심선 아래 (60~71번, 평균 99.02nm)\",\n   \"checks\": [\n    {\"cause_id\": \"SH-1\", \"reason\": \"PM 이력과 치우침 시작 시점을 비교하여 부품 교체나 PM 후 조건 변화를 먼저 점검해야 합니다.\"},\n    {\"cause_id\": \"SH-2\", \"reason\": \"원료 가스나 전구체 로트 변경 이력을 확인하여 원료 변경 가능성을 점검합니다.\"},\n    {\"cause_id\": \"SH-3\", \"reason\": \"레시피 변경 이력을 확인하여 공정 조건 변경 여부를 점검합니다.\"}\n   ]},\n  {\"event_id\": \"E2\", \"pattern\": \"추세\", \"rule\": \"6점 연속 상승 (87~92번, 97.47→101.01nm)\",\n   \"checks\": [\n    {\"cause_id\": \"TR-1\", \"reason\": \"챔버 벽 증착물 누적 여부와 클리닝 주기 도래를 확인하여 청소 필요성을 먼저 점검합니다.\"},\n    {\"cause_id\": \"TR-2\", \"reason\": \"히터 및 온도 센서 로그 추이를 확인하여 온도 변화 가능성을 점검합니다.\"},\n    {\"cause_id\": \"TR-3\", \"reason\": \"소스 소모 상태와 교체 시점을 확인하여 전구체 잔량 문제를 점검합니다.\"}\n   ]}\n ],\n \"priority\": [\"E1\", \"E2\"]}",
+     "error": null,
+     "latency_s": 3.23,
+     "usage": {
+      "prompt_tokens": 1079,
+      "completion_tokens": 412
+     },
+     "issues": [],
+     "created": "2026-09-25T23:46:27"
+    }
+   ]
+  },
+  "14": {
+   "input": {
+    "process": {
+     "name": "증착 막 두께",
+     "unit": "nm",
+     "target": 100.0,
+     "ucl": 103.0,
+     "lcl": 97.0
+    },
+    "events": [
+     {
+      "event_id": "E1",
+      "pattern": "추세",
+      "direction": "하강",
+      "start": 45,
+      "end": 52,
+      "rule": "8점 연속 하강 (45~52번, 101.19→97.92nm)",
+      "first_value": 101.19,
+      "last_value": 97.92
+     },
+     {
+      "event_id": "E2",
+      "pattern": "급변",
+      "direction": "아래",
+      "start": 93,
+      "end": 93,
+      "rule": "관리한계 밖 1점 (93번 95.51nm, LCL 97nm 미만)",
+      "values": [
+       95.51
+      ]
+     }
+    ],
+    "cause_table": [
+     {
+      "cause_id": "SP-1",
+      "pattern": "급변",
+      "cause": "계측 오류 (측정 위치 오정렬, 계측기 순간 오류)",
+      "check": "같은 웨이퍼 재측정"
+     },
+     {
+      "cause_id": "SP-2",
+      "pattern": "급변",
+      "cause": "파티클·이물로 인한 국부 이상",
+      "check": "파티클·결함 검사 결과 확인"
+     },
+     {
+      "cause_id": "SP-3",
+      "pattern": "급변",
+      "cause": "가스 유량 순간 이상 (MFC 스파이크)",
+      "check": "해당 런의 MFC 유량 로그 확인"
+     },
+     {
+      "cause_id": "SP-4",
+      "pattern": "급변",
+      "cause": "웨이퍼 로딩·척(chuck) 이상",
+      "check": "로딩 로그와 척 상태 확인"
+     },
+     {
+      "cause_id": "SP-5",
+      "pattern": "급변",
+      "cause": "레시피·작업 입력 오류",
+      "check": "해당 런의 레시피·작업 이력 확인"
+     },
+     {
+      "cause_id": "TR-1",
+      "pattern": "추세",
+      "cause": "챔버 벽 증착물 누적 (클리닝 주기 도래)",
+      "check": "마지막 챔버 클리닝 이후 처리 매수 확인"
+     },
+     {
+      "cause_id": "TR-2",
+      "pattern": "추세",
+      "cause": "히터·온도의 점진적 변화",
+      "check": "온도 센서 로그 추이 확인"
+     },
+     {
+      "cause_id": "TR-3",
+      "pattern": "추세",
+      "cause": "소스 소모 (전구체 잔량, 타깃 수명)",
+      "check": "소모품 사용량과 교체 시점 확인"
+     },
+     {
+      "cause_id": "TR-4",
+      "pattern": "추세",
+      "cause": "펌프 성능 저하로 인한 압력 변화",
+      "check": "챔버 압력 로그 추이 확인"
+     },
+     {
+      "cause_id": "TR-5",
+      "pattern": "추세",
+      "cause": "계측기 드리프트",
+      "check": "표준 시편으로 계측기 점검"
+     }
+    ]
+   },
+   "input_hash": "2321c9416938ca87",
+   "runs": [
+    {
+     "run": 0,
+     "text": "{\n  \"summary\": \"증착 막 두께 공정에서 45~52번 구간에 8점 연속 하강하는 추세가 관찰되었고, 93번에서 관리한계 아래 급변이 발생했습니다. 각각의 원인에 대해 우선순위에 따라 점검이 필요합니다.\",\n  \"events\": [\n    {\n      \"event_id\": \"E1\",\n      \"pattern\": \"추세\",\n      \"rule\": \"8점 연속 하강 (45~52번, 101.19→97.92nm)\",\n      \"checks\": [\n        {\n          \"cause_id\": \"TR-1\",\n          \"reason\": \"챔버 벽 증착물 누적으로 인한 점진적 두께 감소 가능성이 가장 흔하므로 먼저 확인합니다.\"\n        },\n        {\n          \"cause_id\": \"TR-2\",\n          \"reason\": \"히터나 온도의 점진적 변화가 증착 두께에 영향을 줄 수 있어 다음으로 점검합니다.\"\n        },\n        {\n          \"cause_id\": \"TR-3\",\n          \"reason\": \"소스 소모로 인한 증착량 감소 가능성도 고려하여 확인합니다.\"\n        }\n      ]\n    },\n    {\n      \"event_id\": \"E2\",\n      \"pattern\": \"급변\",\n      \"rule\": \"관리한계 밖 1점 (93번 95.51nm, LCL 97nm 미만)\",\n      \"checks\": [\n        {\n          \"cause_id\": \"SP-1\",\n          \"reason\": \"계측 오류 가능성이 가장 흔하므로 같은 웨이퍼 재측정을 먼저 수행합니다.\"\n        },\n        {\n          \"cause_id\": \"SP-2\",\n          \"reason\": \"파티클이나 이물에 의한 국부 이상 여부를 파티클 검사 결과로 확인합니다.\"\n        },\n        {\n          \"cause_id\": \"SP-3\",\n          \"reason\": \"가스 유량의 순간 이상 가능성을 MFC 유량 로그로 점검합니다.\"\n        }\n      ]\n    }\n  ],\n  \"priority\": [\"E1\", \"E2\"]\n}",
+     "error": null,
+     "latency_s": 3.65,
+     "usage": {
+      "prompt_tokens": 1109,
+      "completion_tokens": 452
+     },
+     "issues": [],
+     "created": "2026-09-25T23:46:27"
+    },
+    {
+     "run": 1,
+     "text": "{\n  \"summary\": \"증착 막 두께 공정에서 45~52번 구간에 8점 연속 하강하는 추세와 93번에서 관리한계 아래로 급변하는 이상이 발견되었습니다. 각각의 원인에 대해 우선순위에 따라 점검이 필요합니다.\",\n  \"events\": [\n    {\n      \"event_id\": \"E1\",\n      \"pattern\": \"추세\",\n      \"rule\": \"8점 연속 하강 (45~52번, 101.19→97.92nm)\",\n      \"checks\": [\n        {\n          \"cause_id\": \"TR-1\",\n          \"reason\": \"챔버 벽 증착물 누적으로 인한 점진적 두께 감소 가능성이 가장 흔하므로 먼저 확인합니다.\"\n        },\n        {\n          \"cause_id\": \"TR-2\",\n          \"reason\": \"히터나 온도의 점진적 변화가 증착 두께에 영향을 줄 수 있어 다음으로 점검합니다.\"\n        },\n        {\n          \"cause_id\": \"TR-3\",\n          \"reason\": \"소스 소모로 인한 증착량 감소 가능성도 고려하여 확인합니다.\"\n        }\n      ]\n    },\n    {\n      \"event_id\": \"E2\",\n      \"pattern\": \"급변\",\n      \"rule\": \"관리한계 밖 1점 (93번 95.51nm, LCL 97nm 미만)\",\n      \"checks\": [\n        {\n          \"cause_id\": \"SP-1\",\n          \"reason\": \"계측 오류 가능성이 가장 흔하므로 같은 웨이퍼 재측정을 먼저 수행합니다.\"\n        },\n        {\n          \"cause_id\": \"SP-2\",\n          \"reason\": \"파티클이나 이물에 의한 국부 이상 여부를 파티클 검사 결과로 확인합니다.\"\n        },\n        {\n          \"cause_id\": \"SP-3\",\n          \"reason\": \"가스 유량의 순간 이상(MFC 스파이크) 가능성도 점검합니다.\"\n        }\n      ]\n    }\n  ],\n  \"priority\": [\"E1\", \"E2\"]\n}",
+     "error": null,
+     "latency_s": 3.6,
+     "usage": {
+      "prompt_tokens": 1109,
+      "completion_tokens": 450
+     },
+     "issues": [],
+     "created": "2026-09-25T23:46:27"
+    },
+    {
+     "run": 2,
+     "text": "{\n  \"summary\": \"증착 막 두께 공정에서 45~52번 구간에 8점 연속 하강하는 추세가 관찰되었고, 93번에서 관리한계 아래 급변이 발생했습니다. 각각의 원인에 대해 우선순위에 따라 점검이 필요합니다.\",\n  \"events\": [\n    {\n      \"event_id\": \"E1\",\n      \"pattern\": \"추세\",\n      \"rule\": \"8점 연속 하강 (45~52번, 101.19→97.92nm)\",\n      \"checks\": [\n        {\n          \"cause_id\": \"TR-1\",\n          \"reason\": \"챔버 벽 증착물 누적으로 인한 점진적 두께 감소 가능성이 가장 흔하므로 먼저 확인합니다.\"\n        },\n        {\n          \"cause_id\": \"TR-2\",\n          \"reason\": \"히터나 온도의 점진적 변화가 증착 두께에 영향을 줄 수 있어 다음으로 점검합니다.\"\n        },\n        {\n          \"cause_id\": \"TR-3\",\n          \"reason\": \"소스 소모로 인한 증착량 감소 가능성도 고려하여 확인합니다.\"\n        }\n      ]\n    },\n    {\n      \"event_id\": \"E2\",\n      \"pattern\": \"급변\",\n      \"rule\": \"관리한계 밖 1점 (93번 95.51nm, LCL 97nm 미만)\",\n      \"checks\": [\n        {\n          \"cause_id\": \"SP-1\",\n          \"reason\": \"계측 오류 가능성이 가장 흔하므로 같은 웨이퍼 재측정을 먼저 수행합니다.\"\n        },\n        {\n          \"cause_id\": \"SP-2\",\n          \"reason\": \"파티클이나 이물에 의한 국부 이상 여부를 파티클 검사 결과로 확인합니다.\"\n        },\n        {\n          \"cause_id\": \"SP-3\",\n          \"reason\": \"가스 유량의 순간 이상 가능성을 MFC 유량 로그로 점검합니다.\"\n        }\n      ]\n    }\n  ],\n  \"priority\": [\"E1\", \"E2\"]\n}",
+     "error": null,
+     "latency_s": 3.58,
+     "usage": {
+      "prompt_tokens": 1109,
+      "completion_tokens": 452
+     },
+     "issues": [],
+     "created": "2026-09-25T23:46:27"
+    }
+   ]
+  },
+  "15": {
+   "input": {
+    "process": {
+     "name": "증착 막 두께",
+     "unit": "nm",
+     "target": 100.0,
+     "ucl": 103.0,
+     "lcl": 97.0
+    },
+    "events": [
+     {
+      "event_id": "E1",
+      "pattern": "추세",
+      "direction": "상승",
+      "start": 28,
+      "end": 35,
+      "rule": "8점 연속 상승 (28~35번, 98.92→102.01nm)",
+      "first_value": 98.92,
+      "last_value": 102.01
+     },
+     {
+      "event_id": "E2",
+      "pattern": "급변",
+      "direction": "위",
+      "start": 54,
+      "end": 54,
+      "rule": "관리한계 밖 1점 (54번 104.44nm, UCL 103nm 초과)",
+      "values": [
+       104.44
+      ]
+     }
+    ],
+    "cause_table": [
+     {
+      "cause_id": "SP-1",
+      "pattern": "급변",
+      "cause": "계측 오류 (측정 위치 오정렬, 계측기 순간 오류)",
+      "check": "같은 웨이퍼 재측정"
+     },
+     {
+      "cause_id": "SP-2",
+      "pattern": "급변",
+      "cause": "파티클·이물로 인한 국부 이상",
+      "check": "파티클·결함 검사 결과 확인"
+     },
+     {
+      "cause_id": "SP-3",
+      "pattern": "급변",
+      "cause": "가스 유량 순간 이상 (MFC 스파이크)",
+      "check": "해당 런의 MFC 유량 로그 확인"
+     },
+     {
+      "cause_id": "SP-4",
+      "pattern": "급변",
+      "cause": "웨이퍼 로딩·척(chuck) 이상",
+      "check": "로딩 로그와 척 상태 확인"
+     },
+     {
+      "cause_id": "SP-5",
+      "pattern": "급변",
+      "cause": "레시피·작업 입력 오류",
+      "check": "해당 런의 레시피·작업 이력 확인"
+     },
+     {
+      "cause_id": "TR-1",
+      "pattern": "추세",
+      "cause": "챔버 벽 증착물 누적 (클리닝 주기 도래)",
+      "check": "마지막 챔버 클리닝 이후 처리 매수 확인"
+     },
+     {
+      "cause_id": "TR-2",
+      "pattern": "추세",
+      "cause": "히터·온도의 점진적 변화",
+      "check": "온도 센서 로그 추이 확인"
+     },
+     {
+      "cause_id": "TR-3",
+      "pattern": "추세",
+      "cause": "소스 소모 (전구체 잔량, 타깃 수명)",
+      "check": "소모품 사용량과 교체 시점 확인"
+     },
+     {
+      "cause_id": "TR-4",
+      "pattern": "추세",
+      "cause": "펌프 성능 저하로 인한 압력 변화",
+      "check": "챔버 압력 로그 추이 확인"
+     },
+     {
+      "cause_id": "TR-5",
+      "pattern": "추세",
+      "cause": "계측기 드리프트",
+      "check": "표준 시편으로 계측기 점검"
+     }
+    ]
+   },
+   "input_hash": "6353385750d73bf0",
+   "runs": [
+    {
+     "run": 0,
+     "text": "{\"summary\": \"증착 막 두께 공정에서 28~35번 구간에 8점 연속 상승하는 추세와 54번에서 관리한계 밖 급변이 발생했습니다. 각 사건별로 원인 후보를 점검하여 문제를 해결해야 합니다.\",\n \"events\": [\n  {\"event_id\": \"E1\", \"pattern\": \"추세\", \"rule\": \"8점 연속 상승 (28~35번, 98.92→102.01nm)\",\n   \"checks\": [\n    {\"cause_id\": \"TR-1\", \"reason\": \"챔버 벽 증착물 누적은 점진적 두께 상승의 대표적 원인이므로 먼저 점검합니다.\"},\n    {\"cause_id\": \"TR-2\", \"reason\": \"히터·온도의 점진적 변화가 증착 두께에 영향을 줄 수 있어 다음으로 확인합니다.\"},\n    {\"cause_id\": \"TR-3\", \"reason\": \"소스 소모에 따른 변화 가능성도 점검 대상입니다.\"}\n   ]},\n  {\"event_id\": \"E2\", \"pattern\": \"급변\", \"rule\": \"관리한계 밖 1점 (54번 104.44nm, UCL 103nm 초과)\",\n   \"checks\": [\n    {\"cause_id\": \"SP-1\", \"reason\": \"계측 오류가 급변 원인 중 가장 흔하므로 먼저 같은 웨이퍼 재측정을 권장합니다.\"},\n    {\"cause_id\": \"SP-2\", \"reason\": \"파티클·이물로 인한 국부 이상 가능성을 파티클 검사 결과로 확인합니다.\"},\n    {\"cause_id\": \"SP-3\", \"reason\": \"가스 유량 순간 이상(MFC 스파이크)도 급변 원인으로 MFC 로그를 점검합니다.\"}\n   ]}\n ],\n \"priority\": [\"E1\", \"E2\"]}",
+     "error": null,
+     "latency_s": 3.49,
+     "usage": {
+      "prompt_tokens": 1107,
+      "completion_tokens": 410
+     },
+     "issues": [],
+     "created": "2026-09-25T23:46:27"
+    },
+    {
+     "run": 1,
+     "text": "{\"summary\": \"증착 막 두께에서 28~35번 구간에 8점 연속 상승하는 추세와 54번에서 관리한계 초과 급변이 발생했습니다. 각 사건별로 원인을 점검하여 문제를 해결해야 합니다.\",\"events\":[{\"event_id\":\"E1\",\"pattern\":\"추세\",\"rule\":\"8점 연속 상승 (28~35번, 98.92→102.01nm)\",\"checks\":[{\"cause_id\":\"TR-1\",\"reason\":\"챔버 벽 증착물 누적으로 클리닝 주기 도래 여부를 먼저 확인하여 원인 가능성을 점검하기 때문입니다.\"},{\"cause_id\":\"TR-2\",\"reason\":\"히터·온도의 점진적 변화를 확인하여 온도 이상 여부를 점검하기 때문입니다.\"},{\"cause_id\":\"TR-3\",\"reason\":\"소스 소모 상태를 점검하여 전구체 잔량과 타깃 수명을 확인하기 때문입니다.\"}]},{\"event_id\":\"E2\",\"pattern\":\"급변\",\"rule\":\"관리한계 밖 1점 (54번 104.44nm, UCL 103nm 초과)\",\"checks\":[{\"cause_id\":\"SP-1\",\"reason\":\"계측 오류 가능성을 먼저 배제하기 위해 같은 웨이퍼 재측정을 확인하기 때문입니다.\"},{\"cause_id\":\"SP-2\",\"reason\":\"파티클·이물로 인한 국부 이상 여부를 파티클·결함 검사 결과로 점검하기 때문입니다.\"},{\"cause_id\":\"SP-3\",\"reason\":\"가스 유량 순간 이상 가능성을 MFC 유량 로그로 확인하기 때문입니다.\"}]}],\"priority\":[\"E1\",\"E2\"]}",
+     "error": null,
+     "latency_s": 3.31,
+     "usage": {
+      "prompt_tokens": 1107,
+      "completion_tokens": 364
+     },
+     "issues": [],
+     "created": "2026-09-25T23:46:27"
+    },
+    {
+     "run": 2,
+     "text": "{\"summary\": \"증착 막 두께 공정에서 28~35번 구간에 8점 연속 상승하는 추세와 54번에서 관리한계 밖 급변이 발생했습니다. 각 사건별로 원인을 점검하여 문제를 해결해야 합니다.\",\n \"events\": [\n  {\"event_id\": \"E1\", \"pattern\": \"추세\", \"rule\": \"8점 연속 상승 (28~35번, 98.92→102.01nm)\",\n   \"checks\": [\n    {\"cause_id\": \"TR-1\", \"reason\": \"챔버 벽 증착물 누적은 점진적 두께 상승의 대표적 원인이므로 먼저 점검합니다.\"},\n    {\"cause_id\": \"TR-2\", \"reason\": \"히터·온도의 점진적 변화가 증착 두께에 영향을 줄 수 있어 다음으로 확인합니다.\"},\n    {\"cause_id\": \"TR-3\", \"reason\": \"소스 소모에 따른 변화 가능성을 점검합니다.\"}\n   ]},\n  {\"event_id\": \"E2\", \"pattern\": \"급변\", \"rule\": \"관리한계 밖 1점 (54번 104.44nm, UCL 103nm 초과)\",\n   \"checks\": [\n    {\"cause_id\": \"SP-1\", \"reason\": \"계측 오류 가능성이 가장 흔하므로 같은 웨이퍼 재측정을 먼저 합니다.\"},\n    {\"cause_id\": \"SP-2\", \"reason\": \"파티클·이물로 인한 국부 이상 여부를 파티클 검사 결과로 확인합니다.\"},\n    {\"cause_id\": \"SP-3\", \"reason\": \"가스 유량 순간 이상(MFC 스파이크) 로그를 점검합니다.\"}\n   ]}\n ],\n \"priority\": [\"E1\", \"E2\"]}",
+     "error": null,
+     "latency_s": 3.26,
+     "usage": {
+      "prompt_tokens": 1107,
+      "completion_tokens": 392
+     },
+     "issues": [],
+     "created": "2026-09-25T23:46:27"
+    }
+   ]
+  },
+  "16": {
+   "input": {
+    "process": {
+     "name": "증착 막 두께",
+     "unit": "nm",
+     "target": 100.0,
+     "ucl": 103.0,
+     "lcl": 97.0
+    },
+    "events": [
+     {
+      "event_id": "E1",
+      "pattern": "급변",
+      "direction": "위",
+      "start": 31,
+      "end": 31,
+      "rule": "관리한계 밖 1점 (31번 103.75nm, UCL 103nm 초과)",
+      "values": [
+       103.75
+      ]
+     },
+     {
+      "event_id": "E2",
+      "pattern": "치우침",
+      "direction": "아래",
+      "start": 89,
+      "end": 99,
+      "rule": "11점 연속 중심선 아래 (89~99번, 평균 98.72nm)",
+      "mean": 98.72
+     }
+    ],
+    "cause_table": [
+     {
+      "cause_id": "SP-1",
+      "pattern": "급변",
+      "cause": "계측 오류 (측정 위치 오정렬, 계측기 순간 오류)",
+      "check": "같은 웨이퍼 재측정"
+     },
+     {
+      "cause_id": "SP-2",
+      "pattern": "급변",
+      "cause": "파티클·이물로 인한 국부 이상",
+      "check": "파티클·결함 검사 결과 확인"
+     },
+     {
+      "cause_id": "SP-3",
+      "pattern": "급변",
+      "cause": "가스 유량 순간 이상 (MFC 스파이크)",
+      "check": "해당 런의 MFC 유량 로그 확인"
+     },
+     {
+      "cause_id": "SP-4",
+      "pattern": "급변",
+      "cause": "웨이퍼 로딩·척(chuck) 이상",
+      "check": "로딩 로그와 척 상태 확인"
+     },
+     {
+      "cause_id": "SP-5",
+      "pattern": "급변",
+      "cause": "레시피·작업 입력 오류",
+      "check": "해당 런의 레시피·작업 이력 확인"
+     },
+     {
+      "cause_id": "SH-1",
+      "pattern": "치우침",
+      "cause": "부품 교체·PM 후 조건 변화",
+      "check": "PM 이력과 치우침 시작 시점 비교"
+     },
+     {
+      "cause_id": "SH-2",
+      "pattern": "치우침",
+      "cause": "원료 가스·전구체 로트 변경",
+      "check": "원료 로트 변경 이력 확인"
+     },
+     {
+      "cause_id": "SH-3",
+      "pattern": "치우침",
+      "cause": "레시피 변경",
+      "check": "레시피 변경 이력 확인"
+     },
+     {
+      "cause_id": "SH-4",
+      "pattern": "치우침",
+      "cause": "계측기 교정값 변경",
+      "check": "계측기 교정 이력 확인"
+     },
+     {
+      "cause_id": "SH-5",
+      "pattern": "치우침",
+      "cause": "다른 챔버·장비로 전환",
+      "check": "설비 배정 이력 확인"
+     }
+    ]
+   },
+   "input_hash": "a106fd374dc2a9c5",
+   "runs": [
+    {
+     "run": 0,
+     "text": "{\"summary\": \"증착 막 두께 공정에서 급변과 치우침 두 가지 이상 징후가 발견되었습니다. 각각의 원인 후보를 점검하여 문제를 해결해야 합니다.\",\n \"events\": [\n  {\"event_id\": \"E1\", \"pattern\": \"급변\", \"rule\": \"관리한계 밖 1점 (31번 103.75nm, UCL 103nm 초과)\",\n   \"checks\": [\n    {\"cause_id\": \"SP-1\", \"reason\": \"계측 오류 가능성이 가장 높으므로 같은 웨이퍼 재측정을 먼저 확인합니다.\"},\n    {\"cause_id\": \"SP-2\", \"reason\": \"파티클이나 이물에 의한 국부 이상 여부를 파티클·결함 검사 결과로 점검합니다.\"},\n    {\"cause_id\": \"SP-3\", \"reason\": \"가스 유량의 순간 이상 가능성을 MFC 유량 로그로 확인합니다.\"}\n   ]},\n  {\"event_id\": \"E2\", \"pattern\": \"치우침\", \"rule\": \"11점 연속 중심선 아래 (89~99번, 평균 98.72nm)\",\n   \"checks\": [\n    {\"cause_id\": \"SH-1\", \"reason\": \"부품 교체나 PM 후 조건 변화를 PM 이력과 치우침 시작 시점으로 먼저 점검합니다.\"},\n    {\"cause_id\": \"SH-2\", \"reason\": \"원료 가스나 전구체 로트 변경 여부를 원료 로트 변경 이력으로 확인합니다.\"},\n    {\"cause_id\": \"SH-3\", \"reason\": \"레시피 변경 이력을 확인하여 공정 조건 변화를 점검합니다.\"}\n   ]}\n ],\n \"priority\": [\"E1\", \"E2\"]}",
+     "error": null,
+     "latency_s": 3.23,
+     "usage": {
+      "prompt_tokens": 1070,
+      "completion_tokens": 383
+     },
+     "issues": [],
+     "created": "2026-09-25T23:46:27"
+    },
+    {
+     "run": 1,
+     "text": "{\n  \"summary\": \"증착 막 두께 공정에서 급변과 치우침 두 가지 이상이 발견되었습니다. 각각의 원인 후보를 점검하여 문제를 해결해야 합니다.\",\n  \"events\": [\n    {\n      \"event_id\": \"E1\",\n      \"pattern\": \"급변\",\n      \"rule\": \"관리한계 밖 1점 (31번 103.75nm, UCL 103nm 초과)\",\n      \"checks\": [\n        {\n          \"cause_id\": \"SP-1\",\n          \"reason\": \"계측 오류 가능성이 높으므로 같은 웨이퍼를 재측정하여 확인하는 것이 우선입니다.\"\n        },\n        {\n          \"cause_id\": \"SP-2\",\n          \"reason\": \"파티클이나 이물로 인한 국부 이상 여부를 파티클·결함 검사 결과로 점검해야 합니다.\"\n        },\n        {\n          \"cause_id\": \"SP-3\",\n          \"reason\": \"가스 유량의 순간 이상 가능성을 MFC 유량 로그를 통해 확인하는 것이 중요합니다.\"\n        }\n      ]\n    },\n    {\n      \"event_id\": \"E2\",\n      \"pattern\": \"치우침\",\n      \"rule\": \"11점 연속 중심선 아래 (89~99번, 평균 98.72nm)\",\n      \"checks\": [\n        {\n          \"cause_id\": \"SH-1\",\n          \"reason\": \"부품 교체나 PM 후 조건 변화를 PM 이력과 치우침 시작 시점을 비교하여 먼저 점검해야 합니다.\"\n        },\n        {\n          \"cause_id\": \"SH-2\",\n          \"reason\": \"원료 가스나 전구체 로트 변경 이력을 확인하여 원인 가능성을 점검합니다.\"\n        },\n        {\n          \"cause_id\": \"SH-3\",\n          \"reason\": \"레시피 변경 이력이 있는지 확인하여 공정 조건 변화를 점검합니다.\"\n        }\n      ]\n    }\n  ],\n  \"priority\": [\"E1\", \"E2\"]\n}",
+     "error": null,
+     "latency_s": 3.46,
+     "usage": {
+      "prompt_tokens": 1070,
+      "completion_tokens": 432
+     },
+     "issues": [],
+     "created": "2026-09-25T23:46:27"
+    },
+    {
+     "run": 2,
+     "text": "{\"summary\": \"증착 막 두께 공정에서 31번째 측정값이 관리한계 상한을 초과하는 급변 현상과 89~99번째 구간에서 중심선 아래로 치우친 현상이 발견되었습니다. 각각의 원인 후보를 점검하여 문제를 해결해야 합니다.\", \"events\": [{\"event_id\": \"E1\", \"pattern\": \"급변\", \"rule\": \"관리한계 밖 1점 (31번 103.75nm, UCL 103nm 초과)\", \"checks\": [{\"cause_id\": \"SP-1\", \"reason\": \"계측 오류 가능성이 가장 흔하므로 먼저 같은 웨이퍼를 재측정하여 확인합니다.\"}, {\"cause_id\": \"SP-2\", \"reason\": \"파티클이나 이물로 인한 국부 이상 여부를 파티클·결함 검사 결과로 점검합니다.\"}, {\"cause_id\": \"SP-3\", \"reason\": \"가스 유량의 순간 이상 가능성을 MFC 유량 로그를 통해 확인합니다.\"}]}, {\"event_id\": \"E2\", \"pattern\": \"치우침\", \"rule\": \"11점 연속 중심선 아래 (89~99번, 평균 98.72nm)\", \"checks\": [{\"cause_id\": \"SH-1\", \"reason\": \"부품 교체나 PM 후 조건 변화를 PM 이력과 치우침 시작 시점 비교로 먼저 점검합니다.\"}, {\"cause_id\": \"SH-2\", \"reason\": \"원료 가스나 전구체 로트 변경 여부를 원료 로트 변경 이력으로 확인합니다.\"}, {\"cause_id\": \"SH-3\", \"reason\": \"레시피 변경 이력이 있는지 확인하여 공정 조건 변화를 점검합니다.\"}]}], \"priority\": [\"E1\", \"E2\"]}",
+     "error": null,
+     "latency_s": 3.2,
+     "usage": {
+      "prompt_tokens": 1070,
+      "completion_tokens": 398
+     },
+     "issues": [],
+     "created": "2026-09-25T23:46:27"
+    }
+   ]
+  },
+  "17": {
+   "input": {
+    "process": {
+     "name": "증착 막 두께",
+     "unit": "nm",
+     "target": 100.0,
+     "ucl": 103.0,
+     "lcl": 97.0
+    },
+    "events": [
+     {
+      "event_id": "E1",
+      "pattern": "치우침",
+      "direction": "위",
+      "start": 26,
+      "end": 36,
+      "rule": "11점 연속 중심선 위 (26~36번, 평균 101.41nm)",
+      "mean": 101.41
+     },
+     {
+      "event_id": "E2",
+      "pattern": "급변",
+      "direction": "아래",
+      "start": 64,
+      "end": 64,
+      "rule": "관리한계 밖 1점 (64번 95.35nm, LCL 97nm 미만)",
+      "values": [
+       95.35
+      ]
+     }
+    ],
+    "cause_table": [
+     {
+      "cause_id": "SP-1",
+      "pattern": "급변",
+      "cause": "계측 오류 (측정 위치 오정렬, 계측기 순간 오류)",
+      "check": "같은 웨이퍼 재측정"
+     },
+     {
+      "cause_id": "SP-2",
+      "pattern": "급변",
+      "cause": "파티클·이물로 인한 국부 이상",
+      "check": "파티클·결함 검사 결과 확인"
+     },
+     {
+      "cause_id": "SP-3",
+      "pattern": "급변",
+      "cause": "가스 유량 순간 이상 (MFC 스파이크)",
+      "check": "해당 런의 MFC 유량 로그 확인"
+     },
+     {
+      "cause_id": "SP-4",
+      "pattern": "급변",
+      "cause": "웨이퍼 로딩·척(chuck) 이상",
+      "check": "로딩 로그와 척 상태 확인"
+     },
+     {
+      "cause_id": "SP-5",
+      "pattern": "급변",
+      "cause": "레시피·작업 입력 오류",
+      "check": "해당 런의 레시피·작업 이력 확인"
+     },
+     {
+      "cause_id": "SH-1",
+      "pattern": "치우침",
+      "cause": "부품 교체·PM 후 조건 변화",
+      "check": "PM 이력과 치우침 시작 시점 비교"
+     },
+     {
+      "cause_id": "SH-2",
+      "pattern": "치우침",
+      "cause": "원료 가스·전구체 로트 변경",
+      "check": "원료 로트 변경 이력 확인"
+     },
+     {
+      "cause_id": "SH-3",
+      "pattern": "치우침",
+      "cause": "레시피 변경",
+      "check": "레시피 변경 이력 확인"
+     },
+     {
+      "cause_id": "SH-4",
+      "pattern": "치우침",
+      "cause": "계측기 교정값 변경",
+      "check": "계측기 교정 이력 확인"
+     },
+     {
+      "cause_id": "SH-5",
+      "pattern": "치우침",
+      "cause": "다른 챔버·장비로 전환",
+      "check": "설비 배정 이력 확인"
+     }
+    ]
+   },
+   "input_hash": "c727397a524450c7",
+   "runs": [
+    {
+     "run": 0,
+     "text": "{\n  \"summary\": \"증착 막 두께 공정에서 26~36번까지 11점 연속 중심선 위로 치우침이 발생했고, 64번에서 급변으로 관리한계 아래로 벗어난 점이 확인되었습니다.\",\n  \"events\": [\n    {\n      \"event_id\": \"E1\",\n      \"pattern\": \"치우침\",\n      \"rule\": \"11점 연속 중심선 위 (26~36번, 평균 101.41nm)\",\n      \"checks\": [\n        {\n          \"cause_id\": \"SH-1\",\n          \"reason\": \"부품 교체나 PM 후 조건 변화가 치우침 시작 시점과 연관 있을 수 있어 먼저 점검합니다.\"\n        },\n        {\n          \"cause_id\": \"SH-2\",\n          \"reason\": \"원료 가스나 전구체 로트 변경이 치우침에 영향을 줄 수 있으므로 다음으로 확인합니다.\"\n        },\n        {\n          \"cause_id\": \"SH-3\",\n          \"reason\": \"레시피 변경 이력이 치우침 원인일 수 있어 마지막으로 점검합니다.\"\n        }\n      ]\n    },\n    {\n      \"event_id\": \"E2\",\n      \"pattern\": \"급변\",\n      \"rule\": \"관리한계 밖 1점 (64번 95.35nm, LCL 97nm 미만)\",\n      \"checks\": [\n        {\n          \"cause_id\": \"SP-1\",\n          \"reason\": \"계측 오류 가능성이 높으므로 같은 웨이퍼 재측정을 먼저 실시합니다.\"\n        },\n        {\n          \"cause_id\": \"SP-2\",\n          \"reason\": \"파티클이나 이물로 인한 국부 이상 여부를 파티클 검사 결과로 확인합니다.\"\n        },\n        {\n          \"cause_id\": \"SP-3\",\n          \"reason\": \"가스 유량의 순간 이상 가능성을 MFC 유량 로그로 점검합니다.\"\n        }\n      ]\n    }\n  ],\n  \"priority\": [\"E1\", \"E2\"]\n}",
+     "error": null,
+     "latency_s": 3.57,
+     "usage": {
+      "prompt_tokens": 1070,
+      "completion_tokens": 436
+     },
+     "issues": [],
+     "created": "2026-09-25T23:46:27"
+    },
+    {
+     "run": 1,
+     "text": "{\n  \"summary\": \"증착 막 두께 공정에서 26~36번 웨이퍼에서 중심선 위로 치우침이 발생했고, 64번 웨이퍼에서 급격한 두께 감소가 나타났습니다. 각각의 원인 후보를 점검하여 문제를 해결해야 합니다.\",\n  \"events\": [\n    {\n      \"event_id\": \"E1\",\n      \"pattern\": \"치우침\",\n      \"rule\": \"11점 연속 중심선 위 (26~36번, 평균 101.41nm)\",\n      \"checks\": [\n        {\n          \"cause_id\": \"SH-1\",\n          \"reason\": \"부품 교체나 PM 후 조건 변화가 치우침 시작 시점과 일치하는지 먼저 확인해야 합니다.\"\n        },\n        {\n          \"cause_id\": \"SH-2\",\n          \"reason\": \"원료 가스나 전구체 로트 변경이 있었는지 확인하여 원인 가능성을 점검합니다.\"\n        },\n        {\n          \"cause_id\": \"SH-3\",\n          \"reason\": \"레시피 변경 이력이 있는지 확인하여 공정 조건 변화를 점검합니다.\"\n        }\n      ]\n    },\n    {\n      \"event_id\": \"E2\",\n      \"pattern\": \"급변\",\n      \"rule\": \"관리한계 밖 1점 (64번 95.35nm, LCL 97nm 미만)\",\n      \"checks\": [\n        {\n          \"cause_id\": \"SP-1\",\n          \"reason\": \"계측 오류 가능성이 있으므로 같은 웨이퍼를 재측정하여 확인합니다.\"\n        },\n        {\n          \"cause_id\": \"SP-2\",\n          \"reason\": \"파티클이나 이물로 인한 국부 이상 여부를 파티클·결함 검사 결과로 점검합니다.\"\n        },\n        {\n          \"cause_id\": \"SP-3\",\n          \"reason\": \"가스 유량의 순간 이상(MFC 스파이크) 로그를 확인하여 원인을 찾습니다.\"\n        }\n      ]\n    }\n  ],\n  \"priority\": [\"E1\", \"E2\"]\n}",
+     "error": null,
+     "latency_s": 3.78,
+     "usage": {
+      "prompt_tokens": 1070,
+      "completion_tokens": 453
+     },
+     "issues": [],
+     "created": "2026-09-25T23:46:27"
+    },
+    {
+     "run": 2,
+     "text": "{\n  \"summary\": \"증착 막 두께 공정에서 26~36번 웨이퍼에서 중심선 위로 치우침이 발생했고, 64번 웨이퍼에서 급격한 두께 감소가 나타났습니다. 각각의 원인 후보를 점검하여 문제를 해결해야 합니다.\",\n  \"events\": [\n    {\n      \"event_id\": \"E1\",\n      \"pattern\": \"치우침\",\n      \"rule\": \"11점 연속 중심선 위 (26~36번, 평균 101.41nm)\",\n      \"checks\": [\n        {\n          \"cause_id\": \"SH-1\",\n          \"reason\": \"부품 교체나 PM 후 조건 변화가 치우침 시작 시점과 일치하는지 먼저 확인해야 하기 때문입니다.\"\n        },\n        {\n          \"cause_id\": \"SH-2\",\n          \"reason\": \"원료 가스나 전구체 로트 변경이 치우침에 영향을 줄 수 있으므로 다음으로 점검합니다.\"\n        },\n        {\n          \"cause_id\": \"SH-3\",\n          \"reason\": \"레시피 변경 이력이 치우침 발생과 관련 있는지 확인합니다.\"\n        }\n      ]\n    },\n    {\n      \"event_id\": \"E2\",\n      \"pattern\": \"급변\",\n      \"rule\": \"관리한계 밖 1점 (64번 95.35nm, LCL 97nm 미만)\",\n      \"checks\": [\n        {\n          \"cause_id\": \"SP-1\",\n          \"reason\": \"계측 오류 가능성을 먼저 배제하기 위해 같은 웨이퍼를 재측정해야 합니다.\"\n        },\n        {\n          \"cause_id\": \"SP-2\",\n          \"reason\": \"파티클이나 이물로 인한 국부 이상 여부를 파티클 검사 결과로 확인합니다.\"\n        },\n        {\n          \"cause_id\": \"SP-3\",\n          \"reason\": \"가스 유량의 순간 이상(MFC 스파이크)이 있었는지 해당 런의 로그를 점검합니다.\"\n        }\n      ]\n    }\n  ],\n  \"priority\": [\"E1\", \"E2\"]\n}",
+     "error": null,
+     "latency_s": 3.7,
+     "usage": {
+      "prompt_tokens": 1070,
+      "completion_tokens": 457
+     },
+     "issues": [],
+     "created": "2026-09-25T23:46:27"
+    }
+   ]
+  },
+  "18": {
+   "input": {
+    "process": {
+     "name": "증착 막 두께",
+     "unit": "nm",
+     "target": 100.0,
+     "ucl": 103.0,
+     "lcl": 97.0
+    },
+    "events": [
+     {
+      "event_id": "E1",
+      "pattern": "추세",
+      "direction": "상승",
+      "start": 9,
+      "end": 17,
+      "rule": "9점 연속 상승 (9~17번, 98.31→101.39nm)",
+      "first_value": 98.31,
+      "last_value": 101.39
+     },
+     {
+      "event_id": "E2",
+      "pattern": "치우침",
+      "direction": "위",
+      "start": 79,
+      "end": 89,
+      "rule": "11점 연속 중심선 위 (79~89번, 평균 101.44nm)",
+      "mean": 101.44
+     }
+    ],
+    "cause_table": [
+     {
+      "cause_id": "TR-1",
+      "pattern": "추세",
+      "cause": "챔버 벽 증착물 누적 (클리닝 주기 도래)",
+      "check": "마지막 챔버 클리닝 이후 처리 매수 확인"
+     },
+     {
+      "cause_id": "TR-2",
+      "pattern": "추세",
+      "cause": "히터·온도의 점진적 변화",
+      "check": "온도 센서 로그 추이 확인"
+     },
+     {
+      "cause_id": "TR-3",
+      "pattern": "추세",
+      "cause": "소스 소모 (전구체 잔량, 타깃 수명)",
+      "check": "소모품 사용량과 교체 시점 확인"
+     },
+     {
+      "cause_id": "TR-4",
+      "pattern": "추세",
+      "cause": "펌프 성능 저하로 인한 압력 변화",
+      "check": "챔버 압력 로그 추이 확인"
+     },
+     {
+      "cause_id": "TR-5",
+      "pattern": "추세",
+      "cause": "계측기 드리프트",
+      "check": "표준 시편으로 계측기 점검"
+     },
+     {
+      "cause_id": "SH-1",
+      "pattern": "치우침",
+      "cause": "부품 교체·PM 후 조건 변화",
+      "check": "PM 이력과 치우침 시작 시점 비교"
+     },
+     {
+      "cause_id": "SH-2",
+      "pattern": "치우침",
+      "cause": "원료 가스·전구체 로트 변경",
+      "check": "원료 로트 변경 이력 확인"
+     },
+     {
+      "cause_id": "SH-3",
+      "pattern": "치우침",
+      "cause": "레시피 변경",
+      "check": "레시피 변경 이력 확인"
+     },
+     {
+      "cause_id": "SH-4",
+      "pattern": "치우침",
+      "cause": "계측기 교정값 변경",
+      "check": "계측기 교정 이력 확인"
+     },
+     {
+      "cause_id": "SH-5",
+      "pattern": "치우침",
+      "cause": "다른 챔버·장비로 전환",
+      "check": "설비 배정 이력 확인"
+     }
+    ]
+   },
+   "input_hash": "f962c03426f8a872",
+   "runs": [
+    {
+     "run": 0,
+     "text": "{\n  \"summary\": \"증착 막 두께 공정에서 9~17번 구간에 9점 연속 상승하는 추세가 관찰되었고, 79~89번 구간에는 11점 연속 중심선 위에 위치하는 치우침 현상이 나타났습니다.\",\n  \"events\": [\n    {\n      \"event_id\": \"E1\",\n      \"pattern\": \"추세\",\n      \"rule\": \"9점 연속 상승 (9~17번, 98.31→101.39nm)\",\n      \"checks\": [\n        {\n          \"cause_id\": \"TR-1\",\n          \"reason\": \"챔버 벽 증착물 누적으로 인한 변화 가능성이 있으므로 마지막 챔버 클리닝 이후 처리 매수를 먼저 확인합니다.\"\n        },\n        {\n          \"cause_id\": \"TR-2\",\n          \"reason\": \"히터 및 온도의 점진적 변화가 추세에 영향을 줄 수 있어 온도 센서 로그 추이를 점검합니다.\"\n        },\n        {\n          \"cause_id\": \"TR-3\",\n          \"reason\": \"소스 소모 상태가 증착 두께에 영향을 줄 수 있으므로 소모품 사용량과 교체 시점을 확인합니다.\"\n        }\n      ]\n    },\n    {\n      \"event_id\": \"E2\",\n      \"pattern\": \"치우침\",\n      \"rule\": \"11점 연속 중심선 위 (79~89번, 평균 101.44nm)\",\n      \"checks\": [\n        {\n          \"cause_id\": \"SH-1\",\n          \"reason\": \"부품 교체 또는 PM 후 조건 변화 가능성이 있으므로 PM 이력과 치우침 시작 시점을 비교합니다.\"\n        },\n        {\n          \"cause_id\": \"SH-2\",\n          \"reason\": \"원료 가스 또는 전구체 로트 변경이 영향을 줄 수 있어 원료 로트 변경 이력을 확인합니다.\"\n        },\n        {\n          \"cause_id\": \"SH-3\",\n          \"reason\": \"레시피 변경 여부가 치우침 원인일 수 있으므로 레시피 변경 이력을 점검합니다.\"\n        }\n      ]\n    }\n  ],\n  \"priority\": [\"E1\", \"E2\"]\n}",
+     "error": null,
+     "latency_s": 3.64,
+     "usage": {
+      "prompt_tokens": 1078,
+      "completion_tokens": 474
+     },
+     "issues": [],
+     "created": "2026-09-25T23:46:27"
+    },
+    {
+     "run": 1,
+     "text": "{\"summary\": \"증착 막 두께 공정에서 9~17번 구간에 9점 연속 상승하는 추세와 79~89번 구간에 11점 연속 중심선 위로 치우침 현상이 관찰되었습니다. 각각의 원인 후보를 점검하여 문제를 해결해야 합니다.\", \"events\": [{\"event_id\": \"E1\", \"pattern\": \"추세\", \"rule\": \"9점 연속 상승 (9~17번, 98.31→101.39nm)\", \"checks\": [{\"cause_id\": \"TR-1\", \"reason\": \"챔버 벽 증착물 누적으로 클리닝 주기 도래 여부를 먼저 확인하여 근본 원인을 파악하기 쉽기 때문입니다.\"}, {\"cause_id\": \"TR-2\", \"reason\": \"히터·온도의 점진적 변화를 점검하여 온도 관련 이상 여부를 확인합니다.\"}, {\"cause_id\": \"TR-3\", \"reason\": \"소스 소모 상태를 점검하여 전구체 잔량과 타깃 수명을 확인합니다.\"}]}, {\"event_id\": \"E2\", \"pattern\": \"치우침\", \"rule\": \"11점 연속 중심선 위 (79~89번, 평균 101.44nm)\", \"checks\": [{\"cause_id\": \"SH-1\", \"reason\": \"부품 교체 또는 PM 후 조건 변화를 먼저 확인하여 최근 작업 이력을 파악합니다.\"}, {\"cause_id\": \"SH-2\", \"reason\": \"원료 가스·전구체 로트 변경 이력을 확인하여 원료 변경 여부를 점검합니다.\"}, {\"cause_id\": \"SH-3\", \"reason\": \"레시피 변경 이력을 확인하여 공정 조건 변화를 점검합니다.\"}]}], \"priority\": [\"E1\", \"E2\"]}",
+     "error": null,
+     "latency_s": 3.18,
+     "usage": {
+      "prompt_tokens": 1078,
+      "completion_tokens": 401
+     },
+     "issues": [],
+     "created": "2026-09-25T23:46:27"
+    },
+    {
+     "run": 2,
+     "text": "{\"summary\": \"증착 막 두께 공정에서 9점 연속 상승하는 추세와 11점 연속 중심선 위의 치우침 현상이 관찰되었습니다. 각각의 원인 후보를 점검하여 문제를 해결해야 합니다.\",\n \"events\": [\n  {\"event_id\": \"E1\", \"pattern\": \"추세\", \"rule\": \"9점 연속 상승 (9~17번, 98.31→101.39nm)\",\n   \"checks\": [\n    {\"cause_id\": \"TR-1\", \"reason\": \"챔버 벽 증착물 누적은 점진적 두께 상승의 대표 원인이므로 먼저 확인합니다.\"},\n    {\"cause_id\": \"TR-2\", \"reason\": \"히터·온도의 점진적 변화가 두께 상승에 영향을 줄 수 있어 다음으로 점검합니다.\"},\n    {\"cause_id\": \"TR-3\", \"reason\": \"소스 소모에 따른 증착 특성 변화 가능성을 확인합니다.\"}\n   ]},\n  {\"event_id\": \"E2\", \"pattern\": \"치우침\", \"rule\": \"11점 연속 중심선 위 (79~89번, 평균 101.44nm)\",\n   \"checks\": [\n    {\"cause_id\": \"SH-1\", \"reason\": \"부품 교체나 PM 후 조건 변화가 치우침 원인일 수 있어 우선 점검합니다.\"},\n    {\"cause_id\": \"SH-2\", \"reason\": \"원료 가스·전구체 로트 변경 여부를 확인하여 원인 가능성을 평가합니다.\"},\n    {\"cause_id\": \"SH-3\", \"reason\": \"레시피 변경 이력을 확인하여 공정 조건 변화를 점검합니다.\"}\n   ]}\n ],\n \"priority\": [\"E1\", \"E2\"]}",
+     "error": null,
+     "latency_s": 3.3,
+     "usage": {
+      "prompt_tokens": 1078,
+      "completion_tokens": 388
+     },
+     "issues": [],
+     "created": "2026-09-25T23:46:27"
+    }
+   ]
+  },
+  "19": {
+   "input": {
+    "process": {
+     "name": "증착 막 두께",
+     "unit": "nm",
+     "target": 100.0,
+     "ucl": 103.0,
+     "lcl": 97.0
+    },
+    "events": [
+     {
+      "event_id": "E1",
+      "pattern": "추세",
+      "direction": "상승",
+      "start": 16,
+      "end": 23,
+      "rule": "8점 연속 상승 (16~23번, 98.62→101.48nm)",
+      "first_value": 98.62,
+      "last_value": 101.48
+     },
+     {
+      "event_id": "E2",
+      "pattern": "치우침",
+      "direction": "아래",
+      "start": 47,
+      "end": 64,
+      "rule": "18점 연속 중심선 아래 (47~64번, 평균 98.56nm)",
+      "mean": 98.56
+     }
+    ],
+    "cause_table": [
+     {
+      "cause_id": "TR-1",
+      "pattern": "추세",
+      "cause": "챔버 벽 증착물 누적 (클리닝 주기 도래)",
+      "check": "마지막 챔버 클리닝 이후 처리 매수 확인"
+     },
+     {
+      "cause_id": "TR-2",
+      "pattern": "추세",
+      "cause": "히터·온도의 점진적 변화",
+      "check": "온도 센서 로그 추이 확인"
+     },
+     {
+      "cause_id": "TR-3",
+      "pattern": "추세",
+      "cause": "소스 소모 (전구체 잔량, 타깃 수명)",
+      "check": "소모품 사용량과 교체 시점 확인"
+     },
+     {
+      "cause_id": "TR-4",
+      "pattern": "추세",
+      "cause": "펌프 성능 저하로 인한 압력 변화",
+      "check": "챔버 압력 로그 추이 확인"
+     },
+     {
+      "cause_id": "TR-5",
+      "pattern": "추세",
+      "cause": "계측기 드리프트",
+      "check": "표준 시편으로 계측기 점검"
+     },
+     {
+      "cause_id": "SH-1",
+      "pattern": "치우침",
+      "cause": "부품 교체·PM 후 조건 변화",
+      "check": "PM 이력과 치우침 시작 시점 비교"
+     },
+     {
+      "cause_id": "SH-2",
+      "pattern": "치우침",
+      "cause": "원료 가스·전구체 로트 변경",
+      "check": "원료 로트 변경 이력 확인"
+     },
+     {
+      "cause_id": "SH-3",
+      "pattern": "치우침",
+      "cause": "레시피 변경",
+      "check": "레시피 변경 이력 확인"
+     },
+     {
+      "cause_id": "SH-4",
+      "pattern": "치우침",
+      "cause": "계측기 교정값 변경",
+      "check": "계측기 교정 이력 확인"
+     },
+     {
+      "cause_id": "SH-5",
+      "pattern": "치우침",
+      "cause": "다른 챔버·장비로 전환",
+      "check": "설비 배정 이력 확인"
+     }
+    ]
+   },
+   "input_hash": "274d46c4e3857d1b",
+   "runs": [
+    {
+     "run": 0,
+     "text": "{\"summary\": \"증착 막 두께 공정에서 16~23번 구간에 8점 연속 상승하는 추세와 47~64번 구간에 18점 연속 중심선 아래로 치우침 현상이 발생했습니다. 각각의 원인을 점검하여 공정 안정화를 도모해야 합니다.\",\"events\":[{\"event_id\":\"E1\",\"pattern\":\"추세\",\"rule\":\"8점 연속 상승 (16~23번, 98.62→101.48nm)\",\"checks\":[{\"cause_id\":\"TR-1\",\"reason\":\"챔버 벽 증착물 누적으로 클리닝 주기 도래 여부를 먼저 확인하여 근본 원인을 파악하기 위해\"},{\"cause_id\":\"TR-2\",\"reason\":\"히터·온도의 점진적 변화를 점검하여 온도 영향 가능성을 확인하기 위해\"},{\"cause_id\":\"TR-3\",\"reason\":\"소스 소모 상태를 점검하여 전구체 잔량과 타깃 수명 문제 여부를 확인하기 위해\"}]},{\"event_id\":\"E2\",\"pattern\":\"치우침\",\"rule\":\"18점 연속 중심선 아래 (47~64번, 평균 98.56nm)\",\"checks\":[{\"cause_id\":\"SH-1\",\"reason\":\"부품 교체·PM 후 조건 변화를 먼저 확인하여 최근 설비 변경 여부를 파악하기 위해\"},{\"cause_id\":\"SH-2\",\"reason\":\"원료 가스·전구체 로트 변경 이력을 확인하여 원료 영향 가능성을 점검하기 위해\"},{\"cause_id\":\"SH-3\",\"reason\":\"레시피 변경 이력을 확인하여 공정 조건 변경 여부를 점검하기 위해\"}]}],\"priority\":[\"E1\",\"E2\"]}",
+     "error": null,
+     "latency_s": 3.03,
+     "usage": {
+      "prompt_tokens": 1079,
+      "completion_tokens": 366
+     },
+     "issues": [],
+     "created": "2026-09-25T23:46:27"
+    },
+    {
+     "run": 1,
+     "text": "{\"summary\": \"증착 막 두께 공정에서 16~23번 구간에 8점 연속 상승하는 추세와 47~64번 구간에 18점 연속 중심선 아래로 치우침 현상이 발생했습니다. 각각의 원인을 점검하여 문제를 해결해야 합니다.\",\"events\":[{\"event_id\":\"E1\",\"pattern\":\"추세\",\"rule\":\"8점 연속 상승 (16~23번, 98.62→101.48nm)\",\"checks\":[{\"cause_id\":\"TR-1\",\"reason\":\"챔버 벽 증착물 누적으로 클리닝 주기 도래 여부를 먼저 확인하여 근본 원인을 파악하기 위해\"},{\"cause_id\":\"TR-2\",\"reason\":\"히터·온도의 점진적 변화가 증착 두께 상승에 영향을 줄 수 있으므로 온도 센서 로그를 점검하기 위해\"},{\"cause_id\":\"TR-3\",\"reason\":\"소스 소모 상태가 증착 두께 변화에 영향을 줄 수 있어 소모품 사용량과 교체 시점을 확인하기 위해\"}]},{\"event_id\":\"E2\",\"pattern\":\"치우침\",\"rule\":\"18점 연속 중심선 아래 (47~64번, 평균 98.56nm)\",\"checks\":[{\"cause_id\":\"SH-1\",\"reason\":\"부품 교체 또는 PM 후 조건 변화가 치우침 원인일 수 있어 PM 이력과 치우침 시작 시점을 비교하기 위해\"},{\"cause_id\":\"SH-2\",\"reason\":\"원료 가스 또는 전구체 로트 변경이 영향을 줄 수 있으므로 원료 로트 변경 이력을 확인하기 위해\"},{\"cause_id\":\"SH-3\",\"reason\":\"레시피 변경이 공정 조건에 영향을 미쳤을 가능성이 있어 레시피 변경 이력을 점검하기 위해\"}]}],\"priority\":[\"E1\",\"E2\"]}",
+     "error": null,
+     "latency_s": 3.21,
+     "usage": {
+      "prompt_tokens": 1079,
+      "completion_tokens": 394
+     },
+     "issues": [],
+     "created": "2026-09-25T23:46:27"
+    },
+    {
+     "run": 2,
+     "text": "{\"summary\": \"증착 막 두께 공정에서 16~23번 구간에 8점 연속 상승하는 추세와 47~64번 구간에 18점 연속 중심선 아래로 치우침 현상이 발생했습니다. 각각의 원인을 점검하여 공정 안정화를 도모해야 합니다.\", \"events\": [{\"event_id\": \"E1\", \"pattern\": \"추세\", \"rule\": \"8점 연속 상승 (16~23번, 98.62→101.48nm)\", \"checks\": [{\"cause_id\": \"TR-1\", \"reason\": \"챔버 벽 증착물 누적으로 클리닝 주기 도래 여부를 먼저 확인하여 근본 원인을 파악하기 쉽기 때문입니다.\"}, {\"cause_id\": \"TR-2\", \"reason\": \"히터·온도의 점진적 변화를 온도 센서 로그로 확인하여 공정 조건 변화를 점검합니다.\"}, {\"cause_id\": \"TR-3\", \"reason\": \"소스 소모 상태를 확인하여 전구체 잔량과 타깃 수명을 점검함으로써 재료 문제 가능성을 검토합니다.\"}]}, {\"event_id\": \"E2\", \"pattern\": \"치우침\", \"rule\": \"18점 연속 중심선 아래 (47~64번, 평균 98.56nm)\", \"checks\": [{\"cause_id\": \"SH-1\", \"reason\": \"부품 교체나 PM 후 조건 변화를 PM 이력과 치우침 시작 시점 비교로 우선 점검합니다.\"}, {\"cause_id\": \"SH-2\", \"reason\": \"원료 가스·전구체 로트 변경 이력을 확인하여 재료 변경 여부를 점검합니다.\"}, {\"cause_id\": \"SH-3\", \"reason\": \"레시피 변경 이력을 확인하여 공정 조건 변경 가능성을 검토합니다.\"}]}], \"priority\": [\"E1\", \"E2\"]}",
+     "error": null,
+     "latency_s": 4.24,
+     "usage": {
+      "prompt_tokens": 1079,
+      "completion_tokens": 424
+     },
+     "issues": [],
+     "created": "2026-09-25T23:46:27"
+    }
+   ]
+  }
+ }
+}
