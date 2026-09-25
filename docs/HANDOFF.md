@@ -3,7 +3,7 @@
 마지막 갱신: 2026-09-25
 
 ## 현재 단계
-설계 문서·구현 계획 작성 완료. 화면은 절충안 C(`docs/design/2026-09-25-ui-comparison.md`)로, 그래프 시안 2장(`docs/design/ref/`)을 반영해 계획에 Task 11-1~11-4를 추가함(계획서 코드 실행 검증: 테스트 80개 통과, 실제 화면 캡처로 시안 대조). 사용자 승인 대기 — 승인하면 Task 1부터 바로 구현.
+구현 시작. Task 1 완료(2026-09-26 새벽, 커밋 2486f99·577ecee, 테스트 3개 통과). 진행 기록은 `.superpowers/sdd/2026-09-25-spc-explainer/progress.md`(git 제외, executing-plans 방식). 사용자가 새 Claude Design 시안 2A(데스크톱 스토리형)·2B(모바일) 적용 여부를 물음 → 검토 결과 보고, 결정 대기(탭 3개 → 한 페이지 스토리로 바꿀지). Task 2~10은 화면과 무관해 결정과 상관없이 진행 가능.
 
 ## 완료
 - GitHub 레포 생성: https://github.com/HGK-lab/SPCEXPLANER (private)
@@ -21,7 +21,8 @@
 없음
 
 ## 다음 할 일
-1. 사용자 승인을 받는다: 계획(Task 1~13, 11-1~11-4 포함)과 실행 방식(추천: 네이티브 — 이 세션에서 순서대로 구현, 끝에 리뷰어 1회). 순서: Task 1~11 → 11-1 → 11-2 → 11-3 → 11-4 → 12 → 13. 9/26 18시 기준선에 걸리면 그 자리에서 멈춘다(SECOM부터 뺌).
+1. Task 2부터 이어서 구현한다 (executing-plans: `task-start docs/superpowers/plans/2026-09-25-spc-explainer.md 2`). 순서: Task 2~11 → 11-1 → 11-2 → 11-3 → 11-4 → 12 → 13. 9/26 18시 기준선에 걸리면 그 자리에서 멈춘다(SECOM부터 뺌).
+   - 2A 채택이 결정되면 Task 11 전에 Task 11-1~11-4와 Task 13의 화면 부분을 스토리형 섹션으로 다시 쓰고, 이전처럼 계획서 코드 추출·실행·화면 캡처로 검증한다.
 2. 계획서 Task 1부터 구현. 첫 명령: `python -m venv .venv` → `.venv/Scripts/python -m pip install -q -r requirements-dev.txt` (requirements 파일은 Task 1 Step 1에서 먼저 만든다)
 3. Task 10에서 실제 실험(API 168회) 실행 후 결과 커밋
 4. Task 11 푸시 후 사용자에게 받을 것: 배포 URL(README에 넣음), Streamlit Secrets에 `OPENAI_API_KEY` 추가(실시간 설명용)
