@@ -3,7 +3,7 @@
 마지막 갱신: 2026-09-25
 
 ## 현재 단계
-설계 문서·구현 계획 작성 완료. 사용자의 계획 리뷰 + 실행 방식 선택(서브에이전트 / 네이티브) 대기.
+설계 문서·구현 계획 작성 완료. 화면 설계 비교 완료(`docs/design/2026-09-25-ui-comparison.md`, 추천 C: Streamlit 구조 유지 + Claude Design 문구·배치 차용, Task 11 +3~4시간). 사용자 승인 대기 — 승인하면 Task 1부터 바로 구현.
 
 ## 완료
 - GitHub 레포 생성: https://github.com/HGK-lab/SPCEXPLANER (private)
@@ -21,7 +21,7 @@
 없음
 
 ## 다음 할 일
-1. 사용자에게 계획 리뷰와 실행 방식 선택을 받는다 (추천: 네이티브 — 이 세션에서 순서대로 구현, 끝에 리뷰어 1회).
+1. 사용자 승인을 받는다: 화면안(A/B/C, 추천 C)과 실행 방식(추천: 네이티브 — 이 세션에서 순서대로 구현, 끝에 리뷰어 1회). C면 Task 11을 비교 문서 5절 목록대로 바꿔 구현한다(Task 1~10·13은 그대로).
 2. 계획서 Task 1부터 구현. 첫 명령: `python -m venv .venv` → `.venv/Scripts/python -m pip install -q -r requirements-dev.txt` (requirements 파일은 Task 1 Step 1에서 먼저 만든다)
 3. Task 10에서 실제 실험(API 168회) 실행 후 결과 커밋
 4. Task 11 푸시 후 사용자에게 받을 것: 배포 URL(README에 넣음), Streamlit Secrets에 `OPENAI_API_KEY` 추가(실시간 설명용)
