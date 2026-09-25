@@ -1,1 +1,9 @@
+# -*- coding: utf-8 -*-
+# 배포(Streamlit Community Cloud)용 의존성
 streamlit
+pycontrolcharts==0.1.2
+numpy
+pandas
+plotly
+openai
+python-dotenv
