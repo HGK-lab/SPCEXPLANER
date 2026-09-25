@@ -1,50 +1,52 @@
 # 인수인계 (세션 간 이어가기용)
 
-마지막 갱신: 2026-09-26
+마지막 갱신: 2026-09-26 새벽 (작업 중지)
 
 ## 현재 단계
-구현 중. Task 1 완료. Task 2~10 진행 중(사용자 승인, 중간 보고는 Task 4 후·Task 10 후). 진행 기록은 `.superpowers/sdd/2026-09-25-spc-explainer/progress.md`(git 제외, executing-plans 방식) — `Task N: complete` 줄이 있는 태스크는 다시 하지 않는다.
+Task 1~10 완료(테스트 50개 통과, 실제 LLM 실험 결과 커밋). 다음은 2A 스토리형 화면: 계획서 재작성 직전. 화면 프로토타입 코드는 작성·검증을 마치고 `docs/superpowers/wip/story-ui/`에 저장했다(scratchpad에서 테스트 85개 통과, 데스크톱·모바일 캡처 확인).
 
 ## 완료
-- GitHub 레포 생성: https://github.com/HGK-lab/SPCEXPLANER (private)
-- `docs/brief.md` 작성 (배포 항목 반영, 공고 확인 사항 추가)
-- `.env`에 OPENAI_API_KEY 저장 (gitignore 처리)
-- `CLAUDE.md`에 '작업 중지' 규칙 정의
-- 배포 연결 확인용 임시 `streamlit_app.py`. Streamlit Community Cloud에 임시 배포 완료(사용자 확인, 2026-09-25). 배포 설정 = 레포 `HGK-lab/SPCEXPLANER`, 브랜치 `main`, 파일 `streamlit_app.py`
-- 규칙 엔진 비교 실험 → `docs/research/2026-09-24-spc-library-comparison.md`
-- 설계 문서 → `docs/superpowers/specs/2026-09-25-spc-explainer-design.md`
-- 구현 계획(전체 코드 포함) → `docs/superpowers/plans/2026-09-25-spc-explainer.md` (계획서 코드를 추출·실행해 검증: Task 13까지 테스트 80개 통과, 화면 캡처로 시안 대조)
-- 화면 설계 비교 → `docs/design/2026-09-25-ui-comparison.md`, 그래프 시안 → `docs/design/ref/`
-- `docs/ai_errors.md` 생성 (설계 검증 스모크 호출의 오답 1건)
-- Task 1: 프로젝트 뼈대·설정·패턴 자료형 (커밋 2486f99, 계획 수정 577ecee)
+- GitHub 레포: https://github.com/HGK-lab/SPCEXPLANER (private). Streamlit Community Cloud 임시 배포 완료 (레포 `HGK-lab/SPCEXPLANER`, 브랜치 `main`, 파일 `streamlit_app.py` — 지금은 임시 페이지)
+- 문서: `docs/brief.md`, 설계 `docs/superpowers/specs/2026-09-25-spc-explainer-design.md`, 계획 `docs/superpowers/plans/2026-09-25-spc-explainer.md`, 라이브러리 비교 `docs/research/`, 화면 비교 `docs/design/2026-09-25-ui-comparison.md`, 그래프 시안 `docs/design/ref/`
+- 구현 (executing-plans 방식, 태스크마다 테스트 먼저 → 커밋·푸시):
+  - Task 1 뼈대·설정·패턴 / 2 가상 데이터 생성기 / 3 규칙 판정 + shewhart 교차 검증 / 4 채점 / 5 OpenAI 호출부 / 6 원인표·설명 검증기 / 7 LLM 단독 판정 파서 / 8 리포트 / 9 실험 실행기
+  - Task 10 실제 실험 (2026-09-25 23:45~23:48, 호출 168회, 호출 오류 0, 실제 비용 $0.546 = 4.1-mini $0.086 + sol $0.460)
+    - 규칙 엔진: 심은 이상 21/21, 오탐 6건(정상 시리즈 1/5 경보)
+    - gpt-4.1-mini 단독 판정: 67%(3회 같음), 치우침 1.3/7, 회당 오탐 103건, 정상 시리즈 5/5 경보
+    - gpt-6-sol 단독 판정: 100%(3회 같음), 오탐 6건 — 규칙 엔진과 같은 판정, 호출당 평균 10.8초(4.1-mini 2.1초)
+    - 설명 LLM(gpt-4.1-mini) 출력 48개 전부 검증 통과 (형식 위반·원인표 밖·판정 불일치 0)
+    - 결과 파일: `data/synthetic/series.json`, `results/*.json`, `docs/validation_report.md`, `docs/ai_errors.md`(단독 판정 오답 59건 기록)
 
-## 진행 중
-Task 2~10 (화면과 무관한 데이터·규칙·채점·LLM·실험)
+## 진행 중 (작업 중지 시점)
+- 2A 화면 프로토타입: `docs/superpowers/wip/story-ui/` — 상태·저장소에 넣을 때 필요한 변경·도구 사용법은 그 폴더의 `README.md`
+  - 마지막 캡처 뒤에 고친 3가지(음영 라벨 두 줄 엇갈림, 사례 해설 카드 글자 크기, "지표 생성" 표기·오탐 기준 각주)는 테스트만 통과했고 화면 재확인 전
+  - `docs/case_notes.md` 초안(사례 해설, 수동 분석)도 그 폴더에 있다
+- 진행 기록(ledger): `.superpowers/sdd/2026-09-25-spc-explainer/progress.md` — git 제외라 이 PC에만 있다. 다른 PC에서는 새로 만들고, Task 1~10 완료는 `git log`로 확인한다
 
 ## 다음 할 일
-1. Task 2~10을 순서대로 끝낸다. 다음 태스크 시작: `task-start docs/superpowers/plans/2026-09-25-spc-explainer.md <N>` (스크립트 위치: superpowers `executing-plans/scripts/`)
-2. Task 10 뒤: 2A 스토리형으로 계획서 Task 11·11-1~11-4·13의 화면 부분을 다시 쓰고(아래 결정 사항의 조건 포함), 계획서 코드 추출·실행·화면 캡처로 검증한 뒤 구현
-3. 04 검증 섹션의 "사례 해설(수동 분석)": Task 10 결과의 `docs/ai_errors.md`에서 대표 오답 1~2개를 골라 따로 쓴다 (자동 집계와 구분 표기)
-4. Task 11 푸시 후 사용자에게 받을 것: 배포 URL(README에 넣음), Streamlit Secrets에 `OPENAI_API_KEY` 추가(실시간 설명용)
-5. 9/26 18시 기준선에 걸리면 그 자리에서 멈춘다 (SECOM부터 뺀다)
+1. 계획서 화면 태스크 재작성 (첫 명령: `grep -n "^### Task" docs/superpowers/plans/2026-09-25-spc-explainer.md`로 바꿀 섹션 위치 확인)
+   - 옛 Task 11(탭형)·11-1~11-4는 삭제하고 새 번호로: Task 11 = SECOM(옛 Task 13의 모듈·데이터·experiment 연결·테스트, 앱·README 수정은 뺌) → Task 12 = 스토리 화면 ①(테마·`ui_html`·`ui_steps`·`charts`·config 한 줄·앱의 머리말~03 섹션·테스트) → Task 13 = 스토리 화면 ②(`ui_dashboard`·04 검증·사례 해설·05 SECOM·06 한계·모바일·Streamlit 버전 고정) → Task 14 = README·HANDOFF(옛 Task 12 + SECOM 문구)
+   - 코드는 `docs/superpowers/wip/story-ui/`에서 가져온다
+2. 검증: `python docs/superpowers/wip/story-ui/tools/extract_plan.py <계획서> <scratch폴더> 14`로 추출 → 전체 테스트 → 실제 결과 파일·SECOM 데이터를 넣고 앱 실행 → `tools/cdp_shot.py`로 데스크톱(1440)·모바일(400) 캡처 (위 3가지 수정 화면 확인 포함)
+3. 계획서 커밋 후 구현 재개: executing-plans `task-start <계획서> 11`부터 (SECOM → 화면 ① → 화면 ② → README)
+4. 구현 뒤: 사용자에게 사례 해설 초안 검토 요청, 배포 URL·Streamlit Secrets(`OPENAI_API_KEY`) 요청, executing-plans의 전체 브랜치 최종 리뷰
+5. 9/26 18시 기준선에 걸리면 그 자리에서 멈춘다 (SECOM 화면부터 뺀다)
 
 ## 사용자 결정 사항
-- LLM: OpenAI 키 사용 (이전 해커톤 키 재사용)
-- 배포: Streamlit Community Cloud
-- 작업마다 커밋 + 푸시 (상시 허락)
-- 필요하면 OpenAI 프로젝트의 허용 모델 변경 가능
+- LLM: OpenAI 키 사용 (이전 해커톤 키 재사용). 배포: Streamlit Community Cloud. 작업마다 커밋 + 푸시 (상시 허락). 필요하면 OpenAI 프로젝트의 허용 모델 변경 가능
 - 2026-09-25 LLM 구성(A안): 설명 = gpt-4.1-mini, 단독 판정 비교 = gpt-4.1-mini vs gpt-6-sol, gpt-6-astra는 설정으로 켜고 끄는 1회 비교(현재 비활성 → 기본 끔). 모델명은 `spc_explainer/config.py` 한 곳에서 관리
 - 2026-09-25 가정 전부 승인 + 추가 요구 4가지: (1) 20개 중 정상 시리즈 5개 이상, 오탐 따로 보고 (2) LLM 출력 3회 반복, 형식 위반·원인표 밖 원인·판정 불일치 기록 (3) UCI SECOM 실데이터 확인(결측 적은 센서 1~2개, 앞 구간으로 한계 추정, 탐지율 없이 작동 확인 + 불량 라벨 겹침 관찰, 시간 부족 시 가장 먼저 제외) (4) 설계 문서에 "관리한계 고정값 = 안정화된 공정 감시 가정" 명시
-- 2026-09-25 화면: 그래프 시안 2장(관리도, 패턴별 탐지율 막대)의 스타일만 따르고 숫자는 결과 파일에서만 읽음. 점 번호 0부터·100점. 정답 구간은 테두리만 있는 점선. LLM 단독 막대는 모델별로 반복 평균 + 최소~최대
-- 2026-09-26 화면 2A(한 페이지 스토리형) 채택 — 탭 3개를 없애고 섹션으로(머리말·01 문제·02 규칙 판정·03 AI 설명·04 검증·05 SECOM·06 한계), 2B(모바일)는 반응형 CSS로. 수정 4가지 동의: 오류 분류는 검증기 기준, 실제 모델명 표기, 예시 표시는 실험 결과로 교체, Task 11·13 화면을 섹션 구조로 재작성. 추가 조건:
-  - 성능: 결과 파일 읽기와 SECOM 계산은 캐시, 시리즈 선택 시 관련 섹션만 다시 그림(전체 재계산 금지)
-  - 04 검증에 자동 집계와 별도로 "사례 해설(수동 분석)" 칸 — `ai_errors.md`의 대표 오답 1~2개를 무엇을 어떻게 틀렸는지 설명, 자동 집계 숫자와 섞이지 않게 표기 구분
-- 2026-09-26 Task 2~10 진행 승인, Task 10의 API 약 168회 호출 승인. 중간 보고: Task 4 후, Task 10 후
+- 2026-09-25 그래프: 시안 2장(관리도, 패턴별 탐지율 막대)의 스타일만 따르고 숫자는 결과 파일에서만 읽음. 점 번호 0부터·100점. 정답 구간은 테두리만 있는 점선. LLM 단독 막대는 모델별로 반복 평균 + 최소~최대
+- 2026-09-26 화면 2A(한 페이지 스토리형) 채택 — 탭 3개 폐지, 섹션(머리말·01 문제·02 규칙 판정·03 AI 설명·04 검증·05 SECOM·06 한계), 2B(모바일)는 반응형 CSS. 수정 4가지 동의: 오류 분류는 검증기 기준, 실제 모델명 표기, 예시 표시는 실험 결과로 교체, 화면 태스크를 섹션 구조로 재작성. 추가 조건:
+  - 성능: 결과 파일 읽기와 SECOM 계산은 캐시, 시리즈 선택 시 관련 섹션만 다시 그림
+  - 04 검증에 자동 집계와 별도로 "사례 해설(수동 분석)" 칸 — `ai_errors.md`의 대표 오답 1~2개를 무엇을 어떻게 틀렸는지 설명, 자동 집계와 표기 구분
+- 2026-09-26 Task 2~10 진행 승인, Task 10의 API 약 168회 호출 승인. 중간 보고는 Task 4 후·Task 10 후 (둘 다 완료)
 - 구현 마감 기준선: 9/26 18시
-- 설계 중 확인 후 정한 것 (사용자가 바꿀 수 있음): 추세 = 연속 6점(증가 5회, pycontrolcharts `test3_n=5`, 라이브러리 기본값 7점과 다름), temperature는 4.1-mini 0 / sol 기본값(sol이 0을 거부)
+- 설계 중 확인 후 정한 것 (사용자가 바꿀 수 있음): 추세 = 연속 6점(증가 5회, pycontrolcharts `test3_n=5`), temperature는 4.1-mini 0 / sol 기본값(sol이 0을 거부)
+- Claude가 정하고 보고한 것 (사용자 확인 전): 04 제목을 "AI가 판정까지 직접 하면 어떻게 될까"로 중립화하고 역할 분리 근거를 결정성·비용·속도·검증 가능성으로 서술 / 사례 해설은 설명 LLM 오답이 0건이라 단독 판정 오답에서 고름
 
 ## 막힌 점
-없음. 참고: 2026-09-25 기준 키로 보이는 모델은 gpt-4.1-mini, gpt-6-sol 둘뿐 (astra는 대시보드에서 허용해야 함)
+없음. 참고: 키로 쓸 수 있는 모델은 gpt-4.1-mini, gpt-6-sol 둘뿐 (astra는 대시보드에서 허용해야 함). scratchpad는 세션마다 사라지므로 프로토타입을 wip 폴더에 옮겨 두었다.
 
 ## 계획과 실제 실행의 차이 (포트폴리오용)
 계획대로 했는데 실제로는 어긋난 지점과, 그것을 어떻게 잡고 고쳤는지 모은다. 새 사례가 생기면 아래에 덧붙인다.
@@ -52,6 +54,10 @@ Task 2~10 (화면과 무관한 데이터·규칙·채점·LLM·실험)
 | # | 날짜 · 단계 | 계획 | 실제로 일어난 일 | 원인 | 조치 |
 |---|---|---|---|---|---|
 | 1 | 09-26 · 구현 Task 1 | requirements 파일에 한글 주석을 달고 `pip install -r requirements-dev.txt` | 한국어 윈도에서 설치가 `UnicodeDecodeError: 'cp949' codec can't decode`로 멈춤 | Python 3.10에 딸린 pip 23이 인코딩 선언이 없는 파일을 시스템 기본 인코딩(cp949)으로 읽음. 계획 검증 때는 패키지를 직접 설치해서 이 경로를 안 탔음 | 두 파일 첫 줄에 `# -*- coding: utf-8 -*-`을 넣어 한글 주석을 지키고 해결. 계획서 Task 1에도 수정과 이유를 적어 다른 PC에서 재발하지 않게 함 |
+| 6 | 09-26 · 구현 Task 5 | 실패 확인 단계의 예상 문구 `ModuleNotFoundError` | 실제 문구는 `ImportError: cannot import name 'llm_client'` | 테스트가 `from spc_explainer import llm_client` 형태라 파이썬이 다른 예외를 냄 (원인은 같음: 모듈 없음) | 실패 원인이 기대와 같은지 확인하려고 구현 파일을 잠시 치워 다시 돌려 본 뒤, 문구 차이만 기록하고 진행 |
+| 7 | 09-26 · 구현 Task 10 | 2A 시안의 04 제목 "AI가 판정까지 직접 하면 얼마나 틀릴까" — AI 판정이 틀린다고 전제 | 상위 모델 gpt-6-sol은 3회 모두 규칙 엔진과 같은 판정(100%, 오탐도 같은 6건). 소형 gpt-4.1-mini만 크게 틀림(67%, 회당 오탐 103건) | 결과가 모델 크기에 따라 갈림 | 04 제목을 중립으로 바꾸고, 역할 분리 근거를 정확도에서 결정성·비용·속도·검증 가능성으로 옮김 (사용자 확인 전) |
+| 8 | 09-26 · 구현 Task 10 | "사례 해설"은 ai_errors.md의 설명 LLM 오답에서 고를 계획 | 설명 LLM 출력 48개가 전부 검증 통과 — 설명 오답 0건 | 판정 결과·원인표만 주는 좁은 입력 + JSON 모드 | 단독 판정(gpt-4.1-mini) 오답에서 대표 사례 2개를 골라 해설 |
+| 9 | 09-26 · 화면 프로토타입 | 음영 라벨을 사건 시작점 위에 한 줄로 | 가까운 사건(#45, #48)의 라벨이 겹침, 모바일에서 더 심함 | 라벨 폭이 점 간격보다 넓음 | 시작점이 25점 이내면 두 줄로 엇갈려 배치 (화면 재확인 전) |
 
 계획을 쓰는 동안 실제로 돌려 보고 잡은 것 (구현 전):
 

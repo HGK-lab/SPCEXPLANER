@@ -1,0 +1,11 @@
+# 화면 테마: Claude Design 시안(docs/design/)의 색·글꼴
+[theme]
+base = "light"
+primaryColor = "#0068a7"
+backgroundColor = "#f3f4f5"
+secondaryBackgroundColor = "#ffffff"
+textColor = "#16191d"
+borderColor = "#d9dcdf"
+baseRadius = "small"
+font = "IBM Plex Sans KR:https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500;600;700&display=swap"
+codeFont = "IBM Plex Mono:https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&display=swap"

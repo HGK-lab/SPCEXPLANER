@@ -1,0 +1,1 @@
+13:CASE_NOTES_PATH = ROOT / "docs" / "case_notes.md"  # 04 검증의 사례 해설(수동 분석)
