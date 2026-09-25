@@ -90,6 +90,7 @@
 Create `requirements.txt`:
 
 ```text
+# -*- coding: utf-8 -*-
 # 배포(Streamlit Community Cloud)용 의존성
 streamlit
 pycontrolcharts==0.1.2
@@ -103,6 +104,7 @@ python-dotenv
 Create `requirements-dev.txt`:
 
 ```text
+# -*- coding: utf-8 -*-
 # 개발·테스트 전용 의존성 (배포에는 들어가지 않는다)
 -r requirements.txt
 pytest
@@ -116,6 +118,8 @@ Create `pytest.ini`:
 pythonpath = .
 testpaths = tests
 ```
+
+두 requirements 파일 첫 줄의 인코딩 선언은 지우지 않는다. 한국어 윈도에서 pip 23이 파일을 cp949로 읽다가 한글 주석에서 `UnicodeDecodeError`로 멈추는 것을 막는다 (2026-09-25 실제 발생).
 
 Run:
 
