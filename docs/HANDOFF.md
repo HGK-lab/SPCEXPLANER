@@ -1,32 +1,32 @@
 # 인수인계 (세션 간 이어가기용)
 
-마지막 갱신: 2026-09-25
+마지막 갱신: 2026-09-26
 
 ## 현재 단계
-구현 시작. Task 1 완료(2026-09-26 새벽, 커밋 2486f99·577ecee, 테스트 3개 통과). 진행 기록은 `.superpowers/sdd/2026-09-25-spc-explainer/progress.md`(git 제외, executing-plans 방식). 사용자가 새 Claude Design 시안 2A(데스크톱 스토리형)·2B(모바일) 적용 여부를 물음 → 검토 결과 보고, 결정 대기(탭 3개 → 한 페이지 스토리로 바꿀지). Task 2~10은 화면과 무관해 결정과 상관없이 진행 가능.
+구현 중. Task 1 완료. Task 2~10 진행 중(사용자 승인, 중간 보고는 Task 4 후·Task 10 후). 진행 기록은 `.superpowers/sdd/2026-09-25-spc-explainer/progress.md`(git 제외, executing-plans 방식) — `Task N: complete` 줄이 있는 태스크는 다시 하지 않는다.
 
 ## 완료
 - GitHub 레포 생성: https://github.com/HGK-lab/SPCEXPLANER (private)
 - `docs/brief.md` 작성 (배포 항목 반영, 공고 확인 사항 추가)
 - `.env`에 OPENAI_API_KEY 저장 (gitignore 처리)
 - `CLAUDE.md`에 '작업 중지' 규칙 정의
-- 배포 연결 확인용 임시 `streamlit_app.py` + `requirements.txt`. Streamlit Community Cloud에 임시 배포 완료(사용자 확인, 2026-09-25). 배포 설정 = 레포 `HGK-lab/SPCEXPLANER`, 브랜치 `main`, 파일 `streamlit_app.py`
+- 배포 연결 확인용 임시 `streamlit_app.py`. Streamlit Community Cloud에 임시 배포 완료(사용자 확인, 2026-09-25). 배포 설정 = 레포 `HGK-lab/SPCEXPLANER`, 브랜치 `main`, 파일 `streamlit_app.py`
 - 규칙 엔진 비교 실험 → `docs/research/2026-09-24-spc-library-comparison.md`
 - 설계 문서 → `docs/superpowers/specs/2026-09-25-spc-explainer-design.md`
-- 구현 계획(13개 태스크, 전체 코드 포함) → `docs/superpowers/plans/2026-09-25-spc-explainer.md`
-  - 계획서 코드를 scratchpad에 추출해 실제 실행으로 검증: Task 1~12 테스트 55개, Task 13 적용 후 60개 통과
-- `docs/ai_errors.md` 생성: 설계 검증 스모크 호출에서 나온 gpt-4.1-mini 단독 판정 오답 1건 기록
+- 구현 계획(전체 코드 포함) → `docs/superpowers/plans/2026-09-25-spc-explainer.md` (계획서 코드를 추출·실행해 검증: Task 13까지 테스트 80개 통과, 화면 캡처로 시안 대조)
+- 화면 설계 비교 → `docs/design/2026-09-25-ui-comparison.md`, 그래프 시안 → `docs/design/ref/`
+- `docs/ai_errors.md` 생성 (설계 검증 스모크 호출의 오답 1건)
+- Task 1: 프로젝트 뼈대·설정·패턴 자료형 (커밋 2486f99, 계획 수정 577ecee)
 
 ## 진행 중
-없음
+Task 2~10 (화면과 무관한 데이터·규칙·채점·LLM·실험)
 
 ## 다음 할 일
-1. Task 2부터 이어서 구현한다 (executing-plans: `task-start docs/superpowers/plans/2026-09-25-spc-explainer.md 2`). 순서: Task 2~11 → 11-1 → 11-2 → 11-3 → 11-4 → 12 → 13. 9/26 18시 기준선에 걸리면 그 자리에서 멈춘다(SECOM부터 뺌).
-   - 2A 채택이 결정되면 Task 11 전에 Task 11-1~11-4와 Task 13의 화면 부분을 스토리형 섹션으로 다시 쓰고, 이전처럼 계획서 코드 추출·실행·화면 캡처로 검증한다.
-2. 계획서 Task 1부터 구현. 첫 명령: `python -m venv .venv` → `.venv/Scripts/python -m pip install -q -r requirements-dev.txt` (requirements 파일은 Task 1 Step 1에서 먼저 만든다)
-3. Task 10에서 실제 실험(API 168회) 실행 후 결과 커밋
+1. Task 2~10을 순서대로 끝낸다. 다음 태스크 시작: `task-start docs/superpowers/plans/2026-09-25-spc-explainer.md <N>` (스크립트 위치: superpowers `executing-plans/scripts/`)
+2. Task 10 뒤: 2A 스토리형으로 계획서 Task 11·11-1~11-4·13의 화면 부분을 다시 쓰고(아래 결정 사항의 조건 포함), 계획서 코드 추출·실행·화면 캡처로 검증한 뒤 구현
+3. 04 검증 섹션의 "사례 해설(수동 분석)": Task 10 결과의 `docs/ai_errors.md`에서 대표 오답 1~2개를 골라 따로 쓴다 (자동 집계와 구분 표기)
 4. Task 11 푸시 후 사용자에게 받을 것: 배포 URL(README에 넣음), Streamlit Secrets에 `OPENAI_API_KEY` 추가(실시간 설명용)
-5. 시간이 부족하면 Task 13(SECOM)부터 뺀다
+5. 9/26 18시 기준선에 걸리면 그 자리에서 멈춘다 (SECOM부터 뺀다)
 
 ## 사용자 결정 사항
 - LLM: OpenAI 키 사용 (이전 해커톤 키 재사용)
@@ -35,9 +35,29 @@
 - 필요하면 OpenAI 프로젝트의 허용 모델 변경 가능
 - 2026-09-25 LLM 구성(A안): 설명 = gpt-4.1-mini, 단독 판정 비교 = gpt-4.1-mini vs gpt-6-sol, gpt-6-astra는 설정으로 켜고 끄는 1회 비교(현재 비활성 → 기본 끔). 모델명은 `spc_explainer/config.py` 한 곳에서 관리
 - 2026-09-25 가정 전부 승인 + 추가 요구 4가지: (1) 20개 중 정상 시리즈 5개 이상, 오탐 따로 보고 (2) LLM 출력 3회 반복, 형식 위반·원인표 밖 원인·판정 불일치 기록 (3) UCI SECOM 실데이터 확인(결측 적은 센서 1~2개, 앞 구간으로 한계 추정, 탐지율 없이 작동 확인 + 불량 라벨 겹침 관찰, 시간 부족 시 가장 먼저 제외) (4) 설계 문서에 "관리한계 고정값 = 안정화된 공정 감시 가정" 명시
-- 2026-09-25 화면: 절충안 C, 비교 문서 5절 순서 유지. 그래프 시안 2장(관리도, 패턴별 탐지율 막대)의 스타일만 따르고 숫자는 결과 파일에서만 읽음. 점 번호 0부터·100점. 정답 구간은 테두리만 있는 점선. LLM 단독 막대는 모델별로 반복 평균 + 최소~최대
+- 2026-09-25 화면: 그래프 시안 2장(관리도, 패턴별 탐지율 막대)의 스타일만 따르고 숫자는 결과 파일에서만 읽음. 점 번호 0부터·100점. 정답 구간은 테두리만 있는 점선. LLM 단독 막대는 모델별로 반복 평균 + 최소~최대
+- 2026-09-26 화면 2A(한 페이지 스토리형) 채택 — 탭 3개를 없애고 섹션으로(머리말·01 문제·02 규칙 판정·03 AI 설명·04 검증·05 SECOM·06 한계), 2B(모바일)는 반응형 CSS로. 수정 4가지 동의: 오류 분류는 검증기 기준, 실제 모델명 표기, 예시 표시는 실험 결과로 교체, Task 11·13 화면을 섹션 구조로 재작성. 추가 조건:
+  - 성능: 결과 파일 읽기와 SECOM 계산은 캐시, 시리즈 선택 시 관련 섹션만 다시 그림(전체 재계산 금지)
+  - 04 검증에 자동 집계와 별도로 "사례 해설(수동 분석)" 칸 — `ai_errors.md`의 대표 오답 1~2개를 무엇을 어떻게 틀렸는지 설명, 자동 집계 숫자와 섞이지 않게 표기 구분
+- 2026-09-26 Task 2~10 진행 승인, Task 10의 API 약 168회 호출 승인. 중간 보고: Task 4 후, Task 10 후
 - 구현 마감 기준선: 9/26 18시
 - 설계 중 확인 후 정한 것 (사용자가 바꿀 수 있음): 추세 = 연속 6점(증가 5회, pycontrolcharts `test3_n=5`, 라이브러리 기본값 7점과 다름), temperature는 4.1-mini 0 / sol 기본값(sol이 0을 거부)
 
 ## 막힌 점
 없음. 참고: 2026-09-25 기준 키로 보이는 모델은 gpt-4.1-mini, gpt-6-sol 둘뿐 (astra는 대시보드에서 허용해야 함)
+
+## 계획과 실제 실행의 차이 (포트폴리오용)
+계획대로 했는데 실제로는 어긋난 지점과, 그것을 어떻게 잡고 고쳤는지 모은다. 새 사례가 생기면 아래에 덧붙인다.
+
+| # | 날짜 · 단계 | 계획 | 실제로 일어난 일 | 원인 | 조치 |
+|---|---|---|---|---|---|
+| 1 | 09-26 · 구현 Task 1 | requirements 파일에 한글 주석을 달고 `pip install -r requirements-dev.txt` | 한국어 윈도에서 설치가 `UnicodeDecodeError: 'cp949' codec can't decode`로 멈춤 | Python 3.10에 딸린 pip 23이 인코딩 선언이 없는 파일을 시스템 기본 인코딩(cp949)으로 읽음. 계획 검증 때는 패키지를 직접 설치해서 이 경로를 안 탔음 | 두 파일 첫 줄에 `# -*- coding: utf-8 -*-`을 넣어 한글 주석을 지키고 해결. 계획서 Task 1에도 수정과 이유를 적어 다른 PC에서 재발하지 않게 함 |
+
+계획을 쓰는 동안 실제로 돌려 보고 잡은 것 (구현 전):
+
+| # | 날짜 · 단계 | 계획(처음 생각) | 실제로 일어난 일 | 원인 | 조치 |
+|---|---|---|---|---|---|
+| 2 | 09-25 · 설계 | 브리프의 "추세 = 6점 연속 상승"을 pycontrolcharts 기본값으로 판정 | 기본값은 7점(증가 6회)을 요구, 비교용 shewhart는 6점에서 탐지 — 두 라이브러리 판정이 다름 | `test3_n`이 점 개수가 아니라 "증가 횟수" | `test3_n=5`로 브리프 정의에 맞추고, 두 라이브러리의 점 단위 일치를 테스트로 고정 |
+| 3 | 09-25 · 설계 | 모든 모델을 temperature 0으로 호출 | gpt-6-sol이 거부: "Only the default (1) value is supported" | 모델 제약 | temperature를 모델별 설정으로 두고 sol은 기본값 |
+| 4 | 09-25 · 계획 검증 | 막대 라벨과 AI 출력 발췌를 모노 글꼴(IBM Plex Mono)로 표시 | 실제 화면에서 한글 자간이 벌어져 보임 | 모노 글꼴에 한글 글리프가 없어 대체 글꼴로 그려짐 | 한글이 들어가는 두 곳만 산세리프로 |
+| 5 | 09-25 · 계획 검증 | 마커 트레이스 이름에 기호 포함("◆ 급변") | SECOM 탭 범례가 "◆ ◆ 급변"으로 겹침 | Plotly 범례가 마커 모양을 이미 그림 | 트레이스 이름에서 기호 제거 |
