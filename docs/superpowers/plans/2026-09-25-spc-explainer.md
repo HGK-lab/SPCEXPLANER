@@ -26,6 +26,9 @@
 - 명령은 저장소 루트에서 실행. `.venv/Scripts/python`은 윈도 기준이고, macOS/Linux는 `.venv/bin/python`.
 - 태스크마다 커밋 후 `git push origin main` (사용자 상시 허락). 커밋 메시지 끝에 `Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>` 줄을 붙인다.
 - LLM이 틀린 출력은 지우지 않고 `docs/ai_errors.md`에 남긴다 (실험 스크립트가 자동으로 덧붙임).
+- 화면의 숫자(n·x̄·σ, 탐지율, 분수, 건수)는 결과 파일에서만 읽는다. Claude Design 시안의 값(50점, 20건, 60건, 63.3% 등)은 쓰지 않는다.
+- LLM이 만든 문자열을 HTML에 넣을 때는 `ui_html.esc()`를 거친다 (Task 11-1부터).
+- 구현 마감 기준선: 9/26 18시. Task 11-1~11-4는 비교 문서 5절 순서대로 하고, 기준선에 걸리면 그 태스크에서 멈춘다.
 
 ## Review Focus
 
@@ -33,7 +36,9 @@
 2. `results/` 파일이 없거나, 저장된 설명의 입력이 현재 규칙 판정과 다른 경우 → 그래프·규칙 판정은 그대로 보이고 안내·경고만 뜬다. Task 11 `test_app_without_saved_files`.
 3. API 키가 없거나 실시간 호출 한도를 다 쓴 경우 → 실시간 버튼만 비활성, 저장된 설명은 그대로 보인다. Task 11 `test_live_button_disabled_without_key`.
 4. JSON으로는 읽히지만 타입이 엉뚱한 LLM 출력(최상위 배열, events가 객체, checks가 문자열, 번호가 실수) → 검증기·파서·화면이 예외 없이 형식 위반으로 처리. Task 6 `test_parseable_but_wrong_types_do_not_raise`, Task 7 `test_parse_wrong_types_do_not_raise`.
-5. 키 없이 실험 스크립트를 실행한 경우 → 파일을 건드리기 전에 안내 문구와 함께 종료. Task 9 `test_script_exits_with_message_without_key`.
+5. LLM 설명에 `<`·`&`·HTML 태그가 섞인 경우 → `st.html`은 iframe이 아니라서 그대로 넣으면 화면이 깨진다. 글자 그대로 보여야 한다. Task 11-2 `test_llm_text_is_escaped`, Task 11-4 `test_error_cases_come_from_saved_explanations`.
+
+(키 없이 실험 스크립트를 실행하는 경우는 Task 9 `test_script_exits_with_message_without_key`가 막는다.)
 
 ## 파일 구조
 
@@ -52,11 +57,14 @@
 | `spc_explainer/report.py` | 지표 → `docs/validation_report.md` | 8 |
 | `spc_explainer/experiment.py`, `scripts/run_experiment.py` | 반복 호출·캐시·지표·ai_errors | 9 |
 | `data/synthetic/series.json`, `results/*.json`, `docs/validation_report.md`, `docs/ai_errors.md` | 실험 산출물 (커밋) | 10 |
-| `spc_explainer/charts.py`, `streamlit_app.py` | 관리도 그림, 화면 | 11 |
+| `spc_explainer/charts.py`, `streamlit_app.py` | 관리도 그림, 화면 | 11 (11-3에서 관리도 스타일 교체) |
+| `.streamlit/config.toml`, `spc_explainer/ui_html.py` | 테마, 전역 CSS, 패턴 색·기호·규칙 번호, 머리말 | 11-1 |
+| `spc_explainer/ui_steps.py` | STEP 1 규칙 판정·STEP 2 AI 설명 카드, 점검 우선순위 펼치기 | 11-2 |
+| `spc_explainer/ui_dashboard.py` | 검증 탭 KPI·탐지율 막대·설명 오답 사례 | 11-4 |
 | `README.md`, `docs/HANDOFF.md` | 실행 방법, 인수인계 | 12 |
 | `spc_explainer/secom.py`, `scripts/fetch_secom.py`, `data/secom/secom_selected.csv` | SECOM 실데이터 확인 (시간 부족 시 제외) | 13 |
 
-스펙 8절 구조에 `charts.py` 하나를 더했다. 그림 코드를 화면 코드에서 떼어 두 탭이 같이 쓰게 하기 위해서다.
+스펙 8절 구조에 `charts.py`를 더했다. 그림 코드를 화면 코드에서 떼어 두 탭이 같이 쓰게 하기 위해서다. Task 11-1~11-4의 `ui_*.py` 세 개는 화면 설계 비교(`docs/design/2026-09-25-ui-comparison.md`)의 절충안 C를 위한 화면 전용 모듈이다(순수 함수라 pytest로 확인).
 
 ---
 
@@ -2611,6 +2619,1495 @@ git push origin main
 
 ---
 
+> **Task 11-1 ~ 11-4 공통.** 화면 설계 비교(`docs/design/2026-09-25-ui-comparison.md`)의 절충안 C를 5절 순서대로 적용한다. 그래프 스타일 출처는 `docs/design/ref/control-chart.png`(관리도), `docs/design/ref/detection-bars.png`(탐지율 막대).
+> - 태스크마다 앱이 동작하는 상태로 커밋한다. 9/26 18시 기준선에 걸리면 그 자리에서 멈춘다 (최악의 경우 Task 11 화면).
+> - 화면의 숫자는 결과 파일(`data/synthetic/series.json`, `results/*.json`)에서만 읽는다. 시안의 값(50점, 20건, 60건, 63.3% 등)은 쓰지 않는다. 점 번호는 0부터, 100점.
+> - LLM이 만든 문자열은 `ui_html.esc()`를 거쳐 HTML에 넣는다. `st.html`은 iframe 없이 페이지에 바로 들어간다.
+> - Task 13(SECOM)이 찾아 바꾸는 세 줄은 그대로 둔다: `from spc_explainer import config, explain, generator, llm_client, rules`, `tab_main, tab_report = st.tabs(["판정·설명", "검증 리포트"])`, 파일 마지막 줄 `st.info("리포트가 아직 없습니다. ...")`. `control_chart`의 기존 인자도 그대로 받는다.
+> - 비교 문서 5절의 9번(화면용 가공 함수)은 처음 필요한 곳에서 만든다: 점검 우선순위 펼치기는 11-2의 `ui_steps.py`, KPI·막대·오답 사례는 11-4의 `ui_dashboard.py`.
+
+### Task 11-1: 테마·카드 CSS·머리말 (5절 1~3번)
+
+**Files:**
+- Create: `.streamlit/config.toml`, `spc_explainer/ui_html.py`, `tests/test_ui_html.py`
+- Modify: `streamlit_app.py`
+
+**Interfaces:**
+- Consumes: `config.UNIT`, 데이터셋의 `center`·`ucl`·`lcl` (Task 2)
+- Produces:
+  - `ui_html.PATTERN_COLORS: dict[str, {"fill": str, "text": str}]`, `ui_html.SYMBOL`(◆▲■), `ui_html.RULE_ID`(spike R1, shift R2, trend R3)
+  - `ui_html.esc(text) -> str`, `ui_html.span_text(start: int, end: int) -> str` (`#14`, `#45–52`)
+  - `ui_html.header_html(center, ucl, lcl, unit) -> str`, `ui_html.CSS: str`
+  - 카드 키(= CSS 클래스 `st-key-<키>`): `chart_card`, `rule_card`, `ai_card`, `ai_body`, `ai_warn`, `ai_runs`, `ai_foot`, `kpi_rule`, `kpi_llm`, `kpi_ai`, `bars_card`, `cases_card`
+
+- [ ] **Step 1: 실패하는 테스트 작성**
+
+Create `tests/test_ui_html.py`:
+
+```python
+# 화면 공통 조각: 머리말 문구, 카드 CSS, 패턴 기호·규칙 번호, 이스케이프
+from spc_explainer.ui_html import CSS, PATTERN_COLORS, RULE_ID, SYMBOL, esc, header_html, span_text
+
+
+def test_header_shows_roles_limits_and_assumption():
+    h = header_html(100.0, 103.0, 97.0, "nm")
+    assert "판정 · 정확성" in h and "설명 · 해석력" in h
+    assert "CL 100.0" in h and "UCL 103.0" in h and "LCL 97.0" in h
+    assert "이미 안정화된 공정을 감시하는 상황을 가정" in h
+
+
+def test_css_targets_keyed_cards():
+    for key in ("chart_card", "rule_card", "ai_card", "ai_foot", "kpi_rule", "bars_card", "cases_card"):
+        assert f".st-key-{key}" in CSS
+    assert CSS.startswith("<style>") and CSS.rstrip().endswith("</style>")
+
+
+def test_pattern_vocabulary():
+    assert RULE_ID == {"spike": "R1", "shift": "R2", "trend": "R3"}  # Nelson 규칙 번호
+    assert SYMBOL == {"spike": "◆", "trend": "▲", "shift": "■"}
+    assert set(PATTERN_COLORS) == {"spike", "trend", "shift"}
+
+
+def test_span_and_escape():
+    assert span_text(14, 14) == "#14" and span_text(45, 52) == "#45–52"
+    assert esc('<b>&"') == "&lt;b&gt;&amp;&quot;"
+```
+
+- [ ] **Step 2: 실패 확인**
+
+Run: `.venv/Scripts/python -m pytest tests/test_ui_html.py -v`
+Expected: 수집 오류 `ModuleNotFoundError: No module named 'spc_explainer.ui_html'`
+
+- [ ] **Step 3: 테마와 공통 조각 구현**
+
+Create `.streamlit/config.toml`:
+
+```toml
+# 화면 테마: Claude Design 시안(docs/design/)의 색·글꼴
+[theme]
+base = "light"
+primaryColor = "#0068a7"
+backgroundColor = "#f3f4f5"
+secondaryBackgroundColor = "#ffffff"
+textColor = "#16191d"
+borderColor = "#d9dcdf"
+baseRadius = "small"
+font = "IBM Plex Sans KR:https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500;600;700&display=swap"
+codeFont = "IBM Plex Mono:https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&display=swap"
+```
+
+Create `spc_explainer/ui_html.py`:
+
+```python
+# 화면 공통 조각: 패턴 색·기호·규칙 번호, 전역 CSS, 머리말 HTML.
+# 스타일 출처: Claude Design 시안(docs/design/). LLM이 만든 문자열은 반드시 esc()를 거쳐 넣는다
+# (st.html은 iframe 없이 페이지에 바로 들어간다).
+import html
+
+PATTERN_COLORS = {
+    "spike": {"fill": "#d02c2a", "text": "#b7191c"},
+    "trend": {"fill": "#c5770f", "text": "#915200"},
+    "shift": {"fill": "#8048b6", "text": "#703ba1"},
+}
+SYMBOL = {"spike": "◆", "trend": "▲", "shift": "■"}
+RULE_ID = {"spike": "R1", "shift": "R2", "trend": "R3"}  # Nelson 규칙 번호
+
+
+def esc(text) -> str:
+    """HTML 특수문자를 이스케이프한다."""
+    return html.escape(str(text), quote=True)
+
+
+def span_text(start: int, end: int) -> str:
+    """구간 표기: #14 또는 #45–52 (점 번호는 0부터)."""
+    return f"#{start}" if start == end else f"#{start}–{end}"
+
+
+def header_html(center: float, ucl: float, lcl: float, unit: str) -> str:
+    """제목 아래 머리말: 역할 띠(규칙 → AI) + 관리 기준 + 고정 한계 가정."""
+    return (
+        '<div class="spc-top">'
+        '<span class="spc-roles"><span class="b-rule">규칙</span>판정 · 정확성'
+        '<span class="spc-arrow-s">→</span><span class="b-ai">AI</span>설명 · 해석력</span>'
+        f"<span>관리 기준 <b>CL {center:.1f}</b> · <b>UCL {ucl:.1f}</b> · <b>LCL {lcl:.1f}</b> {esc(unit)}</span>"
+        '<span class="spc-note">관리한계 고정값 사용 = 이미 안정화된 공정을 감시하는 상황을 가정</span>'
+        "</div>"
+    )
+
+
+CSS = """<style>
+/* ── 카드: 키 달린 st.container에 Streamlit이 붙이는 st-key-* 클래스를 꾸민다 ── */
+.st-key-chart_card, .st-key-bars_card, .st-key-cases_card,
+.st-key-kpi_rule, .st-key-kpi_llm, .st-key-kpi_ai {
+  background: #ffffff !important; border: 1px solid #d9dcdf !important; border-radius: 4px !important;
+  padding: 16px 20px !important; gap: 8px !important;
+}
+.st-key-rule_card {
+  background: #ffffff !important; border: 1px solid #16191d !important; border-radius: 4px !important;
+  padding: 0 !important; gap: 0 !important; overflow: hidden;
+}
+.st-key-ai_card {
+  background: #f7fbfe !important; border: 1px dashed #6da4d3 !important; border-radius: 4px !important;
+  padding: 0 !important; gap: 0 !important; overflow: hidden;
+}
+.st-key-ai_body, .st-key-ai_warn, .st-key-ai_runs { padding: 10px 18px !important; }
+.st-key-ai_foot { padding: 8px 18px !important; border-top: 1px solid #e3e5e8 !important; }
+
+/* ── 머리말 ── */
+.spc-top { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 28px; font-size: 13px; color: #4d545c; }
+.spc-top b { color: #16191d; font-weight: 600; }
+.spc-roles { display: inline-flex; align-items: center; gap: 8px; }
+.spc-arrow-s { color: #8a9098; }
+.spc-note { font-size: 12px; color: #6b727b; }
+.b-rule { font-size: 11px; font-weight: 600; background: #16191d; color: #fff; padding: 2px 7px; border-radius: 3px; }
+.b-ai { font-size: 11px; font-weight: 600; background: #dff1ff; color: #00508e; border: 1px solid #92c4ee;
+  padding: 1px 7px; border-radius: 3px; }
+.b-ai-solid { font-size: 11px; font-weight: 600; background: #0068a7; color: #fff; padding: 2px 7px; border-radius: 3px; }
+.spc-mono { font-family: 'IBM Plex Mono', monospace; }
+
+/* ── 관리도 머리말·꼬리말 ── */
+.spc-chart-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 16px; }
+.spc-chart-title { font-size: 16px; font-weight: 600; }
+.spc-chart-stats { display: inline-flex; gap: 14px; font-family: 'IBM Plex Mono', monospace; font-size: 12.5px; color: #4d545c; }
+.spc-chart-legend { margin-left: auto; display: inline-flex; flex-wrap: wrap; align-items: center; gap: 16px; font-size: 13px; }
+.spc-lg-line { display: inline-block; width: 18px; border-top: 1.5px dashed #5b626b; margin-right: 5px; vertical-align: middle; }
+.spc-lg-truth { display: inline-block; width: 12px; height: 12px; border: 1.5px dotted #16191d; margin-right: 5px;
+  vertical-align: middle; }
+.spc-chart-foot { display: flex; justify-content: space-between; gap: 8px; font-size: 12px; color: #5b626b; }
+
+/* ── STEP 카드 ── */
+.spc-step-head { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 10px; padding: 12px 18px; }
+.spc-step-head b { font-size: 16px; font-weight: 600; }
+.spc-step-head.rule { background: #16191d; color: #fff; }
+.spc-step-head.ai { color: #004072; }
+.spc-step { font-size: 12px; opacity: .75; }
+.spc-muted { font-size: 12px; }
+.spc-step-head.rule .spc-muted { color: #c9cdd2; }
+.spc-step-head.ai .spc-muted { color: #4d545c; }
+.spc-tag-fixed { font-size: 11px; font-weight: 600; border: 1px solid #6b727b; padding: 1px 7px; border-radius: 3px; }
+.spc-tag-ai { font-size: 11px; font-weight: 600; background: #0068a7; color: #fff; padding: 2px 7px; border-radius: 3px; }
+.spc-tag-pass { font-size: 11px; font-weight: 600; background: #e7f5ec; color: #1e6b34; border: 1px solid #a3d4b2;
+  padding: 1px 7px; border-radius: 3px; }
+.spc-tag-fail { font-size: 11px; font-weight: 600; background: #fdecea; color: #b7191c; border: 1px solid #f1a9a5;
+  padding: 1px 7px; border-radius: 3px; }
+.spc-rule-row { display: grid; grid-template-columns: 92px 84px minmax(0, 1fr) 40px; gap: 10px; padding: 12px 18px;
+  border-top: 1px solid #eceef0; font-size: 13.5px; align-items: start; }
+.spc-rule-th { background: #f6f7f8; color: #5b626b; font-size: 12px; padding: 8px 18px; border-top: none; }
+.spc-rule-row small { display: block; font-size: 12px; color: #5b626b; }
+.spc-pat { font-weight: 600; }
+.spc-rid { font-size: 12px; font-weight: 600; border: 1px solid #16191d; border-radius: 3px; text-align: center; }
+.spc-rule-empty { padding: 14px 18px; font-size: 13.5px; color: #3b424a; }
+.spc-foot { display: flex; justify-content: space-between; gap: 8px; background: #f6f7f8; padding: 9px 18px;
+  font-size: 12px; color: #4d545c; border-top: 1px solid #eceef0; }
+.spc-flow { display: flex; flex-direction: column; align-items: center; gap: 4px; margin-top: 110px; color: #5b626b;
+  font-size: 20px; }
+.spc-flow small { font-size: 11px; text-align: center; line-height: 1.3; }
+.spc-ai-body { display: flex; flex-direction: column; gap: 8px; padding: 12px 18px 14px; }
+.spc-label { font-size: 12px; font-weight: 600; color: #5b626b; }
+.spc-summary { font-size: 14px; line-height: 1.6; }
+.spc-checks { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 10px; }
+.spc-check { background: #fff; border: 1px solid #cfe3f3; border-radius: 4px; padding: 12px; display: flex;
+  flex-direction: column; gap: 5px; }
+.spc-check.unknown { border-color: #d02c2a; }
+.spc-check-top { display: flex; align-items: center; gap: 4px; }
+.spc-rank { width: 22px; height: 22px; background: #0068a7; color: #fff; border-radius: 3px; display: inline-grid;
+  place-items: center; font-size: 12px; font-weight: 600; margin-right: 4px; }
+.spc-chip { font-family: 'IBM Plex Mono', monospace; font-size: 11px; border: 1px solid #9aa0a7; border-radius: 3px; padding: 0 5px; }
+.spc-check-title { font-size: 14px; font-weight: 600; }
+.spc-check-cause { font-size: 12px; color: #5b626b; }
+.spc-check-reason { font-size: 12.5px; color: #4d545c; line-height: 1.5; }
+.spc-issues { margin: 10px 18px 0; padding: 10px 12px; background: #fdecea; border: 1px solid #f1a9a5; border-radius: 4px;
+  font-size: 12.5px; color: #7a1512; }
+.spc-issues ul { margin: 6px 0 0; padding-left: 18px; }
+.spc-status { display: flex; align-items: center; gap: 6px; font-size: 12px; color: #4d545c; }
+.spc-dot { width: 7px; height: 7px; border-radius: 50%; background: #6b727b; display: inline-block; flex: none; }
+
+/* ── 검증 탭 ── */
+.spc-dash-title { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 16px; }
+.spc-dash-title b { font-size: 20px; }
+.spc-dash-title span { font-size: 13px; color: #4d545c; }
+.spc-kpi { display: flex; flex-direction: column; gap: 8px; }
+.spc-kpi-top { display: flex; align-items: center; gap: 8px; font-size: 14px; color: #3b424a; }
+.spc-kpi-num { font-size: 40px; font-weight: 600; line-height: 1.1; }
+.spc-kpi-num.sm { font-size: 28px; }
+.spc-kpi-unit { font-size: 22px; color: #5b626b; }
+.spc-kpi-sub { font-size: 12.5px; color: #4d545c; }
+.spc-kpi-model { display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 10px; }
+.spc-kpi-name { width: 100%; font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #3b424a; }
+.spc-kpi-delta { font-size: 14px; font-weight: 600; color: #b7191c; }
+.spc-bars-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 8px;
+  padding-bottom: 10px; border-bottom: 1px solid #eceef0; }
+.spc-bars-head b { font-size: 16px; }
+.spc-lg { display: inline-flex; align-items: center; gap: 6px; margin-left: 14px; font-size: 13px; }
+.spc-lg i { width: 12px; height: 12px; display: inline-block; }
+.spc-bar-group { display: grid; grid-template-columns: 120px minmax(0, 1fr); gap: 16px; padding: 12px 0;
+  border-bottom: 1px solid #eceef0; }
+.spc-bar-group.total { border-bottom: none; border-top: 1px solid #c9cdd2; }
+.spc-bar-name b { display: block; font-size: 14px; }
+.spc-bar-name small { font-family: 'IBM Plex Mono', monospace; font-size: 11.5px; color: #5b626b; }
+.spc-bar-rows { display: flex; flex-direction: column; gap: 6px; }
+.spc-bar-row { display: grid; grid-template-columns: 96px minmax(0, 1fr) 190px; gap: 10px; align-items: center; }
+.spc-bar-who { font-size: 11.5px; color: #5b626b; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.spc-track { position: relative; height: 14px; background: #f0f1f3; }
+.spc-fill { height: 100%; }
+.spc-range { position: absolute; top: 50%; height: 2px; margin-top: -1px; background: #0b2e4f; }
+.spc-range::before, .spc-range::after { content: ""; position: absolute; top: -4px; width: 2px; height: 10px; background: #0b2e4f; }
+.spc-range::before { left: 0; }
+.spc-range::after { right: 0; }
+.spc-bar-val { font-family: 'IBM Plex Mono', monospace; font-size: 12.5px; white-space: nowrap; }
+.spc-bar-val span { color: #5b626b; }
+.spc-facts { border-left: 1px solid #eceef0; padding-left: 16px; display: flex; flex-direction: column; gap: 8px; }
+.spc-facts p { font-size: 14px; line-height: 1.55; margin: 0; }
+.spc-cases-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 14px; padding-bottom: 8px; }
+.spc-cases-head b { font-size: 16px; }
+.spc-cases-head span { font-size: 12.5px; color: #4d545c; }
+.spc-case-row { display: grid; grid-template-columns: 36px 220px minmax(0, 1fr) minmax(0, 1fr); gap: 16px;
+  padding: 12px 0; border-top: 1px solid #eceef0; font-size: 13.5px; }
+.spc-case-row.th { font-size: 12px; font-weight: 600; color: #4d545c; background: #f6f7f8; padding: 8px 0; }
+.spc-case-row small { display: block; font-size: 12px; color: #4d545c; }
+.spc-quote { color: #3b424a; font-size: 12.5px; word-break: break-all; }  /* 모노 글꼴엔 한글이 없어 산세리프 */
+.spc-cases-empty { font-size: 13.5px; color: #3b424a; padding: 8px 0; }
+</style>"""
+```
+
+- [ ] **Step 4: 앱에 CSS·머리말 넣기**
+
+Modify `streamlit_app.py` — 찾을 코드:
+
+```python
+from spc_explainer.charts import control_chart
+```
+
+바꿀 코드:
+
+```python
+from spc_explainer import ui_html
+from spc_explainer.charts import control_chart
+```
+
+Modify `streamlit_app.py` — 찾을 코드:
+
+```python
+st.title("SPC 설명기")
+st.caption(
+    f"{config.PROCESS_NAME} 관리도에서 판정은 규칙 엔진(pycontrolcharts), 설명은 LLM이 맡습니다. "
+    f"관리한계 고정값({config.LCL:g}~{config.UCL:g}{config.UNIT}) 사용 = 이미 안정화된 공정을 감시하는 상황을 가정합니다."
+)
+tab_main, tab_report = st.tabs(["판정·설명", "검증 리포트"])
+
+with tab_main:
+    dataset = load_json(config.SERIES_PATH) or generator.generate_dataset()
+    series = dataset["series"]
+```
+
+바꿀 코드:
+
+```python
+dataset = load_json(config.SERIES_PATH) or generator.generate_dataset()
+st.html(ui_html.CSS)
+st.title("SPC 설명기")
+st.html(ui_html.header_html(dataset["center"], dataset["ucl"], dataset["lcl"], config.UNIT))
+tab_main, tab_report = st.tabs(["판정·설명", "검증 리포트"])
+
+with tab_main:
+    series = dataset["series"]
+```
+
+- [ ] **Step 5: 통과 확인**
+
+Run: `.venv/Scripts/python -m pytest tests/test_ui_html.py tests/test_app.py -v`
+Expected: 7 passed
+
+- [ ] **Step 6: 커밋**
+
+```bash
+git add .streamlit/config.toml spc_explainer/ui_html.py tests/test_ui_html.py streamlit_app.py
+git commit -m "feat: 화면 테마·카드 CSS·역할 머리말 (Claude Design 절충안 1단계)" -m "Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
+git push origin main
+```
+
+---
+
+### Task 11-2: STEP 1 규칙 판정 → 화살표 → STEP 2 AI 설명 (5절 4~6번)
+
+**Files:**
+- Create: `spc_explainer/ui_steps.py`, `tests/test_ui_steps.py`
+- Modify: `streamlit_app.py`
+
+**Interfaces:**
+- Consumes: `ui_html.*`(Task 11-1), `rules.describe`, `explain.ISSUE_KO/validate/build_input/build_messages`, `causes.CAUSES`, `patterns.*`
+- Produces:
+  - `ui_steps.ARROW_HTML: str`
+  - `ui_steps.rule_card_html(events: list[Event], values) -> str`
+  - `ui_steps.ai_head_html(issues: list[dict] | None) -> str` (None = 배지 없음, [] = 검증 통과)
+  - `ui_steps.issues_html(issues) -> str`, `ui_steps.status_html(text) -> str`
+  - `ui_steps.priority_items(data: dict, inp: dict) -> list[dict]` — `{"rank", "event_id", "rule_id", "cause_id", "title", "cause", "reason", "known"}`
+  - `ui_steps.ai_body_html(data: dict, inp: dict) -> str`
+
+- [ ] **Step 1: 실패하는 테스트 작성**
+
+Create `tests/test_ui_steps.py`:
+
+```python
+# STEP 1·STEP 2 카드: 규칙 번호, 구간 표기, 검증 배지, 점검 우선순위 펼치기, HTML 이스케이프
+import json
+
+from spc_explainer.explain import build_input
+from spc_explainer.patterns import Event
+from spc_explainer.ui_steps import ai_body_html, ai_head_html, issues_html, priority_items, rule_card_html
+
+VALUES = [104.2 if i == 14 else 99.0 if 40 <= i <= 49 else 100.0 for i in range(100)]
+EVENTS = [Event("spike", 14, 14, "up"), Event("shift", 40, 49, "down")]
+INP = build_input(VALUES, EVENTS)
+DATA = {
+    "summary": "요약",
+    "priority": ["E2", "E1"],
+    "events": [
+        {"event_id": "E1", "pattern": "급변", "rule": "r", "checks": [{"cause_id": "SP-1", "reason": "재측정"}]},
+        {"event_id": "E2", "pattern": "치우침", "rule": "r",
+         "checks": [{"cause_id": "SH-1", "reason": "PM"}, {"cause_id": "SH-2", "reason": "로트"}]},
+    ],
+}
+
+
+def test_rule_card_lists_events_with_rule_ids():
+    h = rule_card_html(EVENTS, VALUES)
+    assert "STEP 1" in h and "확정" in h and "2건 감지" in h
+    assert "#14" in h and "#40–49" in h and ">R1<" in h and ">R2<" in h
+    assert "관리한계 밖 1점" in h and "결정적 계산 — 동일 입력이면 항상 동일 결과" in h
+
+
+def test_rule_card_without_events():
+    h = rule_card_html([], VALUES)
+    assert "이상 없음" in h and "0건 감지" in h
+
+
+def test_ai_head_badges():
+    assert "검증 통과" in ai_head_html([])
+    assert "검증 문제: 원인표 밖 원인" in ai_head_html([{"type": "cause", "detail": "x"}])
+    none_head = ai_head_html(None)
+    assert "spc-tag-pass" not in none_head and "spc-tag-fail" not in none_head
+    assert "새로운 판정을 만들지 않음" in none_head
+
+
+def test_priority_items_follow_priority_then_checks():
+    items = priority_items(DATA, INP)
+    assert [(i["event_id"], i["cause_id"]) for i in items] == [("E2", "SH-1"), ("E2", "SH-2"), ("E1", "SP-1")]
+    assert [i["rank"] for i in items] == [1, 2, 3]
+    assert items[0]["rule_id"] == "R2" and items[2]["rule_id"] == "R1"  # 규칙 번호는 규칙 판정에서 가져온다
+    assert items[2]["title"] == "같은 웨이퍼 재측정"
+
+
+def test_priority_items_tolerate_bad_shapes():
+    weird = {"events": [{"event_id": "E1", "checks": [1, {"cause_id": "XX-9", "reason": "?"}]}, "x"], "priority": "E1"}
+    items = priority_items(weird, INP)
+    assert len(items) == 1 and items[0]["known"] is False and items[0]["title"] == "원인표에 없는 원인"
+    assert priority_items({}, INP) == []
+
+
+def test_llm_text_is_escaped():
+    bad = json.loads(json.dumps(DATA))
+    bad["summary"] = "<script>alert(1)</script> & <b>굵게</b>"
+    bad["events"][0]["checks"][0]["reason"] = "<img src=x onerror=alert(1)>"
+    h = ai_body_html(bad, INP)
+    assert "<script>" not in h and "&lt;script&gt;" in h and "<img" not in h
+    assert "&lt;b&gt;" in issues_html([{"type": "format", "detail": "<b>"}])
+```
+
+- [ ] **Step 2: 실패 확인**
+
+Run: `.venv/Scripts/python -m pytest tests/test_ui_steps.py -v`
+Expected: 수집 오류 `ModuleNotFoundError: No module named 'spc_explainer.ui_steps'`
+
+- [ ] **Step 3: 카드 조각 구현**
+
+Create `spc_explainer/ui_steps.py`:
+
+```python
+# STEP 1(규칙 판정)·STEP 2(AI 설명) 카드의 HTML과 점검 우선순위 가공. 판정은 항상 규칙 결과가 기준이다.
+from .causes import CAUSES
+from .explain import ISSUE_KO
+from .patterns import FROM_KOREAN, KOREAN, Event
+from .rules import describe
+from .ui_html import PATTERN_COLORS, RULE_ID, SYMBOL, esc, span_text
+
+ARROW_HTML = '<div class="spc-flow">→<small>판정 결과만<br>전달</small></div>'
+
+
+def _split_rule(sentence: str) -> tuple[str, str]:
+    """rules.describe 문장을 주문장과 괄호 속 세부로 나눈다."""
+    main, _, rest = sentence.partition(" (")
+    return main, rest[:-1] if rest.endswith(")") else rest
+
+
+def rule_card_html(events: list[Event], values) -> str:
+    """STEP 1 카드: 머리줄(확정·건수) + 사건 표(패턴·구간·판정 근거·규칙 번호) + 결정적 계산 문구."""
+    head = ('<div class="spc-step-head rule"><span class="spc-step">STEP 1</span><b>규칙 판정</b>'
+            f'<span class="spc-tag-fixed">확정</span><span class="spc-muted">{len(events)}건 감지</span></div>')
+    rows = ['<div class="spc-rule-row spc-rule-th"><span>패턴</span><span>구간</span><span>판정 근거</span><span>규칙</span></div>']
+    for ev in events:
+        main, detail = _split_rule(describe(ev, values))
+        color = PATTERN_COLORS[ev.pattern]["text"]
+        rows.append(
+            f'<div class="spc-rule-row"><span class="spc-pat" style="color:{color}">{SYMBOL[ev.pattern]} {KOREAN[ev.pattern]}</span>'
+            f'<span class="spc-mono">{span_text(ev.start, ev.end)}</span>'
+            f"<span>{esc(main)}<small>{esc(detail)}</small></span>"
+            f'<span class="spc-rid">{RULE_ID[ev.pattern]}</span></div>'
+        )
+    if not events:
+        rows = ['<div class="spc-rule-empty">이상 없음 — 세 규칙 모두 해당하지 않습니다.</div>']
+    foot = ('<div class="spc-foot"><span>결정적 계산 — 동일 입력이면 항상 동일 결과</span>'
+            "<span>Nelson R1–R3</span></div>")
+    return head + "".join(rows) + foot
+
+
+def ai_head_html(issues: list[dict] | None) -> str:
+    """STEP 2 머리줄. issues가 None이면 검증 배지 없음(보여줄 출력 없음), []이면 검증 통과."""
+    if issues is None:
+        badge = ""
+    elif not issues:
+        badge = '<span class="spc-tag-pass">검증 통과</span>'
+    else:
+        names = ", ".join(sorted({ISSUE_KO[i["type"]] for i in issues}))
+        badge = f'<span class="spc-tag-fail">검증 문제: {esc(names)}</span>'
+    return ('<div class="spc-step-head ai"><span class="spc-step">STEP 2</span><b>AI 설명</b>'
+            f'<span class="spc-tag-ai">AI 생성</span>{badge}'
+            '<span class="spc-muted">참고용 해석 · 새로운 판정을 만들지 않음</span></div>')
+
+
+def issues_html(issues: list[dict]) -> str:
+    """검증 문제 목록. 판정은 STEP 1을 따르라고 적는다."""
+    items = "".join(f"<li>{esc(ISSUE_KO[i['type']])}: {esc(i['detail'])}</li>" for i in issues)
+    return ('<div class="spc-issues">검증에서 문제가 발견됐습니다. 판정은 STEP 1 규칙 결과를 따르세요.'
+            f"<ul>{items}</ul></div>")
+
+
+def status_html(text: str) -> str:
+    return f'<div class="spc-status"><span class="spc-dot"></span>{esc(text)}</div>'
+
+
+def priority_items(data: dict, inp: dict) -> list[dict]:
+    """priority 순서대로 사건별 checks를 펼친 점검 목록. 규칙 번호는 LLM이 아니라 규칙 판정에서 가져온다.
+    모양이 틀린 출력도 예외 없이 처리한다."""
+    patterns = {e["event_id"]: FROM_KOREAN.get(e["pattern"]) for e in inp["events"]}
+    events = data.get("events") if isinstance(data.get("events"), list) else []
+    by_id = {}
+    for ev in events:
+        if isinstance(ev, dict):
+            by_id.setdefault(str(ev.get("event_id")), ev)
+    priority = data.get("priority") if isinstance(data.get("priority"), list) else []
+    order = [str(e) for e in priority if str(e) in by_id]
+    order = list(dict.fromkeys(order)) + [eid for eid in by_id if eid not in order]  # priority에 빠진 사건은 뒤에
+    items = []
+    for eid in order:
+        checks = by_id[eid].get("checks")
+        for c in checks if isinstance(checks, list) else []:
+            if not isinstance(c, dict):
+                continue
+            cid = c.get("cause_id")
+            row = CAUSES.get(cid) if isinstance(cid, str) else None
+            items.append({
+                "rank": len(items) + 1,
+                "event_id": eid,
+                "rule_id": RULE_ID.get(patterns.get(eid), "-"),
+                "cause_id": str(cid),
+                "title": row["check"] if row else "원인표에 없는 원인",
+                "cause": row["cause"] if row else str(cid),
+                "reason": str(c.get("reason", "")),
+                "known": row is not None,
+            })
+    return items
+
+
+def ai_body_html(data: dict, inp: dict) -> str:
+    """패턴 해석(summary) + 점검 우선순위 카드. LLM 문자열은 모두 이스케이프한다."""
+    summary = data.get("summary") if isinstance(data.get("summary"), str) else ""
+    cards = []
+    for it in priority_items(data, inp):
+        cls = "spc-check" if it["known"] else "spc-check unknown"
+        cards.append(
+            f'<div class="{cls}"><div class="spc-check-top"><span class="spc-rank">{it["rank"]}</span>'
+            f'<span class="spc-chip">{esc(it["rule_id"])}</span><span class="spc-chip">{esc(it["event_id"])}</span></div>'
+            f'<div class="spc-check-title">{esc(it["title"])}</div>'
+            f'<div class="spc-check-cause">{esc(it["cause_id"])} · {esc(it["cause"])}</div>'
+            f'<div class="spc-check-reason">{esc(it["reason"])}</div></div>'
+        )
+    checks_html = "".join(cards) or '<div class="spc-check-cause">점검 항목 없음</div>'
+    return ('<div class="spc-ai-body"><div class="spc-label">패턴 해석</div>'
+            f'<div class="spc-summary">{esc(summary)}</div>'
+            f'<div class="spc-label">점검 우선순위</div><div class="spc-checks">{checks_html}</div></div>')
+```
+
+- [ ] **Step 4: 앱의 판정·설명 영역을 STEP 카드로 교체**
+
+Modify `streamlit_app.py` — 찾을 코드:
+
+```python
+import pandas as pd
+import streamlit as st
+
+from spc_explainer import config, explain, generator, llm_client, rules
+from spc_explainer.causes import CAUSES
+from spc_explainer import ui_html
+from spc_explainer.charts import control_chart
+```
+
+바꿀 코드:
+
+```python
+import streamlit as st
+
+from spc_explainer import config, explain, generator, llm_client, rules
+from spc_explainer import ui_html, ui_steps
+from spc_explainer.charts import control_chart
+```
+
+Modify `streamlit_app.py` — 찾을 코드:
+
+```python
+def issue_names(issues: list[dict]) -> str:
+    return ", ".join(sorted({explain.ISSUE_KO[i["type"]] for i in issues}))
+
+
+def show_explanation(text, inp: dict) -> None:
+    """설명 출력 하나를 검증 결과와 함께 보여준다. 판정은 항상 규칙 결과가 기준."""
+    data, issues = explain.validate(text, inp)
+    if issues:
+        lines = [f"- {explain.ISSUE_KO[i['type']]}: {i['detail']}" for i in issues]
+        st.error("검증에서 문제가 발견됐습니다. 판정은 위 규칙 결과를 따르세요.\n\n" + "\n".join(lines))
+    else:
+        st.success("검증 통과: JSON 형식, 원인표, 규칙 판정과 모두 일치")
+    if not isinstance(data, dict):
+        st.code(text or "", language="json")
+        return
+    st.markdown(f"**요약** {data.get('summary', '')}")
+    priority = data.get("priority") if isinstance(data.get("priority"), list) else []
+    if priority:
+        st.markdown("**점검 순서** " + " → ".join(map(str, priority)))
+    events = data.get("events") if isinstance(data.get("events"), list) else []
+    for ev in events:
+        if not isinstance(ev, dict):
+            continue
+        st.markdown(f"**{ev.get('event_id')} · {ev.get('pattern')}** — {ev.get('rule', '')}")
+        checks = ev.get("checks") if isinstance(ev.get("checks"), list) else []
+        for n, c in enumerate(checks, start=1):
+            if not isinstance(c, dict):
+                continue
+            cid = c.get("cause_id")
+            row = CAUSES.get(cid, {}) if isinstance(cid, str) else {}
+            cause = row.get("cause", "(원인표에 없음)")
+            check = row.get("check", "-")
+            st.markdown(f"{n}. `{cid}` {cause} — 점검: {check}  \n이유: {c.get('reason', '')}")
+```
+
+바꿀 코드:
+
+```python
+def render_ai_card(sid: int, values, events) -> None:
+    """STEP 2 카드: 설명(실시간 결과가 있으면 그것, 없으면 저장된 1회차) + 검증 배지 + 캐시 상태·실시간 재생성."""
+    model = config.EXPLAIN_MODEL
+    inp = explain.build_input(values, events)
+    saved = load_json(config.EXPLANATIONS_PATH) or {}
+    cached = (saved.get("series") or {}).get(str(sid))
+    runs = cached.get("runs", []) if cached else []
+    live = st.session_state.get("live")
+    reply = live[1] if live and live[0] == sid else None
+
+    if reply is not None:
+        text, error, shown_inp = reply.text, reply.error, inp
+        status = f"실시간 결과 · {model['name']} · {reply.latency_s:.1f}초"
+    elif runs:
+        text, error, shown_inp = runs[0]["text"], runs[0]["error"], cached["input"]
+        created = str(runs[0].get("created", "")).replace("T", " ")[:16]
+        status = f"캐시된 결과 · {created} 생성 · 같은 입력 {len(runs)}회 중 1회차"
+    else:
+        text, error, shown_inp = None, None, None
+        status = "저장된 결과 없음"
+
+    if shown_inp is None or error:
+        st.html(ui_steps.ai_head_html(None))
+        with st.container(key="ai_body"):
+            if error:
+                st.error(f"호출 오류: {error}")
+            else:
+                st.info("저장된 설명이 없습니다. `python scripts/run_experiment.py`로 만들 수 있습니다.")
+    else:
+        data, issues = explain.validate(text, shown_inp)
+        st.html(ui_steps.ai_head_html(issues))
+        if issues:
+            st.html(ui_steps.issues_html(issues))
+        if isinstance(data, dict):
+            st.html(ui_steps.ai_body_html(data, shown_inp))
+        else:
+            with st.container(key="ai_body"):
+                st.code(text or "", language="json")
+    if cached and cached.get("input") != inp:
+        with st.container(key="ai_warn"):
+            st.warning("저장된 설명의 입력이 현재 규칙 판정과 다릅니다. 실험을 다시 돌려야 합니다.")
+
+    # 실시간 재생성: 세션당·하루 호출 수를 제한하고, 키가 없으면 끈다
+    counter = daily_counter()
+    if counter["date"] != date.today():
+        counter.update(date=date.today(), n=0)
+    used = st.session_state.get("live_used", 0)
+    left = max(0, min(config.LIVE_CALLS_PER_SESSION - used, config.LIVE_CALLS_PER_DAY - counter["n"]))
+    has_key = bool(llm_client.get_api_key())
+    if not has_key:
+        limit_text = "API 키 없음 — 실시간 재생성 꺼짐"
+    elif left == 0:
+        limit_text = "실시간 호출 한도 소진"
+    else:
+        limit_text = f"남은 횟수 {left}/{config.LIVE_CALLS_PER_SESSION}"
+    with st.container(key="ai_foot"):
+        info_col, button_col = st.columns([3, 1.3], vertical_alignment="center")
+        with info_col:
+            st.html(ui_steps.status_html(f"{status} · {limit_text}"))
+        with button_col:
+            can_call = has_key and left > 0
+            clicked = st.button("↻ 실시간 재생성" if can_call else "재생성 불가", key="live_button",
+                                disabled=not can_call, width="stretch")
+    if clicked:
+        st.session_state["live_used"] = used + 1
+        counter["n"] += 1
+        with st.spinner("LLM 호출 중…"):
+            st.session_state["live"] = (sid, llm_client.call_json(model, *explain.build_messages(inp)))
+        st.rerun()
+    if runs:
+        with st.container(key="ai_runs"), st.expander(f"같은 입력 {len(runs)}회 반복 결과 (저장된 결과)"):
+            for r in runs:
+                if r["error"]:
+                    st.markdown(f"**{r['run'] + 1}회차** · 호출 오류")
+                    continue
+                data, issues = explain.validate(r["text"], cached["input"])
+                state = ", ".join(sorted({explain.ISSUE_KO[i["type"]] for i in issues})) if issues else "검증 통과"
+                items = ui_steps.priority_items(data, cached["input"]) if isinstance(data, dict) else []
+                order_text = " → ".join(f"{it['event_id']}:{it['cause_id']}" for it in items) or "-"
+                st.markdown(f"**{r['run'] + 1}회차** · {state} · 점검 순서 {order_text}")
+```
+
+Modify `streamlit_app.py` — 찾을 코드:
+
+```python
+    if not events:
+        st.success("규칙 판정: 이상 없음 — LLM을 호출하지 않습니다.")
+    else:
+        st.subheader("규칙 판정")
+        table = [{"사건": f"E{i}", "패턴": KOREAN[e.pattern], "구간": f"{e.start}~{e.end}",
+                  "근거 규칙": rules.describe(e, values)} for i, e in enumerate(events, start=1)]
+        st.dataframe(pd.DataFrame(table), hide_index=True, width="stretch")
+
+        st.subheader("LLM 설명")
+        model = config.EXPLAIN_MODEL
+        inp = explain.build_input(values, events)
+        saved = load_json(config.EXPLANATIONS_PATH) or {}
+        cached = (saved.get("series") or {}).get(str(sid))
+        if not cached or not cached.get("runs"):
+            st.info("저장된 설명이 없습니다. `python scripts/run_experiment.py`로 만들 수 있습니다.")
+        else:
+            if cached["input"] != inp:
+                st.warning("저장된 설명의 입력이 현재 규칙 판정과 다릅니다. 실험을 다시 돌려야 합니다.")
+            runs = cached["runs"]
+            st.caption(f"저장된 결과 · {model['name']} · 같은 입력 {len(runs)}회 중 1회차")
+            if runs[0]["error"]:
+                st.error(f"호출 오류: {runs[0]['error']}")
+            else:
+                show_explanation(runs[0]["text"], cached["input"])
+            with st.expander(f"같은 입력 {len(runs)}회 반복 결과"):
+                for r in runs:
+                    if r["error"]:
+                        st.markdown(f"**{r['run'] + 1}회차** · 호출 오류")
+                        continue
+                    data, issues = explain.validate(r["text"], cached["input"])
+                    status = issue_names(issues) if issues else "검증 통과"
+                    order = data.get("priority") if isinstance(data, dict) else None
+                    order_text = " → ".join(map(str, order)) if isinstance(order, list) and order else "-"
+                    st.markdown(f"**{r['run'] + 1}회차** · {status} · 점검 순서 {order_text}")
+
+        # 실시간 설명: 세션당·하루 호출 수를 제한하고, 키가 없으면 끈다
+        counter = daily_counter()
+        if counter["date"] != date.today():
+            counter.update(date=date.today(), n=0)
+        used = st.session_state.get("live_used", 0)
+        left = max(0, min(config.LIVE_CALLS_PER_SESSION - used, config.LIVE_CALLS_PER_DAY - counter["n"]))
+        has_key = bool(llm_client.get_api_key())
+        clicked = st.button(f"실시간 설명 받기 ({model['name']}, 남은 횟수 {left})", key="live_button",
+                            disabled=not has_key or left == 0)
+        if not has_key:
+            st.caption("API 키가 설정되지 않아 실시간 설명은 꺼져 있습니다. 저장된 결과는 위에서 볼 수 있습니다.")
+        if clicked:
+            st.session_state["live_used"] = used + 1
+            counter["n"] += 1
+            with st.spinner("LLM 호출 중…"):
+                st.session_state["live"] = (sid, llm_client.call_json(model, *explain.build_messages(inp)))
+        live = st.session_state.get("live")
+        if live and live[0] == sid:
+            reply = live[1]
+            st.caption(f"실시간 결과 · {model['name']} · {reply.latency_s:.1f}초")
+            if reply.error:
+                st.error(f"호출 오류: {reply.error}")
+            else:
+                show_explanation(reply.text, inp)
+```
+
+바꿀 코드:
+
+```python
+    rule_col, arrow_col, ai_col = st.columns([5, 0.7, 7])
+    with rule_col, st.container(key="rule_card"):
+        st.html(ui_steps.rule_card_html(events, values))
+    with arrow_col:
+        st.html(ui_steps.ARROW_HTML)
+    with ai_col, st.container(key="ai_card"):
+        if events:
+            render_ai_card(sid, values, events)
+        else:
+            st.html(ui_steps.ai_head_html(None))
+            with st.container(key="ai_body"):
+                st.success("규칙 판정이 없어 LLM을 호출하지 않습니다.")
+```
+
+- [ ] **Step 5: 통과 확인**
+
+Run: `.venv/Scripts/python -m pytest tests/test_ui_steps.py tests/test_app.py -v`
+Expected: 9 passed
+
+- [ ] **Step 6: 커밋**
+
+```bash
+git add spc_explainer/ui_steps.py tests/test_ui_steps.py streamlit_app.py
+git commit -m "feat: STEP 1 규칙 판정 → STEP 2 AI 설명 카드 (검증 배지, 캐시 상태)" -m "Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
+git push origin main
+```
+
+---
+
+### Task 11-3: 관리도 스타일 (5절 7번, 시안 `docs/design/ref/control-chart.png`)
+
+**Files:**
+- Modify: `spc_explainer/charts.py` (전체 교체), `tests/test_charts.py` (전체 교체), `streamlit_app.py`
+
+**Interfaces:**
+- Consumes: `ui_html.PATTERN_COLORS/SYMBOL/esc/span_text`(Task 11-1), `patterns.*`
+- Produces:
+  - `charts.control_chart(values, events, center, ucl, lcl, truth=None, phase_boundary=None, fail_idx=None, y_title="", show_legend=True, band_labels=None, height=440) -> go.Figure` — Task 11의 인자를 그대로 받으므로 Task 13(SECOM) 코드는 바뀌지 않는다. `band_labels=None`이면 사건이 8개 이하일 때만 음영 위 라벨을 단다.
+  - `charts.chart_header_html(values, title: str, show_truth: bool = False) -> str` — n·x̄·σ는 넘겨받은 값에서 계산
+  - `charts.chart_footer_html(show_truth: bool = False) -> str`
+
+- [ ] **Step 1: 실패하는 테스트 작성**
+
+Modify `tests/test_charts.py` — 전체를 다음으로 교체:
+
+```python
+# 관리도 스타일: 한계선(점선+오른쪽 라벨)·중심선(실선), 패턴별 마커, 규칙 구간 음영+라벨, 정답은 테두리만
+from spc_explainer.charts import chart_footer_html, chart_header_html, control_chart
+from spc_explainer.patterns import Event
+
+VALUES = [100.0 + (0.3 if i % 2 else -0.3) for i in range(100)]
+VALUES[14] = 103.6
+EVENTS = [Event("spike", 14, 14, "up"), Event("trend", 24, 29, "up")]
+
+
+def test_rule_bands_labels_and_limit_lines():
+    fig = control_chart(VALUES, EVENTS, 100, 103, 97, show_legend=False)
+    texts = [a.text for a in fig.layout.annotations]
+    assert "<b>◆ 급변 #14</b>" in texts and "<b>▲ 추세 #24–29</b>" in texts
+    assert {"UCL 103", "CL 100", "LCL 97"} <= set(texts)
+    assert sorted(s.line.dash for s in fig.layout.shapes if s.type == "line") == ["dash", "dash", "solid"]
+    bands = [s for s in fig.layout.shapes if s.type == "rect"]
+    assert len(bands) == 2 and all(b.fillcolor.startswith("rgba(") for b in bands)
+    assert not fig.layout.showlegend
+
+
+def test_pattern_markers_and_zero_based_x():
+    fig = control_chart(VALUES, EVENTS, 100, 103, 97)
+    symbols = {t.name: t.marker.symbol for t in fig.data if t.name != "측정값"}
+    assert symbols == {"급변": "diamond", "추세": "triangle-up"}
+    assert list(fig.data[0].x) == list(range(100))
+    assert list(fig.data[2].x) == list(range(24, 30))  # 추세 구간의 모든 점
+
+
+def test_truth_is_outline_only():
+    fig = control_chart(VALUES, EVENTS, 100, 103, 97, truth=[Event("trend", 24, 31, "up")])
+    outlines = [s for s in fig.layout.shapes if s.type == "rect" and s.line.dash == "dot"]
+    assert len(outlines) == 1 and outlines[0].fillcolor == "rgba(0,0,0,0)"
+
+
+def test_many_events_hide_band_labels_and_secom_arguments_still_work():
+    many = [Event("spike", i, i, "up") for i in range(0, 90, 9)]
+    fig = control_chart(VALUES, many, 100, 103, 97, phase_boundary=50, fail_idx=[3], y_title="sensor_88")
+    texts = [a.text for a in fig.layout.annotations]
+    assert not any("급변 #" in t for t in texts) and "Phase I | Phase II" in texts
+    assert "불량 라벨" in [t.name for t in fig.data] and fig.layout.showlegend
+
+
+def test_header_reads_stats_from_values():
+    h = chart_header_html([99.0, 101.0, 100.0], "관리도 · 증착 막 두께 (nm)", show_truth=True)
+    assert "n=3" in h and "x̄=100.00" in h and "σ=1.00" in h
+    assert "◆" in h and "▲" in h and "■" in h and "관리한계" in h and "정답" in h
+    assert "정답" not in chart_header_html([100.0, 100.0], "t", show_truth=False)
+
+
+def test_footer_mentions_rule_bands_and_zero_based_index():
+    f = chart_footer_html()
+    assert "세로 음영 = 규칙이 판정한 이상 구간" in f and "0부터" in f
+    assert "점선 테두리" in chart_footer_html(show_truth=True)
+```
+
+- [ ] **Step 2: 실패 확인**
+
+Run: `.venv/Scripts/python -m pytest tests/test_charts.py -v`
+Expected: 수집 오류 `ImportError: cannot import name 'chart_footer_html' from 'spc_explainer.charts'`
+
+- [ ] **Step 3: 관리도 구현**
+
+Modify `spc_explainer/charts.py` — 전체를 다음으로 교체:
+
+```python
+# 관리도 그림(plotly)과 그림 머리말·꼬리말(HTML). 합성 데이터 탭과 SECOM 탭이 같이 쓴다.
+# 스타일 출처: docs/design/ref/control-chart.png — CL 실선, UCL·LCL 점선과 오른쪽 라벨, 패턴별 마커(◆▲■),
+# 규칙이 판정한 구간의 세로 음영 + 위쪽 라벨. 정답(심은 이상)은 테두리만 있는 점선 사각형으로 구분한다.
+import statistics
+
+import plotly.graph_objects as go
+
+from .patterns import KOREAN, PATTERNS, Event
+from .ui_html import PATTERN_COLORS, SYMBOL, esc, span_text
+
+LINE = "#2a2f35"  # 측정값 선
+LIMIT = "#5b626b"  # 중심선·관리한계
+GRID = "#eceef0"
+TICK = "#6b727b"
+MONO = "IBM Plex Mono, monospace"
+SANS = "IBM Plex Sans KR, sans-serif"
+MARKERS = {"spike": ("diamond", 12), "trend": ("triangle-up", 11), "shift": ("square", 9)}
+MAX_BAND_LABELS = 8  # 사건이 이보다 많으면(예: SECOM) 음영 위 라벨을 생략한다
+
+
+def _rgba(hex_color: str, alpha: float) -> str:
+    h = hex_color.lstrip("#")
+    return f"rgba({int(h[0:2], 16)},{int(h[2:4], 16)},{int(h[4:6], 16)},{alpha})"
+
+
+def control_chart(values, events: list[Event], center: float, ucl: float, lcl: float,
+                  truth: list[Event] | None = None, phase_boundary: int | None = None,
+                  fail_idx: list[int] | None = None, y_title: str = "", show_legend: bool = True,
+                  band_labels: bool | None = None, height: int = 440) -> go.Figure:
+    """측정값 + CL 실선·UCL/LCL 점선(오른쪽 라벨) + 패턴별 마커 + 규칙 판정 구간 음영(+ 위 라벨)."""
+    vals = [float(v) for v in values]
+    xs = list(range(len(vals)))
+    if band_labels is None:
+        band_labels = len(events) <= MAX_BAND_LABELS
+    fig = go.Figure()
+    # 규칙 판정 구간: 패턴 색의 옅은 음영 + 얇은 테두리 (점·선 아래)
+    for e in events:
+        color = PATTERN_COLORS[e.pattern]
+        fig.add_vrect(x0=e.start - 0.5, x1=e.end + 0.5, fillcolor=_rgba(color["fill"], 0.10),
+                      line={"color": _rgba(color["fill"], 0.35), "width": 1}, layer="below")
+        if band_labels:
+            fig.add_annotation(x=e.start - 0.5, y=1, xref="x", yref="paper", xanchor="left", yanchor="bottom",
+                               text=f"<b>{SYMBOL[e.pattern]} {KOREAN[e.pattern]} {span_text(e.start, e.end)}</b>",
+                               showarrow=False, font={"size": 12, "color": color["text"], "family": SANS})
+    # 정답 구간: 테두리만 있는 점선 사각형 (규칙 음영과 구분)
+    for t in truth or []:
+        fig.add_shape(type="rect", x0=t.start - 0.5, x1=t.end + 0.5, y0=0, y1=1, xref="x", yref="paper",
+                      line={"color": "#16191d", "width": 1.2, "dash": "dot"}, fillcolor="rgba(0,0,0,0)")
+    # 중심선(실선)·관리한계(점선) + 오른쪽 라벨
+    for label, y, dash in (("UCL", ucl, "dash"), ("CL", center, "solid"), ("LCL", lcl, "dash")):
+        fig.add_hline(y=y, line={"color": LIMIT, "width": 1.2 if dash == "solid" else 1, "dash": dash}, layer="below")
+        fig.add_annotation(x=1, y=y, xref="paper", yref="y", xanchor="left", yanchor="middle", xshift=8,
+                           text=f"{label} {y:.4g}", showarrow=False, font={"size": 11, "color": "#3b424a", "family": MONO})
+    # 측정값 선 + 정상 점(흰 원)
+    dot = 6 if len(vals) <= 200 else 3
+    fig.add_trace(go.Scatter(x=xs, y=vals, mode="lines+markers", name="측정값", showlegend=False,
+                             line={"color": LINE, "width": 1.3},
+                             marker={"size": dot, "color": "#ffffff", "line": {"color": LINE, "width": 1}},
+                             hovertemplate="#%{x}: %{y:.2f}<extra></extra>"))
+    # 규칙이 판정한 점: 패턴별 모양·색
+    for p in PATTERNS:
+        idx = sorted({i for e in events if e.pattern == p for i in range(e.start, e.end + 1)})
+        if idx:
+            symbol, size = MARKERS[p]
+            fig.add_trace(go.Scatter(x=idx, y=[vals[i] for i in idx], mode="markers", name=KOREAN[p],  # 범례가 모양을 그림
+                                     marker={"symbol": symbol, "size": size, "color": PATTERN_COLORS[p]["fill"],
+                                             "line": {"color": PATTERN_COLORS[p]["text"], "width": 1}},
+                                     hovertemplate="#%{x}: %{y:.2f}<extra>" + KOREAN[p] + "</extra>"))
+    if fail_idx:
+        fig.add_trace(go.Scatter(x=list(fail_idx), y=[vals[i] for i in fail_idx], mode="markers", name="불량 라벨",
+                                 marker={"symbol": "x", "color": "black", "size": 7}))
+    if phase_boundary is not None:
+        fig.add_vline(x=phase_boundary - 0.5, line={"color": "#555555", "dash": "dot"})
+        fig.add_annotation(x=phase_boundary - 0.5, y=1, xref="x", yref="paper", yanchor="bottom",
+                           text="Phase I | Phase II", showarrow=False, font={"size": 11, "color": "#3b424a"})
+    # 축: 값 범위가 좁으면 y는 정수 눈금, x는 10 간격. 눈금 글꼴은 모노
+    lo, hi = min(vals + [lcl]), max(vals + [ucl])
+    pad = (hi - lo) * 0.06 or 1.0
+    yaxis = {"range": [lo - pad, hi + pad], "showgrid": True, "gridcolor": GRID, "zeroline": False,
+             "tickfont": {"family": MONO, "size": 11, "color": TICK},
+             "title": {"text": y_title, "font": {"size": 12, "color": TICK}}}
+    if hi - lo + 2 * pad <= 14:
+        yaxis["dtick"] = 1
+    xaxis = {"range": [-0.8, len(vals) - 0.2], "showgrid": False, "zeroline": False, "showline": True,
+             "linecolor": "#9aa0a7", "ticks": "outside", "ticklen": 4, "tickcolor": "#9aa0a7",
+             "tickfont": {"family": MONO, "size": 11, "color": TICK}}
+    if len(vals) <= 200:
+        xaxis.update(tick0=0, dtick=10)
+    top = 34 if (band_labels and events) or show_legend or phase_boundary is not None else 16
+    fig.update_layout(height=height, margin={"l": 44, "r": 76, "t": top, "b": 30},
+                      paper_bgcolor="#ffffff", plot_bgcolor="#ffffff", xaxis=xaxis, yaxis=yaxis,
+                      showlegend=show_legend, legend={"orientation": "h", "x": 1, "xanchor": "right", "y": 1.02,
+                                                      "yanchor": "bottom", "font": {"size": 12}},
+                      font={"family": SANS, "color": "#16191d"}, hoverlabel={"font": {"family": MONO}})
+    return fig
+
+
+def chart_header_html(values, title: str, show_truth: bool = False) -> str:
+    """그림 머리말: 제목 + n·x̄·σ(넘겨받은 값에서 계산) + 범례."""
+    vals = [float(v) for v in values]
+    mean = statistics.fmean(vals) if vals else 0.0
+    sd = statistics.stdev(vals) if len(vals) > 1 else 0.0
+    legend = "".join(f'<span><b style="color:{PATTERN_COLORS[p]["fill"]}">{SYMBOL[p]}</b> {KOREAN[p]}</span>'
+                     for p in PATTERNS)
+    legend += '<span><i class="spc-lg-line"></i>관리한계</span>'
+    if show_truth:
+        legend += '<span><i class="spc-lg-truth"></i>정답(심은 이상)</span>'
+    return (f'<div class="spc-chart-head"><span class="spc-chart-title">{esc(title)}</span>'
+            f'<span class="spc-chart-stats"><span>n={len(vals)}</span><span>x̄={mean:.2f}</span><span>σ={sd:.2f}</span></span>'
+            f'<span class="spc-chart-legend">{legend}</span></div>')
+
+
+def chart_footer_html(show_truth: bool = False) -> str:
+    right = "세로 음영 = 규칙이 판정한 이상 구간"
+    if show_truth:
+        right += " · 점선 테두리 = 심은 이상(정답)"
+    return f'<div class="spc-chart-foot"><span>x축 · 측정 순번 (0부터)</span><span>{right}</span></div>'
+```
+
+- [ ] **Step 4: 앱의 관리도 영역 교체**
+
+Modify `streamlit_app.py` — 찾을 코드:
+
+```python
+from spc_explainer.charts import control_chart
+```
+
+바꿀 코드:
+
+```python
+from spc_explainer.charts import chart_footer_html, chart_header_html, control_chart
+```
+
+Modify `streamlit_app.py` — 찾을 코드:
+
+```python
+    sid = st.selectbox("시리즈", range(len(series)), format_func=lambda i: series_label(series[i]))
+    s = series[sid]
+    values = s["values"]
+    events = rules.detect(values)
+    show_truth = st.toggle("정답(심은 이상) 구간 표시", value=True)
+    truth = generator.truth_events(s) if show_truth else None
+    fig = control_chart(values, events, config.CENTER, config.UCL, config.LCL, truth=truth,
+                        y_title=f"{config.PROCESS_NAME} ({config.UNIT})")
+    st.plotly_chart(fig, width="stretch")
+```
+
+바꿀 코드:
+
+```python
+    pick_col, truth_col = st.columns([3, 1], vertical_alignment="bottom")
+    with pick_col:
+        sid = st.selectbox("샘플 시리즈", range(len(series)), format_func=lambda i: series_label(series[i]))
+    with truth_col:
+        show_truth = st.toggle("정답(심은 이상) 구간 표시", value=False)
+    s = series[sid]
+    values = s["values"]
+    events = rules.detect(values)
+    truth = generator.truth_events(s) if show_truth else None
+    with st.container(key="chart_card"):
+        st.html(chart_header_html(values, f"관리도 · {config.PROCESS_NAME} ({config.UNIT})", show_truth))
+        fig = control_chart(values, events, dataset["center"], dataset["ucl"], dataset["lcl"],
+                            truth=truth, show_legend=False)
+        st.plotly_chart(fig, width="stretch", config={"displayModeBar": False})
+        st.html(chart_footer_html(show_truth))
+```
+
+- [ ] **Step 5: 통과 확인**
+
+Run: `.venv/Scripts/python -m pytest tests/test_charts.py tests/test_app.py -v`
+Expected: 9 passed
+
+- [ ] **Step 6: 시안과 눈으로 대조**
+
+Run (백그라운드): `.venv/Scripts/python -m streamlit run streamlit_app.py --server.headless true --server.port 8501`
+브라우저로 시리즈 14번(급변+추세)과 18번(추세+치우침)을 열어 `docs/design/ref/control-chart.png`와 대조한다: CL 실선, UCL·LCL 점선과 오른쪽 라벨, ◆▲■ 마커와 색, 음영 위 라벨(`▲ 추세 #…`), 머리말의 n·x̄·σ(n=100). 정답 토글을 켜서 점선 테두리가 음영과 구분되는지 본다. 확인 후 서버를 끈다.
+
+- [ ] **Step 7: 커밋**
+
+```bash
+git add spc_explainer/charts.py tests/test_charts.py streamlit_app.py
+git commit -m "feat: 관리도 스타일 (규칙 구간 음영·라벨, 패턴별 마커, n·x̄·σ 머리말)" -m "Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
+git push origin main
+```
+
+---
+
+### Task 11-4: 검증 대시보드·탐지율 막대·버전 고정 (5절 8~11번, 시안 `docs/design/ref/detection-bars.png`)
+
+**Files:**
+- Create: `spc_explainer/ui_dashboard.py`, `tests/test_ui_dashboard.py`
+- Modify: `streamlit_app.py`, `tests/test_app.py` (테스트 1개 덧붙임), `requirements.txt`
+
+**Interfaces:**
+- Consumes: `results/metrics.json` 형태(Task 8·9), `results/explanations.json` 형태(Task 9), `ui_html.*`
+- Produces:
+  - `ui_dashboard.fmt_pct(x) -> str` ("63.3%", "100%"), `ui_dashboard.fmt_num(x) -> str`
+  - `ui_dashboard.detection_groups(metrics) -> list[dict]` — 급변·추세·치우침·전체 순. `{"key", "label", "symbol", "rule_id", "injected", "rule": {"rate", "detected"}, "models": [{"name", "repeats", "mean", "min", "max", "mean_detected"}]}`
+  - `ui_dashboard.kpi_summary(metrics) -> dict`, `ui_dashboard.fact_lines(metrics) -> list[str]`, `ui_dashboard.explain_error_cases(explanations, limit=8) -> list[dict]`
+  - HTML: `title_html`, `kpi_rule_html`, `kpi_llm_html`, `kpi_ai_html`, `detection_bars_html`, `facts_html`, `cases_html`
+
+- [ ] **Step 1: 실패하는 테스트 작성**
+
+Create `tests/test_ui_dashboard.py`:
+
+```python
+# 검증 탭 가공: 숫자를 지표 파일에서만 읽는지, 모델별 반복 평균·최소~최대가 맞는지
+from spc_explainer.matching import summarize
+from spc_explainer.patterns import Event
+from spc_explainer.ui_dashboard import (cases_html, detection_bars_html, detection_groups, explain_error_cases,
+                                        fact_lines, fmt_num, fmt_pct, kpi_llm_html, kpi_summary)
+
+T = [[Event("spike", 5, 5, "up"), Event("trend", 20, 27, "up")], [Event("shift", 40, 49, "down")], []]
+RULES = summarize(T, T)  # 규칙: 3/3
+RUN_A = summarize(T, [[Event("spike", 5, 5)], [], []])  # 1/3
+RUN_B = summarize(T, [[Event("spike", 5, 5), Event("trend", 21, 22)], [], []])  # 2/3
+METRICS = {
+    "dataset": {"seed": 7, "n_series": 3, "n_normal": 1, "n_points": 100, "injected": {"spike": 1, "trend": 1, "shift": 1}},
+    "rules": RULES,
+    "detect": [{"model": "gpt-4.1-mini", "temperature": 0, "repeats": 2, "prompt_version": "detect-v1",
+                "runs": [dict(RUN_A, format_violations=0, call_errors=0), dict(RUN_B, format_violations=1, call_errors=0)]}],
+    "explain": {"model": "gpt-4.1-mini", "temperature": 0, "repeats": 3, "prompt_version": "explain-v1",
+                "series_called": 2, "outputs": 6, "passed": 5, "issue_outputs": {"format": 0, "cause": 1, "mismatch": 0},
+                "call_errors": 0, "repeat_changed_series": 1},
+    "secom": None,
+}
+
+
+def test_formatting():
+    assert fmt_pct(1.0) == "100%" and fmt_pct(0.6333) == "63.3%" and fmt_pct(None) == "-"
+    assert fmt_num(3.0) == "3" and fmt_num(1.5) == "1.5"
+
+
+def test_detection_groups_use_metrics_numbers():
+    groups = detection_groups(METRICS)
+    assert [g["key"] for g in groups] == ["spike", "trend", "shift", "all"]
+    total = groups[-1]
+    assert total["injected"] == 3 and total["rule"] == {"rate": 1.0, "detected": 3}
+    m = total["models"][0]
+    assert m["name"] == "gpt-4.1-mini" and m["repeats"] == 2 and m["mean_detected"] == 1.5
+    assert abs(m["mean"] - 0.5) < 1e-9 and abs(m["min"] - 1 / 3) < 1e-9 and abs(m["max"] - 2 / 3) < 1e-9
+    trend = groups[1]["models"][0]
+    assert trend["min"] == 0.0 and trend["max"] == 1.0
+
+
+def test_bars_show_rule_and_each_model_with_range():
+    h = detection_bars_html(detection_groups(METRICS))
+    assert "규칙 판정" in h and "gpt-4.1-mini" in h
+    assert "50% (33.3%~66.7%)" in h and "1.5/3" in h and "3/3" in h
+    assert "spc-range" in h  # 최소~최대 선
+    assert "/20" not in h and "/60" not in h  # 시안 값은 쓰지 않는다
+
+
+def test_kpis_and_facts():
+    k = kpi_summary(METRICS)
+    assert k["rule"]["rate"] == 1.0 and k["rule"]["false_events"] == 0
+    assert k["models"][0]["format_violations"] == 1 and abs(k["models"][0]["mean"] - 0.5) < 1e-9
+    assert "−50.0%p" in kpi_llm_html(k["models"], k["rule"]["rate"])
+    lines = fact_lines(METRICS)
+    assert lines[0] == "규칙 판정: 심은 이상 3개 중 3개 탐지."
+    assert "gpt-4.1-mini" in lines[1] and "치우침" in lines[1]  # 평균 탐지율이 가장 낮은 패턴
+
+
+def test_error_cases_come_from_saved_explanations():
+    explanations = {"series": {"7": {
+        "input": {"events": [{"event_id": "E1", "pattern": "급변", "start": 5, "end": 5}]},
+        "runs": [{"run": 0, "error": None, "text": "{}", "issues": []},
+                 {"run": 1, "error": None, "text": "<b>틀림</b>", "issues": [{"type": "cause", "detail": "'XX-9'는 원인표에 없음"}]}],
+    }}}
+    cases = explain_error_cases(explanations)
+    assert len(cases) == 1 and cases[0]["run"] == 2 and cases[0]["types"] == "원인표 밖 원인"
+    assert "◆ 급변 #5" in cases[0]["input"]
+    h = cases_html(cases, METRICS["explain"])
+    assert "&lt;b&gt;" in h and "문제가 나온 출력 1개 / 전체 6개" in h
+    assert "문제가 나온 설명 출력이 없습니다" in cases_html([], METRICS["explain"])
+```
+
+Append to `tests/test_app.py` (파일 끝에 추가):
+
+```python
+def test_dashboard_renders_from_metrics_without_llm_results(monkeypatch, tmp_path):
+    # LLM 결과가 없는 지표 파일로도 검증 탭이 그려져야 한다 (숫자는 파일에서만 읽음)
+    import json
+
+    from spc_explainer.experiment import compute_metrics
+    from spc_explainer.generator import generate_dataset
+
+    metrics_path = tmp_path / "metrics.json"
+    metrics = compute_metrics(generate_dataset(), {}, {})
+    metrics_path.write_text(json.dumps(metrics, ensure_ascii=False), encoding="utf-8")
+    monkeypatch.setattr(config, "METRICS_PATH", metrics_path)
+    monkeypatch.setattr(config, "EXPLANATIONS_PATH", tmp_path / "none.json")
+    at = run_app()
+    assert not at.exception
+```
+
+- [ ] **Step 2: 실패 확인**
+
+Run: `.venv/Scripts/python -m pytest tests/test_ui_dashboard.py -v`
+Expected: 수집 오류 `ModuleNotFoundError: No module named 'spc_explainer.ui_dashboard'`
+
+- [ ] **Step 3: 대시보드 가공·HTML 구현**
+
+Create `spc_explainer/ui_dashboard.py`:
+
+```python
+# 검증 탭(규칙 판정 vs LLM 단독 판정)의 지표 가공과 HTML.
+# 스타일 출처: docs/design/ref/detection-bars.png. 모든 숫자는 metrics.json·explanations.json에서만 읽는다.
+from .explain import ISSUE_KO
+from .patterns import FROM_KOREAN, KOREAN, PATTERNS
+from .ui_html import PATTERN_COLORS, RULE_ID, SYMBOL, esc, span_text
+
+RULE_BAR = "#2a2f35"  # 규칙 판정 막대 (검정)
+MODEL_BARS = ["#3e8cc9", "#8cbde6", "#1d5f94"]  # LLM 모델 순서대로 (파랑 계열)
+PRINCIPLE = "이 앱은 판정을 규칙이 맡고, AI는 판정 결과를 받아 해석과 점검 순서만 만든다."
+
+
+def fmt_pct(x) -> str:
+    """0.6333 → "63.3%", 1.0 → "100%", None → "-"."""
+    if x is None:
+        return "-"
+    return f"{x * 100:.1f}".rstrip("0").rstrip(".") + "%"
+
+
+def fmt_num(x) -> str:
+    """3.0 → "3", 1.5 → "1.5"."""
+    return f"{x:.1f}".rstrip("0").rstrip(".")
+
+
+def _pair(summary: dict, p: str) -> tuple[int, int]:
+    """matching.summarize 결과에서 (탐지 수, 심은 수). p="all"이면 전체."""
+    if p == "all":
+        return summary["detected"], summary["injected"]
+    d = summary["per_pattern"][p]
+    return d["detected"], d["injected"]
+
+
+def _stats(pairs: list[tuple[int, int]]) -> dict:
+    """반복별 (탐지 수, 심은 수) → 평균·최소·최대 탐지율과 평균 탐지 수."""
+    rates = [d / n for d, n in pairs if n]
+    if not rates:
+        return {"mean": None, "min": None, "max": None, "mean_detected": 0.0}
+    return {"mean": sum(rates) / len(rates), "min": min(rates), "max": max(rates),
+            "mean_detected": sum(d for d, _ in pairs) / len(pairs)}
+
+
+def detection_groups(metrics: dict) -> list[dict]:
+    """패턴별(+전체) 규칙 판정 vs 모델별 LLM 단독 판정 탐지율. 막대 그림의 입력."""
+    groups = []
+    for p in list(PATTERNS) + ["all"]:
+        detected, injected = _pair(metrics["rules"], p)
+        models = [dict(name=d["model"], repeats=len(d["runs"]), **_stats([_pair(r, p) for r in d["runs"]]))
+                  for d in metrics["detect"]]
+        groups.append({
+            "key": p,
+            "label": "전체" if p == "all" else KOREAN[p],
+            "symbol": SYMBOL.get(p, ""),
+            "rule_id": RULE_ID.get(p, ""),
+            "injected": injected,
+            "rule": {"rate": detected / injected if injected else None, "detected": detected},
+            "models": models,
+        })
+    return groups
+
+
+def kpi_summary(metrics: dict) -> dict:
+    """KPI 카드 숫자: 규칙 판정, 모델별 LLM 단독 판정(반복 평균·범위), 설명 검증."""
+    r = metrics["rules"]
+    false_events = sum(r["normal"]["false_events"].values()) + sum(r["anomalous"]["false_events"].values())
+    rule = {"rate": r["rate"], "detected": r["detected"], "injected": r["injected"], "false_events": false_events,
+            "normal_alarmed": r["normal"]["alarmed_series"], "normal_series": r["normal"]["series"]}
+    models = []
+    for d in metrics["detect"]:
+        stats = _stats([_pair(x, "all") for x in d["runs"]])
+        models.append(dict(name=d["model"], repeats=len(d["runs"]), temperature=d["temperature"],
+                           format_violations=sum(x["format_violations"] for x in d["runs"]),
+                           call_errors=sum(x["call_errors"] for x in d["runs"]), **stats))
+    return {"rule": rule, "models": models, "explain": metrics.get("explain")}
+
+
+def fact_lines(metrics: dict) -> list[str]:
+    """수치에서 바로 읽히는 사실만 문장으로 만든다 (결론·추측은 쓰지 않는다)."""
+    groups = detection_groups(metrics)
+    total = groups[-1]
+    lines = [f"규칙 판정: 심은 이상 {total['injected']}개 중 {total['rule']['detected']}개 탐지."]
+    for i, model in enumerate(total["models"]):
+        per = [(g["models"][i]["mean"], g) for g in groups[:-1] if g["models"][i]["mean"] is not None]
+        if not per:
+            continue
+        low, g = min(per, key=lambda t: t[0])
+        if low >= 1:
+            lines.append(f"{model['name']}: 모든 패턴에서 반복 평균 100%.")
+        else:
+            m = g["models"][i]
+            lines.append(f"{model['name']}: 반복 평균 탐지율이 가장 낮은 패턴은 {g['label']} "
+                         f"({fmt_pct(low)}, 평균 {fmt_num(m['mean_detected'])}/{g['injected']}).")
+    lines.append(PRINCIPLE)
+    return lines
+
+
+def explain_error_cases(explanations: dict, limit: int = 8) -> list[dict]:
+    """저장된 설명 출력 중 검증에서 문제가 나온 것 (실제 결과 파일만 쓴다)."""
+    cases = []
+    for sid, entry in (explanations.get("series") or {}).items():
+        events = entry.get("input", {}).get("events", [])
+        described = " · ".join(
+            f'{SYMBOL.get(FROM_KOREAN.get(e["pattern"]), "")} {e["pattern"]} {span_text(e["start"], e["end"])}'
+            for e in events)
+        for r in entry.get("runs", []):
+            if r.get("error") is None and r.get("issues"):
+                cases.append({
+                    "series": str(sid),
+                    "run": r["run"] + 1,
+                    "input": described,
+                    "excerpt": (r.get("text") or "").replace("\n", " ")[:140],
+                    "types": ", ".join(sorted({ISSUE_KO[i["type"]] for i in r["issues"]})),
+                    "detail": "; ".join(i["detail"] for i in r["issues"])[:220],
+                })
+    cases.sort(key=lambda c: (int(c["series"]), c["run"]))
+    return cases[:limit]
+
+
+def title_html(metrics: dict) -> str:
+    d = metrics["dataset"]
+    counts = " · ".join(f"{KOREAN[p]} {d['injected'][p]}" for p in PATTERNS)
+    return ('<div class="spc-dash-title"><b>규칙 판정 vs LLM 단독 판정</b>'
+            f'<span>검증 세트 · 규칙 정의대로 이상을 심은 가상 시리즈 {d["n_series"]}개 × {d["n_points"]}점 '
+            f'(정상 {d["n_normal"]}개, 심은 이상 {sum(d["injected"].values())}개: {counts}) · 심은 위치를 정답으로 사용</span></div>')
+
+
+def kpi_rule_html(rule: dict) -> str:
+    return ('<div class="spc-kpi"><div class="spc-kpi-top"><span class="b-rule">규칙</span>규칙 판정 탐지율</div>'
+            f'<div class="spc-kpi-num">{fmt_pct(rule["rate"])}</div>'
+            f'<div class="spc-kpi-sub">{rule["detected"]}/{rule["injected"]} 탐지 · 오탐 {rule["false_events"]}건 '
+            f'(정상 시리즈 {rule["normal_alarmed"]}/{rule["normal_series"]}개 경보)</div></div>')
+
+
+def kpi_llm_html(models: list[dict], rule_rate) -> str:
+    rows = []
+    for m in models:
+        delta = ""
+        if m["mean"] is not None and rule_rate is not None:
+            diff = f"{(m['mean'] - rule_rate) * 100:+.1f}".replace("-", "−")
+            delta = f'<span class="spc-kpi-delta">{diff}%p</span>'
+        if m["repeats"] > 1:
+            spread = f'반복 {m["repeats"]}회 {fmt_pct(m["min"])}~{fmt_pct(m["max"])}'
+        else:
+            spread = f'{m["repeats"]}회 실행'
+        rows.append(f'<div class="spc-kpi-model"><span class="spc-kpi-name">{esc(m["name"])}</span>'
+                    f'<span class="spc-kpi-num sm">{fmt_pct(m["mean"])}</span>{delta}'
+                    f'<span class="spc-kpi-sub">{spread} · 형식 위반 {m["format_violations"]} · 호출 오류 {m["call_errors"]}</span></div>')
+    body = "".join(rows) or '<div class="spc-kpi-sub">아직 실행하지 않았습니다.</div>'
+    return ('<div class="spc-kpi"><div class="spc-kpi-top"><span class="b-ai">LLM</span>LLM 단독 판정 탐지율 (반복 평균)</div>'
+            f"{body}</div>")
+
+
+def kpi_ai_html(e: dict | None) -> str:
+    if not e:
+        body = '<div class="spc-kpi-sub">아직 실행하지 않았습니다.</div>'
+    else:
+        io = e["issue_outputs"]
+        body = (f'<div class="spc-kpi-num">{e["passed"]}<span class="spc-kpi-unit">/{e["outputs"]}</span></div>'
+                f'<div class="spc-kpi-sub">검증 통과 · 형식 위반 {io["format"]} · 원인표 밖 {io["cause"]} · '
+                f'판정 불일치 {io["mismatch"]} · 호출 오류 {e["call_errors"]} · '
+                f'반복 간 차이 {e["repeat_changed_series"]}/{e["series_called"]}개 시리즈</div>')
+    return ('<div class="spc-kpi"><div class="spc-kpi-top"><span class="b-ai-solid">AI 생성</span>AI 설명 검증</div>'
+            f"{body}</div>")
+
+
+def _bar_row(who: str, color: str, rate, lo, hi, value_text: str, frac_text: str) -> str:
+    """막대 한 줄: [누구] [회색 바탕 위 채운 막대 (+ 최소~최대 선)] [%·분수]."""
+    width = 0.0 if rate is None else max(0.0, min(1.0, rate)) * 100
+    whisker = ""
+    if lo is not None and hi is not None and hi > lo:
+        whisker = f'<span class="spc-range" style="left:{lo * 100:.1f}%;width:{(hi - lo) * 100:.1f}%"></span>'
+    return (f'<div class="spc-bar-row"><span class="spc-bar-who">{esc(who)}</span>'
+            f'<div class="spc-track"><div class="spc-fill" style="width:{width:.1f}%;background:{color}"></div>{whisker}</div>'
+            f'<div class="spc-bar-val"><b>{esc(value_text)}</b> <span>{esc(frac_text)}</span></div></div>')
+
+
+def detection_bars_html(groups: list[dict]) -> str:
+    """패턴별 탐지율: 규칙 판정(검정) vs LLM 단독(모델별 파랑, 반복 평균 + 최소~최대 선)."""
+    names = [m["name"] for m in groups[0]["models"]] if groups else []
+    legend = f'<span class="spc-lg"><i style="background:{RULE_BAR}"></i>규칙 판정</span>'
+    for i, name in enumerate(names):
+        legend += f'<span class="spc-lg"><i style="background:{MODEL_BARS[i % len(MODEL_BARS)]}"></i>{esc(name)}</span>'
+    parts = [f'<div class="spc-bars-head"><b>패턴별 탐지율</b><span>{legend}</span></div>']
+    for g in groups:
+        color = PATTERN_COLORS[g["key"]]["text"] if g["key"] in PATTERN_COLORS else "#16191d"
+        title = f'{g["symbol"]} {g["label"]}'.strip()
+        sub = f'{g["rule_id"]} · {g["injected"]}건' if g["rule_id"] else f'{g["injected"]}건'
+        rows = [_bar_row("규칙 판정", RULE_BAR, g["rule"]["rate"], None, None,
+                         fmt_pct(g["rule"]["rate"]), f'{g["rule"]["detected"]}/{g["injected"]}')]
+        for i, m in enumerate(g["models"]):
+            many = m["repeats"] > 1
+            value = fmt_pct(m["mean"]) + (f' ({fmt_pct(m["min"])}~{fmt_pct(m["max"])})' if many else "")
+            rows.append(_bar_row(m["name"], MODEL_BARS[i % len(MODEL_BARS)], m["mean"],
+                                 m["min"] if many else None, m["max"] if many else None,
+                                 value, f'{fmt_num(m["mean_detected"])}/{g["injected"]}'))
+        cls = "spc-bar-group total" if g["key"] == "all" else "spc-bar-group"
+        rows_html = "".join(rows)
+        parts.append(f'<div class="{cls}"><div class="spc-bar-name"><b style="color:{color}">{esc(title)}</b>'
+                     f'<small>{esc(sub)}</small></div><div class="spc-bar-rows">{rows_html}</div></div>')
+    return "".join(parts)
+
+
+def facts_html(lines: list[str]) -> str:
+    items = "".join(f"<p>{esc(t)}</p>" for t in lines)
+    return f'<div class="spc-facts"><div class="spc-label">수치로 본 사실</div>{items}</div>'
+
+
+def cases_html(cases: list[dict], e: dict | None) -> str:
+    """AI 설명 오답 사례 표. '수정 후' 열은 두지 않는다 (수정 이력은 docs/ai_errors.md)."""
+    total = e["outputs"] if e else 0
+    bad = e["outputs"] - e["passed"] - e["call_errors"] if e else 0
+    head = ('<div class="spc-cases-head"><b>AI 설명 오답 사례</b>'
+            f'<span>검증에서 문제가 나온 출력 {bad}개 / 전체 {total}개 · 최대 8개 표시 · 전체 기록은 docs/ai_errors.md</span></div>')
+    if not cases:
+        return head + '<div class="spc-cases-empty">검증에서 문제가 나온 설명 출력이 없습니다.</div>'
+    rows = ['<div class="spc-case-row th"><span>#</span><span>입력 사건 (규칙 판정)</span><span>AI 출력 발췌</span><span>무엇이 틀렸나</span></div>']
+    for n, c in enumerate(cases, start=1):
+        rows.append(f'<div class="spc-case-row"><span class="spc-mono">{n:02d}</span>'
+                    f'<span>시리즈 {esc(c["series"])} · {c["run"]}회차<small>{esc(c["input"])}</small></span>'
+                    f'<span class="spc-quote">{esc(c["excerpt"])}</span>'
+                    f'<span><b>{esc(c["types"])}</b><small>{esc(c["detail"])}</small></span></div>')
+    return head + "".join(rows)
+```
+
+- [ ] **Step 4: 앱의 검증 탭을 대시보드로 교체**
+
+Modify `streamlit_app.py` — 찾을 코드:
+
+```python
+from spc_explainer import ui_html, ui_steps
+```
+
+바꿀 코드:
+
+```python
+from spc_explainer import ui_dashboard, ui_html, ui_steps
+```
+
+Modify `streamlit_app.py` — 찾을 코드:
+
+```python
+dataset = load_json(config.SERIES_PATH) or generator.generate_dataset()
+st.html(ui_html.CSS)
+```
+
+바꿀 코드:
+
+```python
+def render_dashboard(metrics: dict) -> None:
+    """검증 탭 위쪽: KPI 3장, 패턴별 탐지율 막대 + 사실 문장, 설명 오답 사례. 숫자는 결과 파일에서만 읽는다."""
+    kpi = ui_dashboard.kpi_summary(metrics)
+    st.html(ui_dashboard.title_html(metrics))
+    rule_col, llm_col, ai_col = st.columns(3)
+    with rule_col, st.container(key="kpi_rule"):
+        st.html(ui_dashboard.kpi_rule_html(kpi["rule"]))
+    with llm_col, st.container(key="kpi_llm"):
+        st.html(ui_dashboard.kpi_llm_html(kpi["models"], kpi["rule"]["rate"]))
+    with ai_col, st.container(key="kpi_ai"):
+        st.html(ui_dashboard.kpi_ai_html(kpi["explain"]))
+    with st.container(key="bars_card"):
+        bars_col, facts_col = st.columns([2.6, 1])
+        with bars_col:
+            st.html(ui_dashboard.detection_bars_html(ui_dashboard.detection_groups(metrics)))
+        with facts_col:
+            st.html(ui_dashboard.facts_html(ui_dashboard.fact_lines(metrics)))
+    explanations = load_json(config.EXPLANATIONS_PATH) or {}
+    with st.container(key="cases_card"):
+        st.html(ui_dashboard.cases_html(ui_dashboard.explain_error_cases(explanations), kpi["explain"]))
+
+
+dataset = load_json(config.SERIES_PATH) or generator.generate_dataset()
+st.html(ui_html.CSS)
+```
+
+Modify `streamlit_app.py` — 찾을 코드:
+
+```python
+with tab_report:
+    report_md = load_text(config.REPORT_PATH)
+    if report_md:
+        st.markdown(report_md)
+    else:
+        st.info("리포트가 아직 없습니다. `python scripts/run_experiment.py`로 만들 수 있습니다.")
+```
+
+바꿀 코드:
+
+```python
+with tab_report:
+    metrics = load_json(config.METRICS_PATH)
+    report_md = load_text(config.REPORT_PATH)
+    if metrics:
+        render_dashboard(metrics)
+    if report_md:
+        with st.expander("전체 리포트 (docs/validation_report.md)", expanded=not metrics):
+            st.markdown(report_md)
+    else:
+        st.info("리포트가 아직 없습니다. `python scripts/run_experiment.py`로 만들 수 있습니다.")
+```
+
+- [ ] **Step 5: Streamlit 버전 고정 (5절 11번)**
+
+화면 CSS가 `st-key-*` 클래스에 기대므로, 배포 환경이 검증한 버전을 쓰게 한다.
+
+Modify `requirements.txt` — 찾을 코드:
+
+```text
+streamlit
+pycontrolcharts==0.1.2
+```
+
+바꿀 코드:
+
+```text
+streamlit==1.64.*
+pycontrolcharts==0.1.2
+```
+
+- [ ] **Step 6: 통과 확인**
+
+Run: `.venv/Scripts/python -m pytest tests/test_ui_dashboard.py tests/test_app.py -v`
+Expected: 9 passed
+
+Run: `.venv/Scripts/python -m pytest -q`
+Expected: 전체 통과
+
+- [ ] **Step 7: 시안과 눈으로 대조**
+
+Run (백그라운드): `.venv/Scripts/python -m streamlit run streamlit_app.py --server.headless true --server.port 8501`
+"검증 리포트" 탭을 `docs/design/ref/detection-bars.png`와 대조한다: 패턴별로 규칙 판정(검정) 한 줄 + 모델별 파랑 막대, 오른쪽 %와 분수, 반복이 2회 이상인 모델의 최소~최대 선. 숫자가 `results/metrics.json`과 같은지 한두 개 대조한다. 확인 후 서버를 끈다.
+
+- [ ] **Step 8: 커밋**
+
+```bash
+git add spc_explainer/ui_dashboard.py tests/test_ui_dashboard.py tests/test_app.py streamlit_app.py requirements.txt
+git commit -m "feat: 검증 대시보드 (KPI, 모델별 탐지율 막대, 설명 오답 사례), Streamlit 버전 고정" -m "Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
+git push origin main
+```
+
+---
+
 ### Task 12: README와 인수인계
 
 **Files:**
@@ -2635,6 +4132,7 @@ SK하이닉스 AI 해커톤 2026 지원용 포트폴리오로 만들었습니다
 - 구현 계획: `docs/superpowers/plans/2026-09-25-spc-explainer.md`
 - 검증 리포트: `docs/validation_report.md`
 - LLM 오류 기록: `docs/ai_errors.md`
+- 화면 설계 비교: `docs/design/2026-09-25-ui-comparison.md` (그래프 시안: `docs/design/ref/`)
 
 ## 동작 방식
 
@@ -3118,3 +4616,6 @@ git push origin main
   - `fetch_secom.py` 실제 다운로드 → 센서 [88, 115], 1567행. `run_experiment.py --no-llm` → 규칙 탐지 21/21, 정상 시리즈 5개 중 1개 경보, 오탐 사건 6개.
   - 가짜 LLM으로 `results/`를 채운 뒤 AppTest로 20개 시리즈·3개 탭을 모두 그려 예외 없음 확인.
   - 실제 모델 스모크 호출 3회(시리즈 14): 설명 4.1-mini 검증 통과, 단독 판정 sol 정확, 단독 판정 4.1-mini는 추세를 놓치고 없는 사건 7개를 냈다 (`docs/ai_errors.md`에 기록).
+- 화면 절충안 C 추가 후 재검증 (2026-09-25): 태스크 경계마다 새로 추출해 전체 테스트 — Task 11 55개 → 11-1 59개 → 11-2 65개 → 11-3 69개 → 11-4 75개 → Task 13 80개, 모두 통과. Task 13의 찾아 바꾸기 세 곳이 11-1~11-4 이후에도 그대로 맞는 것을 확인.
+  - 가짜 LLM(모델·반복별로 일부 사건을 빠뜨림)으로 결과를 채우고 실제 Streamlit 화면을 헤드리스 Chrome으로 캡처해 `docs/design/ref/` 시안과 대조했다: 관리도(음영+라벨, 점선 한계+오른쪽 라벨, ◆▲■, n·x̄·σ, 정답 점선 테두리), 탐지율 막대(규칙 검정 + 모델별 파랑 + 최소~최대 선), SECOM 탭(사건 24개 → 음영 라벨 자동 생략).
+  - 대조 중 고친 것: 모노 글꼴에 한글이 없어 막대의 "규칙 판정"·오답 발췌가 벌어져 보임 → 두 클래스만 산세리프로. Plotly 범례에 기호가 겹쳐 "◆ ◆ 급변"으로 보임 → 트레이스 이름에서 기호 제거.
