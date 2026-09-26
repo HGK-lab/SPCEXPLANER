@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 # 배포(Streamlit Community Cloud)용 의존성
-streamlit
+streamlit==1.64.*
 pycontrolcharts==0.1.2
 numpy
 pandas

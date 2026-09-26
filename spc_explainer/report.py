@@ -1,4 +1,4 @@
-# 지표(metrics.json) → 검증 리포트 마크다운. 앱의 "검증 리포트" 탭도 이 파일을 그대로 보여준다.
+# 지표(metrics.json) → 검증 리포트 마크다운. 앱 맨 아래 "전체 검증 리포트" 펼치기도 이 파일을 그대로 보여준다.
 from pathlib import Path
 
 from . import config
