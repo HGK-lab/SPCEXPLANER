@@ -100,3 +100,45 @@ def test_repeat_runs_show_llm_ids_as_plain_text(monkeypatch, tmp_path):
     assert not any("evil.example" in m.value for m in at.markdown)
     assert any("E1:[눌러](http://evil.example)" in e.proto.body for e in at.get("html"))
 
+
+
+def download_keys(at) -> list[str]:
+    """내려받기 버튼들의 키 (AppTest는 요소 id 끝에 키를 붙인다)."""
+    return [e.proto.id.rsplit("-", 1)[-1] for e in at.get("download_button")]
+
+
+def ai_ranked_labels(at, prefix: str) -> list[str]:
+    return [c.label for c in at.checkbox if (c.key or "").startswith(prefix) and "AI 추천" in c.label]
+
+
+def test_checklist_uses_ai_order_only_when_the_explanation_passes(monkeypatch, tmp_path):
+    # 저장된 설명이 검증을 통과하면 AI 추천 순서가 붙고, 원인표 밖 원인이 섞여 통과하지 못하면 원인표 순서만
+    at = run_app()
+    at.selectbox[0].set_value(5).run()
+    assert any("AI 추천 1순위" in label for label in ai_ranked_labels(at, "chk_s05_"))
+    saved = json.loads(config.EXPLANATIONS_PATH.read_text(encoding="utf-8"))
+    run0 = saved["series"]["5"]["runs"][0]
+    data = json.loads(run0["text"])
+    data["events"][0]["checks"][0]["cause_id"] = "XX-9"
+    run0["text"] = json.dumps(data, ensure_ascii=False)
+    path = tmp_path / "explanations.json"
+    path.write_text(json.dumps(saved, ensure_ascii=False), encoding="utf-8")
+    monkeypatch.setattr(config, "EXPLANATIONS_PATH", path)
+    at = run_app()
+    at.selectbox[0].set_value(5).run()
+    assert not at.exception and ai_ranked_labels(at, "chk_s05_") == []
+    assert any("원인표 순서로 보여줍니다" in e.proto.body for e in at.get("html"))
+
+
+def test_checklist_and_handover_memo():
+    # 03 아래 '지금 확인할 것': 사건의 원인표 항목이 체크박스로 나오고, 체크하면 인수인계 메모에 [x]로 남는다
+    at = run_app()
+    at.selectbox[0].set_value(5).run()
+    assert not at.exception
+    boxes = [c for c in at.checkbox if (c.key or "").startswith("chk_s05_")]
+    assert len(boxes) == 5  # 시리즈 5는 급변 1건 → 원인표의 급변 원인 5개
+    boxes[0].check().run()
+    memo = next(c.value for c in at.code if c.value.startswith("# SPC 판정 인수인계"))
+    assert "memo_s05" in download_keys(at)
+    assert "- [x] " in memo and "시리즈 05" in memo and "## 지금 확인할 것 (원인표 기준)" in memo
+    assert len(at.get("download_button")) >= 1

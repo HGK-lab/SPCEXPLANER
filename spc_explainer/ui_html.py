@@ -76,7 +76,8 @@ def limits_html(metrics: dict | None) -> str:
 
 CSS = """<style>
 /* ── 카드: 키 달린 st.container에 Streamlit이 붙이는 st-key-* 클래스를 꾸민다 ── */
-.st-key-chart_card, .st-key-bars_card, .st-key-counts_card, .st-key-secom_card, [class*="st-key-kpi_"] {
+.st-key-chart_card, .st-key-bars_card, .st-key-counts_card, .st-key-secom_card, .st-key-check_card,
+[class*="st-key-kpi_"] {
   background: #ffffff !important; border: 1px solid #d9dcdf !important; border-radius: 4px !important;
   padding: 16px 20px !important; gap: 8px !important;
 }

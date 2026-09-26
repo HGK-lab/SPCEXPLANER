@@ -3,11 +3,11 @@
 # 시리즈·센서를 고르면 st.fragment로 감싼 그 섹션만 다시 그린다. 결과 파일 읽기와 SECOM 계산은 캐시한다.
 import json
 import os
-from datetime import date
+from datetime import date, datetime
 
 import streamlit as st
 
-from spc_explainer import config, explain, generator, llm_client, rules, secom
+from spc_explainer import checklist, config, explain, generator, llm_client, rules, secom
 from spc_explainer import ui_dashboard, ui_html, ui_steps
 from spc_explainer.charts import chart_footer_html, chart_header_html, control_chart
 from spc_explainer.patterns import KOREAN
@@ -61,8 +61,9 @@ def series_label(s: dict) -> str:
     return f"시리즈 {s['id']:02d} — {kind_text}"
 
 
-def render_ai_card(sid: int, values, events) -> None:
-    """AI 설명 카드: 설명(실시간 결과가 있으면 그것, 없으면 저장된 1회차) + 검증 배지 + 저장 상태·실시간 설명 버튼."""
+def render_ai_card(sid: int, values, events) -> dict | None:
+    """AI 설명 카드: 설명(실시간 결과가 있으면 그것, 없으면 저장된 1회차) + 검증 배지 + 저장 상태·실시간 설명 버튼.
+    보여준 설명을 체크리스트용으로 돌려준다 (없으면 None)."""
     model = config.EXPLAIN_MODEL
     inp = explain.build_input(values, events)
     saved = load_json(config.EXPLANATIONS_PATH) or {}
@@ -74,14 +75,17 @@ def render_ai_card(sid: int, values, events) -> None:
     if reply is not None:
         text, error, shown_inp = reply.text, reply.error, inp
         status = f"실시간 결과 · {model['name']} · {reply.latency_s:.1f}초"
+        source = "실시간 설명"
     elif runs:
         text, error, shown_inp = runs[0]["text"], runs[0]["error"], cached["input"]
         created = str(runs[0].get("created", "")).replace("T", " ")[:16]
         status = f"저장된 설명 · {created} 생성 · 같은 입력 {len(runs)}회 중 1회차"
+        source = "저장된 설명 1회차"
     else:
         text, error, shown_inp = None, None, None
         status = "저장된 설명 없음"
 
+    ai = None
     if shown_inp is None or error:
         st.html(ui_steps.ai_head_html(None))
         with st.container(key="ai_body"):
@@ -91,6 +95,10 @@ def render_ai_card(sid: int, values, events) -> None:
                 st.info("저장된 설명이 없습니다. `python scripts/run_experiment.py`로 만들 수 있습니다.")
     else:
         data, issues = explain.validate(text, shown_inp)
+        names = ", ".join(sorted({explain.ISSUE_KO[i["type"]] for i in issues}))
+        ai = {"data": data if isinstance(data, dict) else None, "inp": shown_inp, "model": model["name"],
+              "ok": not issues and shown_inp == inp,  # 저장된 입력이 지금 판정과 다르면 순서를 쓰지 않는다
+              "status": ("검증 통과" if not issues else f"검증 문제: {names}") + f" · {source}"}
         st.html(ui_steps.ai_head_html(issues))
         if issues:
             st.html(ui_steps.issues_html(issues))
@@ -141,6 +149,29 @@ def render_ai_card(sid: int, values, events) -> None:
                 state = ", ".join(sorted({explain.ISSUE_KO[i["type"]] for i in issues})) if issues else "검증 통과"
                 items = ui_steps.priority_items(data, cached["input"]) if isinstance(data, dict) else []
                 st.html(ui_steps.run_line_html(r["run"] + 1, state, items))
+    return ai
+
+
+def render_checklist(scope: str, title: str, events, values, limits: dict | None, ai: dict | None) -> None:
+    """지금 확인할 것: 사건마다 원인표 항목 체크박스 + 교대 인수인계 메모(.md 내려받기·복사).
+    항목은 원인표에서만 온다. 검증을 통과한 AI 설명이 있으면 그 점검 순서를 앞에 둔다."""
+    order = checklist.ai_order(ai["data"], ai["inp"]) if ai and ai["ok"] else {}
+    cards = checklist.build(events, values, limits, order)
+    st.html(ui_steps.check_head_html(ai is not None, bool(order)))
+    checked = set()
+    for card in cards:
+        with st.expander(f"{card['title']} — {card['rule']}"):
+            for it in card["items"]:
+                if st.checkbox(checklist.item_label(it), key=f"chk_{scope}_{card['event_id']}_{it['cause_id']}"):
+                    checked.add((card["event_id"], it["cause_id"]))
+    ai_meta = None
+    if ai and ai["data"]:
+        ai_meta = {"model": ai["model"], "status": ai["status"], "summary": ai["data"].get("summary", "")}
+    memo = checklist.handover_md(title, datetime.now().strftime("%Y-%m-%d %H:%M"), cards, checked, ai_meta)
+    st.download_button("인수인계 메모 내려받기 (.md)", memo, file_name=f"spc_handover_{scope}.md",
+                       mime="text/markdown", on_click="ignore", key=f"memo_{scope}")
+    with st.expander("메모를 텍스트로 보기·복사 (오른쪽 위 복사 버튼)"):
+        st.code(memo, language="markdown")
 
 
 @st.fragment
@@ -171,11 +202,14 @@ def series_sections(dataset: dict) -> None:
                                  "AI는 새로운 판정을 만들지 않습니다 · 규칙이 넘긴 구간·규칙 번호만 해설합니다"))
     with st.container(key="ai_card"):
         if events:
-            render_ai_card(sid, values, events)
+            ai = render_ai_card(sid, values, events)
         else:
             st.html(ui_steps.ai_head_html(None))
             with st.container(key="ai_body"):
                 st.success("규칙 판정이 없어 LLM을 호출하지 않습니다.")
+    if events:
+        with st.container(key="check_card"):
+            render_checklist(f"s{sid:02d}", series_label(s), events, values, None, ai)
 
 
 def verification_section(metrics: dict | None) -> None:

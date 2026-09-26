@@ -118,3 +118,13 @@ def ai_body_html(data: dict, inp: dict) -> str:
     return ('<div class="spc-ai-body"><div class="spc-label">패턴 해석</div>'
             f'<div class="spc-summary">{esc(summary)}</div>'
             f'<div class="spc-label">점검 우선순위</div><div class="spc-prio">{rows_html}</div></div>')
+
+
+def check_head_html(has_ai: bool, ai_applied: bool) -> str:
+    """'지금 확인할 것' 카드 머리. 항목은 원인표에서만 오고, AI는 순서만 제안한다고 적는다."""
+    note = "항목은 원인표에서만 가져옵니다. AI는 검증을 통과한 설명이 있을 때 점검 순서(AI 추천 순위)만 제안합니다."
+    if has_ai and not ai_applied:
+        note += " 지금 설명은 검증을 통과하지 못해 원인표 순서로 보여줍니다."
+    return ('<div class="spc-box-head"><b>지금 확인할 것</b><span class="b-rule">원인표 기준</span>'
+            f'<span class="spc-note">{note}</span></div>')
+
