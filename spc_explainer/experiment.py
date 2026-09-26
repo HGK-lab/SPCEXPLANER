@@ -7,7 +7,7 @@ from datetime import datetime
 from pathlib import Path
 from typing import Callable
 
-from . import config, explain, generator, llm_detect, report, rules
+from . import config, explain, generator, llm_detect, report, rules, secom
 from .llm_client import LLMReply
 from .matching import classify, summarize
 from .patterns import KOREAN, PATTERNS, Event
@@ -35,12 +35,13 @@ class Paths:
     metrics: Path = config.METRICS_PATH
     report: Path = config.REPORT_PATH
     ai_errors: Path = config.AI_ERRORS_PATH
+    secom: Path = config.SECOM_PATH
 
     @staticmethod
     def under(root: Path) -> "Paths":
         """테스트용: 모든 파일을 root 아래에 둔다."""
         return Paths(root / "series.json", root / "explanations.json", root / "llm_detections.json",
-                     root / "metrics.json", root / "report.md", root / "ai_errors.md")
+                     root / "metrics.json", root / "report.md", root / "ai_errors.md", root / "secom.csv")
 
 
 @dataclass
@@ -238,7 +239,7 @@ def _detect_metrics(detections: dict, series: list[dict], truths: list[list[Even
     return result
 
 
-def compute_metrics(dataset: dict, explanations: dict, detections: dict) -> dict:
+def compute_metrics(dataset: dict, explanations: dict, detections: dict, secom_df=None) -> dict:
     """저장된 결과로 리포트용 지표를 계산한다 (LLM을 부르지 않는다)."""
     series = dataset["series"]
     truths = [generator.truth_events(s) for s in series]
@@ -254,7 +255,7 @@ def compute_metrics(dataset: dict, explanations: dict, detections: dict) -> dict
         "rules": summarize(truths, [rules.detect(s["values"]) for s in series]),
         "detect": _detect_metrics(detections, series, truths),
         "explain": _explain_metrics(explanations),
-        "secom": None,
+        "secom": secom.summarize(secom_df) if secom_df is not None else None,
     }
 
 
@@ -272,7 +273,7 @@ def run_all(llm: LLMFn | None, paths: Paths | None = None, force: bool = False) 
         _write_json(paths.detections, detections)
         label = f"{_now()} (설명 {explain.PROMPT_VERSION}, 단독 판정 {llm_detect.PROMPT_VERSION})"
         append_ai_errors(explain_errors + detect_errors, paths.ai_errors, label)
-    metrics = compute_metrics(dataset, explanations, detections)
+    metrics = compute_metrics(dataset, explanations, detections, secom.load(paths.secom))
     _write_json(paths.metrics, metrics)
     report.write(metrics, paths.report)
     return metrics

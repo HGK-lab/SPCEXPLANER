@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-09-25T23:48:41",
+ "generated_at": "2026-09-26T09:53:33",
  "dataset": {
   "seed": 20260925,
   "n_series": 20,
@@ -2654,5 +2654,46 @@
   "call_errors": 0,
   "repeat_changed_series": 0
  },
- "secom": null
+ "secom": {
+  "n": 1567,
+  "phase1_n": 500,
+  "sensors": {
+   "sensor_88": {
+    "limits": {
+     "center": 1813.7241299999998,
+     "sigma": 49.958400488921114,
+     "ucl": 1963.5993314667633,
+     "lcl": 1663.8489285332364
+    },
+    "events": 24,
+    "by_pattern": {
+     "spike": 15,
+     "trend": 3,
+     "shift": 6
+    },
+    "events_with_fail": 4,
+    "flagged_points": 98,
+    "fail_rate_flagged": 0.061224489795918366,
+    "fail_rate_phase2": 0.04217432052483599
+   },
+   "sensor_115": {
+    "limits": {
+     "center": 745.8432368000001,
+     "sigma": 49.36206082377522,
+     "ucl": 893.9294192713257,
+     "lcl": 597.7570543286745
+    },
+    "events": 10,
+    "by_pattern": {
+     "spike": 7,
+     "trend": 3,
+     "shift": 0
+    },
+    "events_with_fail": 1,
+    "flagged_points": 26,
+    "fail_rate_flagged": 0.038461538461538464,
+    "fail_rate_phase2": 0.04217432052483599
+   }
+  }
+ }
 }
