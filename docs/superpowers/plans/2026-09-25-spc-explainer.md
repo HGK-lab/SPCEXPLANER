@@ -35,7 +35,7 @@
 
 1. 배포 환경의 Streamlit이 달라 앱이 안 뜨거나 카드 CSS(`st-key-*`)가 안 먹는 경우 → 앱은 예외 없이 그려져야 한다. Task 12의 AppTest 스모크 테스트와 Streamlit 버전 고정(Task 12 Step 7)이 막는다.
 2. `results/`·SECOM·사례 해설 파일이 없거나, 저장된 설명의 입력이 현재 규칙 판정과 다른 경우 → 그래프·규칙 판정은 그대로 보이고 섹션마다 안내·경고만 뜬다. Task 12·13 `test_app_without_saved_files`. 지표 파일은 있는데 LLM 결과가 없는 경우(키 없이 `--no-llm`만 돌림)는 Task 13 `test_verification_renders_from_metrics_without_llm_results`.
-3. API 키가 없거나 실시간 호출 한도를 다 쓴 경우 → 실시간 버튼만 비활성, 저장된 설명은 그대로 보인다. Task 12 `test_live_button_disabled_without_key`.
+3. API 키가 없거나 실시간 호출 한도를 다 쓴 경우 → 실시간 버튼만 비활성, 저장된 설명은 그대로 보인다. Task 12 `test_live_button_disabled_without_key`. 버튼 클릭이 전체 재실행으로 들어오는 경우(fragment 재실행이 아님)에도 예외 없이 결과가 떠야 한다 — Task 12 `test_live_button_click_shows_reply_without_error`.
 4. JSON으로는 읽히지만 타입이 엉뚱한 LLM 출력(최상위 배열, events가 객체, checks가 문자열, 번호가 실수) → 검증기·파서·화면이 예외 없이 형식 위반으로 처리. Task 6 `test_parseable_but_wrong_types_do_not_raise`, Task 7 `test_parse_wrong_types_do_not_raise`, Task 12 `test_priority_items_tolerate_bad_shapes`.
 5. LLM 설명에 `<`·`&`·HTML 태그가 섞인 경우 → `st.html`은 iframe이 아니라서 그대로 넣으면 화면이 깨진다. 글자 그대로 보여야 한다. Task 12 `test_llm_text_is_escaped`, Task 13 `test_error_cases_come_from_saved_explanations`.
 
@@ -2883,6 +2883,18 @@ def test_live_button_disabled_without_key(monkeypatch):
     at.selectbox[0].set_value(5).run()
     assert not at.exception
     assert at.button[0].proto.disabled
+
+
+def test_live_button_click_shows_reply_without_error(monkeypatch):
+    # 클릭이 전체 재실행으로 들어와도 예외 없이 실시간 결과가 카드에 뜬다 (가짜 키·가짜 LLM, 네트워크 없음)
+    monkeypatch.setattr(llm_client, "get_api_key", lambda: "test-key")
+    monkeypatch.setattr(llm_client, "call_json",
+                        lambda model, system, user: llm_client.LLMReply(None, "가짜 호출 오류", 0.1, None))
+    at = run_app()
+    at.selectbox[0].set_value(5).run()
+    at.button[0].click().run()
+    assert not at.exception
+    assert any("가짜 호출 오류" in m.value for m in at.error)
 ```
 
 - [ ] **Step 2: 실패 확인**
@@ -2891,7 +2903,7 @@ Run: `.venv/Scripts/python -m pytest tests/test_ui_html.py tests/test_charts.py 
 Expected: 수집 오류 3개 — `ModuleNotFoundError: No module named 'spc_explainer.ui_html'` (`charts`, `ui_steps`도 같은 오류)
 
 Run: `.venv/Scripts/python -m pytest tests/test_app.py -v`
-Expected: 3 failed — 지금 앱은 임시 페이지라 `at.selectbox[0]`에서 `IndexError`
+Expected: 4 failed — 지금 앱은 임시 페이지라 `at.selectbox[0]`에서 `IndexError`
 
 - [ ] **Step 3: 테마와 공통 조각 구현**
 
@@ -3570,7 +3582,8 @@ def render_ai_card(sid: int, values, events) -> None:
         counter["n"] += 1
         with st.spinner("LLM 호출 중…"):
             st.session_state["live"] = (sid, llm_client.call_json(model, *explain.build_messages(inp)))
-        st.rerun(scope="fragment")
+        # 앱 전체를 다시 그려 위 카드에 결과를 띄운다. scope="fragment"는 클릭이 전체 재실행으로 들어오면 예외가 난다
+        st.rerun()
     if runs:
         with st.container(key="ai_runs"), st.expander(f"같은 입력 {len(runs)}회 반복 결과 (저장된 설명)"):
             for r in runs:
@@ -3647,7 +3660,7 @@ Modify `spc_explainer/report.py` — 찾을 코드:
 ```
 
 Run: `.venv/Scripts/python -m pytest tests/test_app.py -v`
-Expected: 3 passed
+Expected: 4 passed
 
 - [ ] **Step 7: Streamlit 버전 고정**
 
@@ -3670,7 +3683,7 @@ pycontrolcharts==0.1.2
 - [ ] **Step 8: 전체 테스트**
 
 Run: `.venv/Scripts/python -m pytest -q`
-Expected: 78 passed
+Expected: 79 passed
 
 - [ ] **Step 9: 화면 확인 (캡처 + 실시간 설명 1회)**
 
@@ -3870,6 +3883,18 @@ def test_live_button_disabled_without_key(monkeypatch):
     assert at.button[0].proto.disabled
 
 
+def test_live_button_click_shows_reply_without_error(monkeypatch):
+    # 클릭이 전체 재실행으로 들어와도 예외 없이 실시간 결과가 카드에 뜬다 (가짜 키·가짜 LLM, 네트워크 없음)
+    monkeypatch.setattr(llm_client, "get_api_key", lambda: "test-key")
+    monkeypatch.setattr(llm_client, "call_json",
+                        lambda model, system, user: llm_client.LLMReply(None, "가짜 호출 오류", 0.1, None))
+    at = run_app()
+    at.selectbox[0].set_value(5).run()
+    at.button[0].click().run()
+    assert not at.exception
+    assert any("가짜 호출 오류" in m.value for m in at.error)
+
+
 def test_verification_renders_from_metrics_without_llm_results(monkeypatch, tmp_path):
     # LLM 결과가 없는 지표 파일로도 04 검증이 그려져야 한다 (숫자는 파일에서만 읽음)
     metrics_path = tmp_path / "metrics.json"
@@ -3890,7 +3915,7 @@ Run: `.venv/Scripts/python -m pytest tests/test_ui_dashboard.py -v`
 Expected: 수집 오류 `ModuleNotFoundError: No module named 'spc_explainer.ui_dashboard'`
 
 Run: `.venv/Scripts/python -m pytest tests/test_app.py -v`
-Expected: 2 failed, 2 passed — `test_app_without_saved_files`와 `test_verification_renders_from_metrics_without_llm_results`가 `AttributeError: ... has no attribute 'CASE_NOTES_PATH'`
+Expected: 2 failed, 3 passed — `test_app_without_saved_files`와 `test_verification_renders_from_metrics_without_llm_results`가 `AttributeError: ... has no attribute 'CASE_NOTES_PATH'`
 
 - [ ] **Step 3: 설정 한 줄 추가**
 
@@ -4355,10 +4380,10 @@ st.html(ui_html.limits_html(metrics))
 - [ ] **Step 7: 통과 확인**
 
 Run: `.venv/Scripts/python -m pytest tests/test_ui_dashboard.py tests/test_app.py -v`
-Expected: 11 passed
+Expected: 12 passed
 
 Run: `.venv/Scripts/python -m pytest -q`
-Expected: 86 passed
+Expected: 87 passed
 
 - [ ] **Step 8: 화면 확인 (캡처, 시안 대조)**
 
@@ -4505,7 +4530,7 @@ Run: `git rm -r -q docs/superpowers/wip/story-ui`
 - [ ] **Step 4: 전체 테스트 재확인**
 
 Run: `.venv/Scripts/python -m pytest -q`
-Expected: 86 passed
+Expected: 87 passed
 
 - [ ] **Step 5: 커밋**
 

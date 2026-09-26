@@ -129,7 +129,8 @@ def render_ai_card(sid: int, values, events) -> None:
         counter["n"] += 1
         with st.spinner("LLM 호출 중…"):
             st.session_state["live"] = (sid, llm_client.call_json(model, *explain.build_messages(inp)))
-        st.rerun(scope="fragment")
+        # 앱 전체를 다시 그려 위 카드에 결과를 띄운다. scope="fragment"는 클릭이 전체 재실행으로 들어오면 예외가 난다
+        st.rerun()
     if runs:
         with st.container(key="ai_runs"), st.expander(f"같은 입력 {len(runs)}회 반복 결과 (저장된 설명)"):
             for r in runs:

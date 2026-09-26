@@ -44,6 +44,18 @@ def test_live_button_disabled_without_key(monkeypatch):
     assert at.button[0].proto.disabled
 
 
+def test_live_button_click_shows_reply_without_error(monkeypatch):
+    # 클릭이 전체 재실행으로 들어와도 예외 없이 실시간 결과가 카드에 뜬다 (가짜 키·가짜 LLM, 네트워크 없음)
+    monkeypatch.setattr(llm_client, "get_api_key", lambda: "test-key")
+    monkeypatch.setattr(llm_client, "call_json",
+                        lambda model, system, user: llm_client.LLMReply(None, "가짜 호출 오류", 0.1, None))
+    at = run_app()
+    at.selectbox[0].set_value(5).run()
+    at.button[0].click().run()
+    assert not at.exception
+    assert any("가짜 호출 오류" in m.value for m in at.error)
+
+
 def test_verification_renders_from_metrics_without_llm_results(monkeypatch, tmp_path):
     # LLM 결과가 없는 지표 파일로도 04 검증이 그려져야 한다 (숫자는 파일에서만 읽음)
     metrics_path = tmp_path / "metrics.json"
