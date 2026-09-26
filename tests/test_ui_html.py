@@ -5,8 +5,8 @@ import pytest
 
 from spc_explainer import config
 from spc_explainer.glossary import GLOSSARY
-from spc_explainer.ui_html import (CSS, PATTERN_COLORS, PROBLEM_HTML, RULE_ID, SYMBOL, esc, hero_html, limits_html,
-                                   section_html, span_text, term)
+from spc_explainer.ui_html import (CSS, PATTERN_COLORS, PROBLEM_HTML, RULE_ID, SYMBOL, esc, guide_html, hero_html,
+                                   limits_html, section_html, span_text, term)
 
 
 def text(h: str) -> str:
@@ -72,3 +72,11 @@ def test_term_is_focusable_and_escaped():
     with pytest.raises(KeyError):
         term("없는 용어")
 
+
+def test_guide_has_three_steps_in_order():
+    steps = ["시리즈 고르기", "판정 보기", "설명·검증 보기"]
+    h = guide_html(5, 15)
+    assert "30초 가이드" in h and h.count("<li>") == 3 and "정상 5개와 이상을 심은 15개" in h
+    assert [h.index(s) for s in steps] == sorted(h.index(s) for s in steps)
+    assert "정상 2개와 이상을 심은 7개" in guide_html(2, 7)  # 숫자는 받은 값 그대로 (데이터에서 센 값)
+    assert ".st-key-guide_card" in CSS

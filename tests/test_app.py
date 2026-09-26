@@ -41,7 +41,7 @@ def test_live_button_disabled_without_key(monkeypatch):
     at = run_app()
     at.selectbox[0].set_value(5).run()
     assert not at.exception
-    assert at.button[0].proto.disabled
+    assert at.button(key="live_button").proto.disabled
 
 
 def test_live_button_click_shows_reply_without_error(monkeypatch):
@@ -51,7 +51,7 @@ def test_live_button_click_shows_reply_without_error(monkeypatch):
                         lambda model, system, user: llm_client.LLMReply(None, "가짜 호출 오류", 0.1, None))
     at = run_app()
     at.selectbox[0].set_value(5).run()
-    at.button[0].click().run()
+    at.button(key="live_button").click().run()
     assert not at.exception
     assert any("가짜 호출 오류" in m.value for m in at.error)
 
@@ -177,3 +177,18 @@ def test_click_outside_events_says_so():
     assert at.selectbox(key="pick_11").value == -1  # "선택 안 함"
     assert any("#63 · 이 점은 판정된 사건에 속하지 않습니다." in b for b in pick_notes(at))
 
+
+def guide_shown(at) -> bool:
+    return any("30초 가이드" in e.proto.body for e in at.get("html"))
+
+
+def test_guide_closes_and_stays_closed_in_the_session():
+    at = run_app()
+    assert guide_shown(at)
+    series = json.loads(config.SERIES_PATH.read_text(encoding="utf-8"))["series"]
+    n_normal = sum(1 for s in series if not s["anomalies"])
+    assert any(f"정상 {n_normal}개와 이상을 심은 {len(series) - n_normal}개" in e.proto.body for e in at.get("html"))
+    at.button(key="guide_close").click().run()
+    assert not at.exception and not guide_shown(at)
+    at.selectbox[0].set_value(11).run()  # 다른 곳을 눌러 다시 그려도 닫힌 채로
+    assert not guide_shown(at)

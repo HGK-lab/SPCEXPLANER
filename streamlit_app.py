@@ -175,6 +175,20 @@ def render_checklist(scope: str, title: str, events, values, limits: dict | None
         st.code(memo, language="markdown")
 
 
+def close_guide() -> None:
+    st.session_state["guide_closed"] = True
+
+
+def guide(dataset: dict) -> None:
+    """첫 방문 30초 가이드. 닫으면 이 세션 동안 다시 보이지 않는다 (콜백이 먼저 돌아 닫은 실행에서 바로 사라진다)."""
+    if st.session_state.get("guide_closed"):
+        return
+    n_normal = sum(1 for s in dataset["series"] if not s["anomalies"])
+    with st.container(key="guide_card"):
+        st.html(ui_html.guide_html(n_normal, len(dataset["series"]) - n_normal))
+        st.button("가이드 닫기", key="guide_close", on_click=close_guide)
+
+
 @st.fragment
 def series_sections(dataset: dict) -> None:
     """02 규칙 판정 + 03 AI 설명. 시리즈를 바꾸면 이 두 섹션만 다시 그린다."""
@@ -297,6 +311,7 @@ dataset = load_json(config.SERIES_PATH) or generator.generate_dataset()
 metrics = load_json(config.METRICS_PATH)
 st.html(ui_html.CSS)
 st.html(ui_html.hero_html(dataset["center"], dataset["ucl"], dataset["lcl"], config.UNIT))
+guide(dataset)
 st.html(ui_html.PROBLEM_HTML)
 series_sections(dataset)
 verification_section(metrics)

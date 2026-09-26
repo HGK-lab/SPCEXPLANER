@@ -59,6 +59,17 @@ def section_html(kicker: str, title: str, sub: str = "", anchor: str = "") -> st
             f"{sub_html}</div>")
 
 
+def guide_html(n_normal: int, n_anomalous: int) -> str:
+    """첫 방문 30초 가이드 (3단계). 시리즈 개수는 데이터에서 센 값을 받는다."""
+    return (
+        '<div class="spc-guide"><b>처음이라면 30초 가이드</b><ol>'
+        f"<li><b>시리즈 고르기</b> — 02 규칙 판정에서 시리즈를 고릅니다. 정상 {n_normal}개와 이상을 심은 "
+        f"{n_anomalous}개가 있습니다.</li>"
+        "<li><b>판정 보기</b> — 관리도의 색 음영과 아래 표가 규칙 엔진의 확정 판정입니다. 점을 누르면 그 사건을 고릅니다.</li>"
+        "<li><b>설명·검증 보기</b> — 03에서 AI 설명과 “지금 확인할 것”을, 04에서 AI가 직접 판정했을 때와의 비교를 봅니다.</li>"
+        "</ol></div>"
+    )
+
 PROBLEM_HTML = section_html("01 문제 상황", "엔지니어는 관리도를 보고, 경험으로 우선순위를 정한다") + (
     '<p class="spc-para">관리도에서 이상 신호가 뜨면 엔지니어는 눈으로 패턴을 읽고 레시피 이력을 볼지 · 챔버 로그를 볼지 · '
     "계측기부터 의심할지를 그 자리에서 판단해야 합니다. 판정 기준은 문서로 정해져 있지만, 무엇부터 점검할지는 "
@@ -106,6 +117,14 @@ CSS = """<style>
 .st-key-notes_card h4 { font-size: 15px !important; font-weight: 700 !important; margin: 12px 0 4px !important;
   padding: 0 !important; line-height: 1.4 !important; }
 .st-key-notes_card li, .st-key-notes_card p { font-size: 13.5px !important; line-height: 1.6 !important; }
+.st-key-guide_card {
+  background: #f7fbfe !important; border: 1px solid #92c4ee !important; border-radius: 4px !important;
+  padding: 14px 18px !important; gap: 6px !important;
+}
+.spc-guide b { font-size: 15px; }
+.spc-guide ol { margin: 6px 0 0; padding-left: 20px; display: flex; flex-direction: column; gap: 4px; }
+.spc-guide li { font-size: 14px; line-height: 1.55; color: #3b424a; }
+.spc-guide li b { font-size: 14px; color: #16191d; }
 .st-key-ai_body, .st-key-ai_warn, .st-key-ai_runs { padding: 10px 18px !important; }
 .st-key-ai_foot { padding: 8px 18px !important; border-top: 1px solid #e3e5e8 !important; }
 
