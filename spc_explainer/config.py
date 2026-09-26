@@ -10,6 +10,7 @@ DETECTIONS_PATH = ROOT / "results" / "llm_detections.json"
 METRICS_PATH = ROOT / "results" / "metrics.json"
 REPORT_PATH = ROOT / "docs" / "validation_report.md"
 AI_ERRORS_PATH = ROOT / "docs" / "ai_errors.md"
+CASE_NOTES_PATH = ROOT / "docs" / "case_notes.md"  # 04 검증의 사례 해설(수동 분석)
 
 # ── 공정: 증착 막 두께 ──
 # 관리한계 고정값 사용 = 이미 안정화된 공정을 감시하는 상황(Phase II)을 가정한다.

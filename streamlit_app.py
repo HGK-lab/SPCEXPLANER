@@ -1,14 +1,14 @@
-# SPC 설명기 화면: 한 페이지 스토리형 (머리말 → 01 문제 → 02 규칙 판정 → 03 AI 설명 → 06 한계).
+# SPC 설명기 화면: 한 페이지 스토리형 (머리말 → 01 문제 → 02 규칙 판정 → 03 AI 설명 → 04 검증 → 05 실데이터 → 06 한계).
 # 판정은 규칙 엔진, 설명은 LLM(저장된 결과 우선, 실시간 호출은 횟수 제한).
-# 시리즈를 고르면 st.fragment로 감싼 그 섹션만 다시 그린다. 결과 파일 읽기는 캐시한다.
+# 시리즈·센서를 고르면 st.fragment로 감싼 그 섹션만 다시 그린다. 결과 파일 읽기와 SECOM 계산은 캐시한다.
 import json
 import os
 from datetime import date
 
 import streamlit as st
 
-from spc_explainer import config, explain, generator, llm_client, rules
-from spc_explainer import ui_html, ui_steps
+from spc_explainer import config, explain, generator, llm_client, rules, secom
+from spc_explainer import ui_dashboard, ui_html, ui_steps
 from spc_explainer.charts import chart_footer_html, chart_header_html, control_chart
 from spc_explainer.patterns import KOREAN
 
@@ -31,6 +31,22 @@ def load_json(path):
 @st.cache_data
 def load_text(path):
     return path.read_text(encoding="utf-8") if path.exists() else None
+
+
+@st.cache_data
+def secom_sensors(path) -> list[str]:
+    """SECOM CSV의 센서 열 이름. 파일이 없으면 빈 목록."""
+    df = secom.load(path)
+    return [] if df is None else [c for c in df.columns if c.startswith("sensor_")]
+
+
+@st.cache_data
+def secom_view(path, sensor: str):
+    """센서 하나의 값·라벨·Phase I 한계·Phase II 알람·불량 겹침. 같은 파일·센서면 다시 계산하지 않는다."""
+    df = secom.load(path)
+    values, labels = df[sensor].tolist(), df["label"].tolist()
+    limits, alarms = secom.monitor(values)
+    return values, labels, limits, alarms, secom.overlap_summary(alarms, labels)
 
 
 @st.cache_resource
@@ -163,12 +179,74 @@ def series_sections(dataset: dict) -> None:
                 st.success("규칙 판정이 없어 LLM을 호출하지 않습니다.")
 
 
+def verification_section(metrics: dict | None) -> None:
+    """04 검증: 규칙 vs 모델별 LLM 단독 판정 KPI, 패턴별 탐지율, 오류 유형 자동 집계, 사례 해설(수동 분석)."""
+    st.html(ui_html.section_html("04 검증", "AI가 판정까지 직접 하면 어떻게 될까", ui_dashboard.subtitle_text(metrics)))
+    if not metrics:
+        st.info("검증 결과가 아직 없습니다. `python scripts/run_experiment.py`로 만들 수 있습니다.")
+        return
+    kpi = ui_dashboard.kpi_summary(metrics)
+    cols = st.columns(1 + len(kpi["models"]))
+    with cols[0], st.container(key="kpi_rule"):
+        st.html(ui_dashboard.kpi_rule_html(kpi["rule"]))
+    for i, m in enumerate(kpi["models"]):
+        with cols[i + 1], st.container(key=f"kpi_model_{i}"):
+            st.html(ui_dashboard.kpi_model_html(m, kpi["rule"]["rate"]))
+    with st.container(key="bars_card"):
+        bars_col, facts_col = st.columns([2.6, 1])
+        with bars_col:
+            st.html(ui_dashboard.detection_bars_html(ui_dashboard.detection_groups(metrics)))
+        with facts_col:
+            st.html(ui_dashboard.facts_html(ui_dashboard.fact_lines(metrics)))
+    counts_col, notes_col = st.columns([1, 1.5])
+    with counts_col, st.container(key="counts_card"):
+        st.html(ui_dashboard.error_counts_html(kpi))
+    with notes_col, st.container(key="notes_card"):
+        st.html(ui_dashboard.NOTES_HEAD_HTML)
+        notes = load_text(config.CASE_NOTES_PATH)
+        if notes:
+            st.markdown(notes)
+        else:
+            st.caption("사례 해설이 아직 없습니다 (docs/case_notes.md).")
+    explanations = load_json(config.EXPLANATIONS_PATH) or {}
+    with st.expander("설명 LLM 오답 목록 (자동 추출)"):
+        st.html(ui_dashboard.cases_html(ui_dashboard.explain_error_cases(explanations), kpi["explain"]))
+
+
+@st.fragment
+def secom_section() -> None:
+    """05 실데이터 확인. 센서를 바꾸면 이 섹션만 다시 그린다."""
+    st.html(ui_html.section_html(
+        "05 실데이터 확인", "가상 데이터만으로 만든 건 아닙니다",
+        f"공개 반도체 공정 데이터(UCI SECOM) 센서에 같은 규칙 엔진을 적용했습니다. 시간순 앞 {config.SECOM_PHASE1_N}점으로 "
+        "한계를 추정하고 나머지를 감시합니다. 정답이 없어 탐지율은 계산하지 않습니다."))
+    sensors = secom_sensors(config.SECOM_PATH)
+    if not sensors:
+        st.info("SECOM 데이터가 없습니다. `python scripts/fetch_secom.py`로 받을 수 있습니다.")
+        return
+    with st.container(key="secom_card"):
+        sensor = st.selectbox("센서", sensors)
+        values, labels, limits, alarms, overlap = secom_view(config.SECOM_PATH, sensor)
+        fail_idx = [i for i, v in enumerate(labels) if v == 1]
+        fig = control_chart(values, alarms, limits["center"], limits["ucl"], limits["lcl"],
+                            phase_boundary=config.SECOM_PHASE1_N, fail_idx=fail_idx, y_title=sensor)
+        st.plotly_chart(fig, width="stretch", config={"displayModeBar": False})
+        c1, c2, c3 = st.columns(3)
+        c1.metric("Phase II 알람 사건", overlap["events"])
+        c2.metric("불량이 포함된 알람 사건", overlap["events_with_fail"])
+        c3.metric("알람 점 중 불량 비율", ui_dashboard.fmt_pct(overlap["fail_rate_flagged"]),
+                  help=f"Phase II 전체 불량 비율 {ui_dashboard.fmt_pct(overlap['fail_rate_phase2'])}")
+        st.caption("불량 라벨과의 겹침은 관찰일 뿐 인과나 성능이 아닙니다. 데이터: UCI SECOM (McCann & Johnston, 2008), CC BY 4.0.")
+
+
 dataset = load_json(config.SERIES_PATH) or generator.generate_dataset()
 metrics = load_json(config.METRICS_PATH)
 st.html(ui_html.CSS)
 st.html(ui_html.hero_html(dataset["center"], dataset["ucl"], dataset["lcl"], config.UNIT))
 st.html(ui_html.PROBLEM_HTML)
 series_sections(dataset)
+verification_section(metrics)
+secom_section()
 st.html(ui_html.limits_html(metrics))
 report_md = load_text(config.REPORT_PATH)
 if report_md:
