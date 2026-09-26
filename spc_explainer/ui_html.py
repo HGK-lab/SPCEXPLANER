@@ -70,6 +70,18 @@ def guide_html(n_normal: int, n_anomalous: int) -> str:
         "</ol></div>"
     )
 
+UPLOAD_NOTE_HTML = (
+    '<div class="spc-upnote"><b>데이터 안내</b> 올린 파일은 서버에 저장하지 않고 이 화면(세션)에서만 판정에 씁니다. '
+    "개인정보나 회사 기밀이 담긴 데이터는 올리지 마세요. ‘AI 설명 받기’를 누르면 판정 요약(사건 구간·값)이 "
+    "OpenAI로 전송됩니다.</div>"
+)
+
+
+def error_html(message: str) -> str:
+    """입력 오류 상자 (사용자가 올린 글자가 섞일 수 있어 이스케이프한다)."""
+    return f'<div class="spc-err">⚠ {esc(message)}</div>'
+
+
 PROBLEM_HTML = section_html("01 문제 상황", "엔지니어는 관리도를 보고, 경험으로 우선순위를 정한다") + (
     '<p class="spc-para">관리도에서 이상 신호가 뜨면 엔지니어는 눈으로 패턴을 읽고 레시피 이력을 볼지 · 챔버 로그를 볼지 · '
     "계측기부터 의심할지를 그 자리에서 판단해야 합니다. 판정 기준은 문서로 정해져 있지만, 무엇부터 점검할지는 "
@@ -87,27 +99,28 @@ def limits_html(metrics: dict | None) -> str:
         sample = "검증 결과 파일이 아직 없습니다."
     items = [
         "관리도 데이터는 규칙 정의대로 패턴을 심은 <b>가상 데이터</b>입니다. 실제 공정 데이터가 아닙니다.",
+        "06에 올린 데이터의 판정은 <b>참고용</b>이며 04 검증 수치에 섞지 않습니다. 추정 한계는 앞 N점이 안정적이라는 가정에 기댑니다.",
         "AI가 고르는 점검 원인표는 <b>교과서 수준의 일반 지식</b>에 기반한 가정이며, 실제 설비·레시피와 다를 수 있습니다.",
         sample,
         "SECOM은 정답이 없어 탐지율을 계산하지 않았고, 불량 라벨과의 겹침은 <b>관찰</b>일 뿐 인과나 성능이 아닙니다.",
     ]
     rows = "".join(f'<div class="spc-limit"><span>—</span><span>{t}</span></div>' for t in items)
-    return section_html("06 한계", "정직하게 밝혀둘 것") + f'<div class="spc-limits">{rows}</div>'
+    return section_html("07 한계", "정직하게 밝혀둘 것") + f'<div class="spc-limits">{rows}</div>'
 
 
 CSS = """<style>
 /* ── 카드: 키 달린 st.container에 Streamlit이 붙이는 st-key-* 클래스를 꾸민다 ── */
 .st-key-chart_card, .st-key-bars_card, .st-key-counts_card, .st-key-secom_card, .st-key-check_card,
-.st-key-feedback_card,
+.st-key-feedback_card, .st-key-upload_card, .st-key-up_check_card,
 [class*="st-key-kpi_"] {
   background: #ffffff !important; border: 1px solid #d9dcdf !important; border-radius: 4px !important;
   padding: 16px 20px !important; gap: 8px !important;
 }
-.st-key-rule_card {
+.st-key-rule_card, .st-key-up_rule_card {
   background: #ffffff !important; border: 1px solid #16191d !important; border-radius: 4px !important;
   padding: 0 !important; gap: 0 !important; overflow: hidden;
 }
-.st-key-ai_card {
+.st-key-ai_card, .st-key-up_ai_card {
   background: #f7fbfe !important; border: 1px dashed #6da4d3 !important; border-radius: 4px !important;
   padding: 0 !important; gap: 0 !important; overflow: hidden;
 }
@@ -126,7 +139,12 @@ CSS = """<style>
 .spc-guide ol { margin: 6px 0 0; padding-left: 20px; display: flex; flex-direction: column; gap: 4px; }
 .spc-guide li { font-size: 14px; line-height: 1.55; color: #3b424a; }
 .spc-guide li b { font-size: 14px; color: #16191d; }
-.st-key-ai_body, .st-key-ai_warn, .st-key-ai_runs { padding: 10px 18px !important; }
+.st-key-ai_body, .st-key-ai_warn, .st-key-ai_runs, .st-key-up_ai_msg { padding: 10px 18px !important; }
+.st-key-up_ai_foot { padding: 10px 18px !important; border-top: 1px solid #e3e5e8 !important; }
+.spc-upnote { font-size: 13px; line-height: 1.6; color: #3b424a; background: #f6f7f8; border-radius: 4px; padding: 8px 12px; }
+.spc-upnote b { margin-right: 6px; }
+.spc-err { font-size: 14px; color: #7a1512; background: #fdecea; border: 1px solid #f1a9a5; border-radius: 4px;
+  padding: 10px 12px; }
 .st-key-ai_foot { padding: 8px 18px !important; border-top: 1px solid #e3e5e8 !important; }
 
 /* ── 머리말·섹션 ── */

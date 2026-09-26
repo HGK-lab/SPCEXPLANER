@@ -205,3 +205,68 @@ def test_false_alarm_feedback_is_kept_in_the_session():
     assert len(at.dataframe) == 1 and "feedback_csv" in download_keys(at)
     at.button(key="fb_s11_E1").click().run()  # 다시 누르면 취소
     assert at.session_state["feedback"] == []
+
+
+def upload_texts(at) -> list[str]:
+    return [e.proto.body for e in at.get("html")]
+
+
+def test_upload_paste_judges_with_the_same_rules():
+    # 가상 시리즈 11을 예시 CSV로 붙여넣고 한계를 직접 입력하면 02와 같은 3건
+    from spc_explainer.upload import example_csv
+    at = run_app()
+    series = json.loads(config.SERIES_PATH.read_text(encoding="utf-8"))["series"]
+    at.text_area(key="up_text").set_value(example_csv(series[11]["values"])).run()
+    assert not at.exception
+    assert any("관리도 · 내 데이터 (막두께_nm, 100점" in b for b in upload_texts(at))
+    assert any("OpenAI로 전송" in b for b in upload_texts(at)) and "up_example" in download_keys(at)
+    assert any("앞 50점으로 추정한 한계" in b for b in upload_texts(at))  # 기본: 앞 N점 추정 (100행 → N=50)
+    at.radio(key="up_mode").set_value("직접 입력").run()
+    assert not at.exception
+    assert any("직접 입력한 한계" in b for b in upload_texts(at))
+    up = [b for b in upload_texts(at) if "규칙 판정 결과" in b and "#76–81" in b]
+    assert len(up) == 1 and "3건 감지" in up[0] and "#45" in up[0] and "#48–59" in up[0]
+    assert at.button(key="up_live_button").label
+    assert any((c.key or "").startswith("chk_up_") for c in at.checkbox)
+
+
+def test_upload_rejects_bad_input_with_a_clear_message():
+    at = run_app()
+    at.text_area(key="up_text").set_value("100.1\nabc\n" + "\n".join(["100"] * 10)).run()
+    assert not at.exception
+    assert any("2행: 막 두께 값 &#x27;abc&#x27;이(가) 숫자가 아닙니다." in b for b in upload_texts(at))
+    at.text_area(key="up_text").set_value("\n".join(["100.0"] * 25)).run()  # 추정에는 30행이 필요
+    assert any("30행 이상 필요합니다" in b for b in upload_texts(at))
+
+
+def test_upload_live_call_shares_the_quota_and_refreshes(monkeypatch):
+    # 06에서 AI 설명을 받으면 03과 같은 세션 한도를 쓰고, 앱 전체를 다시 그려 03의 남은 횟수도 맞게 보인다
+    from spc_explainer.upload import example_csv
+    monkeypatch.setattr(llm_client, "get_api_key", lambda: "test-key")
+    monkeypatch.setattr(llm_client, "call_json",
+                        lambda model, system, user: llm_client.LLMReply(None, "가짜 호출 오류", 0.1, None))
+    at = run_app()
+    at.selectbox[0].set_value(5).run()
+    series = json.loads(config.SERIES_PATH.read_text(encoding="utf-8"))["series"]
+    at.text_area(key="up_text").set_value(example_csv(series[11]["values"])).run()
+    at.radio(key="up_mode").set_value("직접 입력").run()
+    at.button(key="up_live_button").click().run()
+    assert not at.exception
+    assert at.session_state["live_used"] == 1
+    assert any("가짜 호출 오류" in m.value for m in at.error)
+    assert any(f"남은 횟수 {config.LIVE_CALLS_PER_SESSION - 1}/" in e.proto.body for e in at.get("html")
+               if "spc-status" in e.proto.body and "저장된 설명" in e.proto.body)  # 03의 안내도 갱신됨
+
+
+def test_upload_events_also_take_false_alarm_feedback():
+    # 06 사건에도 '오탐이에요'. 목록은 03 한 곳에 모이고, 06에서 눌러도 앱 전체를 다시 그려 바로 보인다
+    from spc_explainer.upload import example_csv
+    at = run_app()
+    series = json.loads(config.SERIES_PATH.read_text(encoding="utf-8"))["series"]
+    at.text_area(key="up_text").set_value(example_csv(series[11]["values"])).run()
+    at.radio(key="up_mode").set_value("직접 입력").run()
+    at.button(key="fb_up_E1").click().run()
+    assert not at.exception
+    assert [(e["series"], e["span"]) for e in at.session_state["feedback"]] == [("내 데이터 (100점)", "#45")]
+    assert len(at.dataframe) == 1 and "feedback_csv" in download_keys(at)
+

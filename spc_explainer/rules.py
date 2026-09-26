@@ -51,6 +51,9 @@ def detect(values, center: float = config.CENTER, ucl: float = config.UCL, lcl: 
     return sorted(events, key=lambda e: (e.start, e.pattern))
 
 
+SPIKE_LISTED = 5  # 급변 사건의 값을 전부 적는 최대 점 수 (가상 데이터의 급변은 1~2점이라 그대로 나온다)
+
+
 def describe(ev: Event, values, ucl: float = config.UCL, lcl: float = config.LCL) -> str:
     """사건의 근거 규칙 문장 (설명 LLM 입력과 화면 표시용)."""
     seg = [float(v) for v in values[ev.start:ev.end + 1]]
@@ -59,6 +62,8 @@ def describe(ev: Event, values, ucl: float = config.UCL, lcl: float = config.LCL
     if ev.pattern == "spike":
         limit = f"UCL {ucl:g}{u} 초과" if ev.direction == "up" else f"LCL {lcl:g}{u} 미만"
         vals = ", ".join(f"{v:.2f}" for v in seg)
+        if n > SPIKE_LISTED:  # 한계 밖 점이 길게 이어지면(올린 데이터) 앞 3개만 적는다
+            vals = ", ".join(f"{v:.2f}" for v in seg[:3]) + f" … 외 {n - 3}점"
         return f"관리한계 밖 {n}점 ({span} {vals}{u}, {limit})"
     if ev.pattern == "trend":
         word = "상승" if ev.direction == "up" else "하강"

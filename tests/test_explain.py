@@ -100,3 +100,25 @@ def test_signature_ignores_reason_wording():
     assert signature(GOOD) == signature(other)
     assert signature(variant(lambda o: o.update(priority=["E1", "E2"]))) != signature(GOOD)
     assert signature(None) is None
+
+
+def test_build_input_uses_given_limits_and_keeps_default_identical():
+    from spc_explainer import config
+    values = [100.0] * 20
+    values[5] = 104.0
+    events = [Event("spike", 5, 5, "up")]
+    assert build_input(values, events) == build_input(values, events, {"center": config.CENTER, "ucl": config.UCL,
+                                                                        "lcl": config.LCL})
+    custom = build_input(values, events, {"center": 101.0, "ucl": 103.5, "lcl": 98.5})
+    assert custom["process"]["target"] == 101.0 and custom["process"]["ucl"] == 103.5
+    assert "UCL 103.5nm 초과" in custom["events"][0]["rule"]
+
+
+def test_saved_experiment_inputs_are_unchanged():
+    # 급변 요약(6점 이상)을 넣어도 저장된 실험 입력과 글자까지 같아야 캐시가 깨지지 않는다
+    from spc_explainer import config, rules
+    saved = json.loads(config.EXPLANATIONS_PATH.read_text(encoding="utf-8"))["series"]
+    series = json.loads(config.SERIES_PATH.read_text(encoding="utf-8"))["series"]
+    for sid, entry in saved.items():
+        values = series[int(sid)]["values"]
+        assert build_input(values, rules.detect(values)) == entry["input"], sid

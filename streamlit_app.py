@@ -1,13 +1,15 @@
-# SPC 설명기 화면: 한 페이지 스토리형 (머리말 → 01 문제 → 02 규칙 판정 → 03 AI 설명 → 04 검증 → 05 실데이터 → 06 한계).
+# SPC 설명기 화면: 한 페이지 스토리형
+# (머리말·가이드 → 01 문제 → 02 규칙 판정 → 03 AI 설명 → 04 검증 → 05 실데이터 → 06 내 데이터 판정 → 07 한계).
 # 판정은 규칙 엔진, 설명은 LLM(저장된 결과 우선, 실시간 호출은 횟수 제한).
-# 시리즈·센서를 고르면 st.fragment로 감싼 그 섹션만 다시 그린다. 결과 파일 읽기와 SECOM 계산은 캐시한다.
+# 시리즈·센서·올린 데이터를 바꾸면 st.fragment로 감싼 그 섹션만 다시 그린다. 결과 파일 읽기와 SECOM 계산은 캐시한다.
+import hashlib
 import json
 import os
 from datetime import date, datetime
 
 import streamlit as st
 
-from spc_explainer import checklist, config, explain, feedback, generator, llm_client, rules, secom
+from spc_explainer import checklist, config, explain, feedback, generator, llm_client, rules, secom, upload
 from spc_explainer import ui_dashboard, ui_html, ui_steps
 from spc_explainer.charts import chart_footer_html, chart_header_html, control_chart
 from spc_explainer.patterns import KOREAN
@@ -53,6 +55,26 @@ def secom_view(path, sensor: str):
 def daily_counter() -> dict:
     """서버 프로세스 전체가 공유하는 오늘의 실시간 호출 수 (앱이 재시작되면 초기화)."""
     return {"date": date.today(), "n": 0}
+
+
+def live_quota() -> tuple[bool, int, str]:
+    """실시간 설명을 부를 수 있는지: (키 있음, 남은 횟수, 안내 글자). 세션당·하루 한도는 03과 06이 같이 쓴다."""
+    counter = daily_counter()
+    if counter["date"] != date.today():
+        counter.update(date=date.today(), n=0)
+    used = st.session_state.get("live_used", 0)
+    left = max(0, min(config.LIVE_CALLS_PER_SESSION - used, config.LIVE_CALLS_PER_DAY - counter["n"]))
+    has_key = bool(llm_client.get_api_key())
+    if not has_key:
+        return has_key, left, "API 키 없음 — 실시간 설명 꺼짐"
+    if left == 0:
+        return has_key, left, "실시간 호출 한도 소진"
+    return has_key, left, f"남은 횟수 {left}/{config.LIVE_CALLS_PER_SESSION}"
+
+
+def spend_live_call() -> None:
+    st.session_state["live_used"] = st.session_state.get("live_used", 0) + 1
+    daily_counter()["n"] += 1
 
 
 def series_label(s: dict) -> str:
@@ -112,18 +134,7 @@ def render_ai_card(sid: int, values, events, selected: str | None = None) -> dic
             st.warning("저장된 설명의 입력이 현재 규칙 판정과 다릅니다. 실험을 다시 돌려야 합니다.")
 
     # 실시간 설명: 세션당·하루 호출 수를 제한하고, 키가 없으면 끈다
-    counter = daily_counter()
-    if counter["date"] != date.today():
-        counter.update(date=date.today(), n=0)
-    used = st.session_state.get("live_used", 0)
-    left = max(0, min(config.LIVE_CALLS_PER_SESSION - used, config.LIVE_CALLS_PER_DAY - counter["n"]))
-    has_key = bool(llm_client.get_api_key())
-    if not has_key:
-        limit_text = "API 키 없음 — 실시간 설명 꺼짐"
-    elif left == 0:
-        limit_text = "실시간 호출 한도 소진"
-    else:
-        limit_text = f"남은 횟수 {left}/{config.LIVE_CALLS_PER_SESSION}"
+    has_key, left, limit_text = live_quota()
     with st.container(key="ai_foot"):
         info_col, button_col = st.columns([3, 1.3], vertical_alignment="center")
         with info_col:
@@ -133,8 +144,7 @@ def render_ai_card(sid: int, values, events, selected: str | None = None) -> dic
             clicked = st.button("실시간 설명 받기" if can_call else "실시간 설명 불가", key="live_button",
                                 disabled=not can_call, width="stretch")
     if clicked:
-        st.session_state["live_used"] = used + 1
-        counter["n"] += 1
+        spend_live_call()
         with st.spinner("LLM 호출 중…"):
             st.session_state["live"] = (sid, llm_client.call_json(model, *explain.build_messages(inp)))
         # 앱 전체를 다시 그려 위 카드에 결과를 띄운다. scope="fragment"는 클릭이 전체 재실행으로 들어오면 예외가 난다
@@ -152,15 +162,17 @@ def render_ai_card(sid: int, values, events, selected: str | None = None) -> dic
     return ai
 
 
-def toggle_feedback(series: str, event_id: str, pattern: str, span: str, rule: str) -> None:
-    """'오탐이에요' 버튼: 누르면 세션 목록에 넣고, 다시 누르면 뺀다."""
+def toggle_feedback(series: str, event_id: str, pattern: str, span: str, rule: str, refresh_all: bool = False) -> None:
+    """'오탐이에요' 버튼: 누르면 세션 목록에 넣고, 다시 누르면 뺀다.
+    refresh_all: 목록이 다른 fragment(03)에 있을 때 앱 전체를 다시 그리라고 표시한다 (06에서 누른 경우)."""
+    st.session_state["feedback_refresh"] = refresh_all
     entry = {"series": series, "event_id": event_id, "pattern": pattern, "span": span, "rule": rule,
              "time": datetime.now().strftime("%Y-%m-%d %H:%M:%S")}
     st.session_state["feedback"] = feedback.toggle(st.session_state.get("feedback", []), entry)
 
 
 def render_checklist(scope: str, title: str, events, values, limits: dict | None, ai: dict | None,
-                     picked: int | None = None, feedback_series: str | None = None) -> None:
+                     picked: int | None = None, feedback_series: str | None = None, feedback_refresh_all: bool = False) -> None:
     """지금 확인할 것: 사건마다 원인표 항목 체크박스 + 교대 인수인계 메모(.md 내려받기·복사).
     항목은 원인표에서만 온다. 검증을 통과한 AI 설명이 있으면 그 점검 순서를 앞에 둔다.
     feedback_series를 주면 사건마다 '오탐이에요' 버튼을 붙인다."""
@@ -180,7 +192,7 @@ def render_checklist(scope: str, title: str, events, values, limits: dict | None
                     st.html('<div class="spc-flag">✓ 오탐으로 표시했습니다 (이번 세션에만 저장)</div>')
                 st.button("오탐 표시 취소" if flagged else "오탐이에요", key=f"fb_{scope}_{card['event_id']}",
                           help=feedback.DEMO_NOTE, on_click=toggle_feedback,
-                          args=(feedback_series, card["event_id"], pattern, span, card["rule"]))
+                          args=(feedback_series, card["event_id"], pattern, span, card["rule"], feedback_refresh_all))
     ai_meta = None
     if ai and ai["data"]:
         ai_meta = {"model": ai["model"], "status": ai["status"], "summary": ai["data"].get("summary", "")}
@@ -339,6 +351,102 @@ def secom_section() -> None:
         st.caption("불량 라벨과의 겹침은 관찰일 뿐 인과나 성능이 아닙니다. 데이터: UCI SECOM (McCann & Johnston, 2008), CC BY 4.0.")
 
 
+def render_upload_ai(values, events, limits: dict) -> dict | None:
+    """06의 AI 설명: 저장된 설명이 없어 실시간으로만 부른다 (호출 한도는 03과 같이 쓴다). 체크리스트용 설명을 돌려준다."""
+    model = config.EXPLAIN_MODEL
+    inp = explain.build_input(values, events, limits)
+    sig = hashlib.sha256(json.dumps(inp, ensure_ascii=False, sort_keys=True).encode("utf-8")).hexdigest()[:16]
+    with st.container(key="up_ai_foot"):
+        has_key, left, _ = live_quota()
+        if st.button("AI 설명 받기 (실시간)" if has_key and left > 0 else "AI 설명 불가", key="up_live_button",
+                     disabled=not (has_key and left > 0)):
+            spend_live_call()
+            with st.spinner("LLM 호출 중…"):
+                st.session_state["up_live"] = (sig, llm_client.call_json(model, *explain.build_messages(inp)))
+            st.rerun()  # 03과 06의 남은 횟수·버튼을 함께 갱신한다 (이 fragment만 다시 그리면 03이 옛 숫자로 남는다)
+        st.html(ui_steps.status_html(f"누르면 판정 요약(사건 구간·값)만 {model['name']}에 보냅니다 · {live_quota()[2]}"))
+    live = st.session_state.get("up_live")
+    reply = live[1] if live and live[0] == sig else None  # 데이터·한계를 바꾸면 이전 설명은 쓰지 않는다
+    if reply is None:
+        return None
+    if reply.error:
+        with st.container(key="up_ai_msg"):
+            st.error(f"호출 오류: {reply.error}")
+        return None
+    data, issues = explain.validate(reply.text, inp)
+    st.html(ui_steps.ai_head_html(issues))
+    if issues:
+        st.html(ui_steps.issues_html(issues))
+    if not isinstance(data, dict):
+        with st.container(key="up_ai_msg"):
+            st.code(reply.text or "", language="json")
+        return None
+    st.html(ui_steps.ai_body_html(data, inp))
+    names = ", ".join(sorted({explain.ISSUE_KO[i["type"]] for i in issues}))
+    return {"data": data, "inp": inp, "model": model["name"], "ok": not issues,
+            "status": ("검증 통과" if not issues else f"검증 문제: {names}") + " · 실시간 설명"}
+
+
+@st.fragment
+def upload_section(dataset: dict) -> None:
+    """06 내 데이터 판정: CSV 올리기·붙여넣기 → 같은 규칙 엔진. 파일은 저장하지 않고, 결과는 04 검증 수치에 섞지 않는다."""
+    st.html(ui_html.section_html(
+        "06 내 데이터로 판정", "내 관리도 데이터에 같은 규칙을 돌려 봅니다",
+        f"숫자 열 1개(막 두께, 앞에 시점 열은 선택) · 최대 {upload.MAX_ROWS:,}행 · 결과는 04 검증 수치에 섞지 않습니다"))
+    with st.container(key="upload_card"):
+        st.html(ui_html.UPLOAD_NOTE_HTML)
+        file_col, paste_col = st.columns(2)
+        with file_col:
+            file = st.file_uploader("CSV 파일 올리기", type=["csv", "txt"], max_upload_size=1, key="up_file")
+            st.download_button("예시 CSV 내려받기 (가상 시리즈 11)", upload.example_csv(dataset["series"][11]["values"]),
+                               file_name="spc_example.csv", mime="text/csv", on_click="ignore", key="up_example")
+        with paste_col:
+            pasted = st.text_area("또는 붙여넣기 (엑셀에서 열을 복사해도 됩니다)", key="up_text", height=150, max_chars=200_000,
+                                  placeholder="시점,막두께_nm\n2026-09-01 08:00,100.21\n2026-09-01 08:30,99.87")
+        try:
+            text = upload.read_input(file.getvalue() if file is not None else None, pasted)
+            if text is None:
+                st.caption("CSV를 올리거나 붙여넣으면 여기서 판정합니다. 예시 CSV를 내려받아 그대로 올려 봐도 됩니다.")
+                return
+            parsed = upload.parse(text)
+            values = parsed["values"]
+            n = len(values)
+            mode = st.radio("관리한계 정하기", ["앞 N점으로 추정 (Phase I)", "직접 입력"], horizontal=True, key="up_mode")
+            if mode == "직접 입력":
+                cl_col, ucl_col, lcl_col = st.columns(3)
+                center = cl_col.number_input("중심선 (CL)", value=config.CENTER, key="up_cl")
+                ucl = ucl_col.number_input("UCL", value=config.UCL, key="up_ucl")
+                lcl = lcl_col.number_input("LCL", value=config.LCL, key="up_lcl")
+                result = upload.judge_fixed(values, center, ucl, lcl)
+            elif n < upload.MIN_PHASE1 + upload.MIN_ROWS:
+                result = upload.judge_estimated(values, upload.MIN_PHASE1)  # 행이 모자라다는 오류를 낸다
+            else:
+                phase1_n = st.number_input("추정에 쓸 앞 N점", min_value=upload.MIN_PHASE1, max_value=n - upload.MIN_ROWS,
+                                           value=upload.default_phase1(n), step=10, key=f"up_n_{n}")
+                result = upload.judge_estimated(values, int(phase1_n))
+        except upload.UploadError as e:
+            st.html(ui_html.error_html(str(e)))
+            return
+        limits, events = result["limits"], result["events"]
+        times = parsed["times"]
+        span = f" · 시점 {times[0]} ~ {times[-1]}" if times and times[0] and times[-1] else ""
+        st.html(chart_header_html(values, f"관리도 · 내 데이터 ({parsed['name']}, {n:,}점{span})"))
+        fig = control_chart(values, events, limits["center"], limits["ucl"], limits["lcl"],
+                            phase_boundary=result["phase1_n"], y_title=parsed["name"], show_legend=False)
+        st.plotly_chart(fig, width="stretch", config={"displayModeBar": False})
+        st.html(ui_steps.upload_limits_html(result))
+    with st.container(key="up_rule_card"):
+        st.html(ui_steps.rule_card_html(events, values, limits))
+    if events:
+        with st.container(key="up_ai_card"):
+            ai = render_upload_ai(values, events, limits)
+        with st.container(key="up_check_card"):
+            render_checklist("up", "내 데이터", events, values, limits, ai,
+                             feedback_series=f"내 데이터 ({len(values):,}점)", feedback_refresh_all=True)
+        if st.session_state.pop("feedback_refresh", False):
+            st.rerun()  # 피드백 목록은 03(다른 fragment)에 있으므로 앱 전체를 다시 그린다
+
+
 dataset = load_json(config.SERIES_PATH) or generator.generate_dataset()
 metrics = load_json(config.METRICS_PATH)
 st.html(ui_html.CSS)
@@ -348,6 +456,7 @@ st.html(ui_html.PROBLEM_HTML)
 series_sections(dataset)
 verification_section(metrics)
 secom_section()
+upload_section(dataset)
 st.html(ui_html.limits_html(metrics))
 report_md = load_text(config.REPORT_PATH)
 if report_md:

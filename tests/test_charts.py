@@ -77,3 +77,19 @@ def test_limit_labels_explain_themselves_on_hover():
     tips = {a.text: a.hovertext for a in fig.layout.annotations if a.hovertext}
     assert tips == {"UCL 103": GLOSSARY["UCL"], "CL 100": GLOSSARY["중심선"], "LCL 97": GLOSSARY["LCL"]}
 
+
+
+def test_phase_label_sits_at_the_bottom_so_band_labels_stay_readable():
+    # 경계(#50)에서 시작하는 사건의 음영 라벨은 위, Phase 글자는 아래 → 겹치지 않는다
+    fig = control_chart(VALUES, [Event("shift", 50, 59, "up")], 100, 103, 97, phase_boundary=50, show_legend=False)
+    phase = [a for a in fig.layout.annotations if a.text == "Phase I | Phase II"][0]
+    band = [a for a in fig.layout.annotations if "치우침" in a.text][0]
+    assert (phase.y, phase.yanchor) == (0, "bottom") and (band.y, band.yanchor) == (1, "bottom")
+
+
+def test_small_scale_data_keeps_y_tick_labels():
+    # 06에 올린 작은 단위 데이터(0.500~0.506)도 눈금이 보여야 한다 (정수 눈금 고정은 범위가 3~14일 때만)
+    vals = [0.500 + (i % 7) * 0.001 for i in range(60)]
+    fig = control_chart(vals, [], 0.503, 0.506, 0.500)
+    assert fig.layout.yaxis.dtick is None
+    assert control_chart(VALUES, EVENTS, 100, 103, 97).layout.yaxis.dtick == 1

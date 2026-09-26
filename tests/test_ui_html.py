@@ -5,8 +5,8 @@ import pytest
 
 from spc_explainer import config
 from spc_explainer.glossary import GLOSSARY
-from spc_explainer.ui_html import (CSS, PATTERN_COLORS, PROBLEM_HTML, RULE_ID, SYMBOL, esc, guide_html, hero_html,
-                                   limits_html, section_html, span_text, term)
+from spc_explainer.ui_html import (CSS, PATTERN_COLORS, PROBLEM_HTML, RULE_ID, SYMBOL, UPLOAD_NOTE_HTML, error_html,
+                                   esc, guide_html, hero_html, limits_html, section_html, span_text, term)
 
 
 def text(h: str) -> str:
@@ -35,7 +35,7 @@ def test_section_and_problem():
 
 def test_limits_read_numbers_from_metrics():
     h = limits_html(METRICS)
-    assert "06 한계" in h and "가상 데이터" in h and "교과서 수준" in h
+    assert "07 한계" in h and "가상 데이터" in h and "교과서 수준" in h and "04 검증 수치에 섞지 않습니다" in h
     assert "가상 시리즈 20개 · 심은 이상 21건" in h and "2026-09-25T23:48:41" in h
     assert "검증 결과 파일이 아직 없습니다" in limits_html(None)
 
@@ -80,3 +80,9 @@ def test_guide_has_three_steps_in_order():
     assert [h.index(s) for s in steps] == sorted(h.index(s) for s in steps)
     assert "정상 2개와 이상을 심은 7개" in guide_html(2, 7)  # 숫자는 받은 값 그대로 (데이터에서 센 값)
     assert ".st-key-guide_card" in CSS
+
+
+def test_upload_note_and_error_box():
+    assert "저장하지 않고" in UPLOAD_NOTE_HTML and "OpenAI로 전송" in UPLOAD_NOTE_HTML
+    assert error_html("3행: 값 '<b>'") == '<div class="spc-err">⚠ 3행: 값 &#x27;&lt;b&gt;&#x27;</div>'
+    assert 'id="spc-ai"' in section_html("03", "t", anchor="spc-ai")

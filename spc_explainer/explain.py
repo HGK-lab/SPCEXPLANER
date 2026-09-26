@@ -4,7 +4,7 @@ import json
 from . import config
 from .causes import CAUSES, rows_for
 from .patterns import FROM_KOREAN, KOREAN, Event
-from .rules import describe
+from .rules import SPIKE_LISTED, describe
 
 PROMPT_VERSION = "explain-v1"  # 프롬프트를 바꾸면 올린다 (캐시가 새로 호출하게 됨)
 DIRECTION_KO = {
@@ -28,8 +28,10 @@ SYSTEM = """너는 반도체 증착 공정의 관리도(SPC) 판정 결과를 �
  "priority": ["E1"]}"""
 
 
-def build_input(values, events: list[Event]) -> dict:
-    """설명 LLM 입력: 공정 정보 + 규칙 사건 요약 + 해당 패턴의 원인표. 원시 시계열은 넣지 않는다."""
+def build_input(values, events: list[Event], limits: dict | None = None) -> dict:
+    """설명 LLM 입력: 공정 정보 + 규칙 사건 요약 + 해당 패턴의 원인표. 원시 시계열은 넣지 않는다.
+    limits = {"center", "ucl", "lcl"} (06 내 데이터 판정). 없으면 설정값 — 저장된 실험 입력과 글자까지 같다."""
+    lim = limits or {"center": config.CENTER, "ucl": config.UCL, "lcl": config.LCL}
     items = []
     for i, ev in enumerate(events, start=1):
         seg = [float(v) for v in values[ev.start:ev.end + 1]]
@@ -39,9 +41,12 @@ def build_input(values, events: list[Event]) -> dict:
             "direction": DIRECTION_KO[ev.pattern][ev.direction],
             "start": ev.start,
             "end": ev.end,
-            "rule": describe(ev, values),
+            "rule": describe(ev, values, lim["ucl"], lim["lcl"]),
         }
-        if ev.pattern == "spike":
+        if ev.pattern == "spike" and len(seg) > SPIKE_LISTED:  # 원시 시계열을 넣지 않도록 요약
+            item["values"] = seg[:SPIKE_LISTED]
+            item["n_points"], item["min"], item["max"] = len(seg), min(seg), max(seg)
+        elif ev.pattern == "spike":
             item["values"] = seg
         elif ev.pattern == "trend":
             item["first_value"], item["last_value"] = seg[0], seg[-1]
@@ -50,8 +55,8 @@ def build_input(values, events: list[Event]) -> dict:
         items.append(item)
     table = rows_for({ev.pattern for ev in events})
     return {
-        "process": {"name": config.PROCESS_NAME, "unit": config.UNIT, "target": config.CENTER,
-                    "ucl": config.UCL, "lcl": config.LCL},
+        "process": {"name": config.PROCESS_NAME, "unit": config.UNIT, "target": lim["center"],
+                    "ucl": lim["ucl"], "lcl": lim["lcl"]},
         "events": items,
         "cause_table": [{"cause_id": cid, "pattern": KOREAN[r["pattern"]], "cause": r["cause"], "check": r["check"]}
                         for cid, r in table.items()],

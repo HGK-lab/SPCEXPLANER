@@ -106,15 +106,17 @@ def control_chart(values, events: list[Event], center: float, ucl: float, lcl: f
                                  marker={"symbol": "x", "color": "black", "size": 7}))
     if phase_boundary is not None:
         fig.add_vline(x=phase_boundary - 0.5, line={"color": "#555555", "dash": "dot"})
-        fig.add_annotation(x=phase_boundary - 0.5, y=1, xref="x", yref="paper", yanchor="bottom",
-                           text="Phase I | Phase II", showarrow=False, font={"size": 11, "color": "#3b424a"})
+        # 그림 아래쪽 안에 둔다 (위쪽은 경계에서 시작하는 사건의 음영 라벨과 겹친다)
+        fig.add_annotation(x=phase_boundary - 0.5, y=0, xref="x", yref="paper", yanchor="bottom", yshift=4,
+                           text="Phase I | Phase II", showarrow=False, bgcolor="rgba(255,255,255,0.85)",
+                           font={"size": 11, "color": "#3b424a"})
     # 축: 값 범위가 좁으면 y는 정수 눈금, x는 10 간격. 눈금 글꼴은 모노
     lo, hi = min(vals + [lcl]), max(vals + [ucl])
     pad = (hi - lo) * 0.06 or 1.0
     yaxis = {"range": [lo - pad, hi + pad], "showgrid": True, "gridcolor": GRID, "zeroline": False,
              "tickfont": {"family": MONO, "size": 11, "color": TICK},
              "title": {"text": y_title, "font": {"size": 12, "color": TICK}}}
-    if hi - lo + 2 * pad <= 14:
+    if 3 <= hi - lo + 2 * pad <= 14:  # 가상 데이터(97~103nm 부근)는 1 간격. 더 좁거나 넓으면 Plotly가 정한다
         yaxis["dtick"] = 1
     xaxis = {"range": [-0.8, len(vals) - 0.2], "showgrid": False, "zeroline": False, "showline": True,
              "linecolor": "#9aa0a7", "ticks": "outside", "ticklen": 4, "tickcolor": "#9aa0a7",

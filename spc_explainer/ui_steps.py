@@ -171,3 +171,16 @@ def pick_note_html(events: list[Event], picked: int | None, outside: int | None)
         return ""
     return (f'<div class="spc-pick">{esc(event_option(events, picked))} 선택 — 03의 설명과 체크리스트에서 강조했습니다 '
             '<a href="#spc-ai">설명으로 이동 ↓</a></div>')
+
+
+def upload_limits_html(result: dict) -> str:
+    """06 판정에 쓴 관리한계 한 줄: 앞 N점 추정(σ 포함) 또는 직접 입력."""
+    lim = result["limits"]
+    nums = f"CL {lim['center']:.4g} · UCL {lim['ucl']:.4g} · LCL {lim['lcl']:.4g}"
+    if result["mode"] == "estimated":
+        n = result["phase1_n"]
+        text = (f"앞 {n}점으로 추정한 한계 · {nums} · σ {lim['sigma']:.4g} (평균 이동범위 ÷ 1.128) · "
+                f"판정은 {n}번 점부터 (Phase II)")
+    else:
+        text = f"직접 입력한 한계 · {nums} · 모든 점을 판정"
+    return f'<div class="spc-status"><span class="spc-dot"></span>{esc(text)}</div>'

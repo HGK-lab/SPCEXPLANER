@@ -4,7 +4,8 @@ import json
 from spc_explainer.explain import build_input
 from spc_explainer.patterns import Event
 from spc_explainer.ui_steps import (ai_body_html, ai_head_html, event_index_at, event_option, issues_html,
-                                    pick_note_html, priority_items, rule_card_html, run_line_html, selected_x)
+                                    pick_note_html, priority_items, rule_card_html, run_line_html, selected_x,
+                                    upload_limits_html)
 
 VALUES = [104.2 if i == 14 else 99.0 if 40 <= i <= 49 else 100.0 for i in range(100)]
 EVENTS = [Event("spike", 14, 14, "up"), Event("shift", 40, 49, "down")]
@@ -101,3 +102,15 @@ def test_selected_event_is_highlighted_in_rule_card_and_ai_body():
     assert body.count("spc-prio-row sel") == 2  # E2의 점검 항목 2개
     assert "spc-prio-row sel" not in ai_body_html(DATA, INP)
 
+
+def test_rule_card_uses_given_limits():
+    h = rule_card_html([Event("spike", 3, 3, "up")], [10.0, 10.0, 10.0, 20.0], limits={"ucl": 15.0, "lcl": 5.0})
+    assert "UCL 15nm 초과" in h
+
+
+def test_upload_limits_line():
+    est = {"mode": "estimated", "phase1_n": 50, "limits": {"center": 0.5, "ucl": 3.16, "lcl": -2.16, "sigma": 0.8865}}
+    assert "앞 50점으로 추정한 한계 · CL 0.5 · UCL 3.16 · LCL -2.16 · σ 0.8865" in upload_limits_html(est)
+    assert "50번 점부터 (Phase II)" in upload_limits_html(est)
+    fixed = {"mode": "fixed", "phase1_n": None, "limits": {"center": 100, "ucl": 103, "lcl": 97}}
+    assert "직접 입력한 한계 · CL 100 · UCL 103 · LCL 97 · 모든 점을 판정" in upload_limits_html(fixed)
