@@ -80,3 +80,11 @@ def test_error_cases_come_from_saved_explanations():
     h = cases_html(cases, METRICS["explain"])
     assert "&lt;b&gt;" in h and "문제가 나온 설명 출력 1개 / 전체 6개" in h
     assert "문제가 나온 설명 출력이 없습니다" in cases_html([], METRICS["explain"])
+
+
+def test_false_alarm_term_has_tooltip_in_kpi_and_counts():
+    k = kpi_summary(METRICS)
+    for h in (kpi_rule_html(k["rule"]), kpi_model_html(k["models"][0], k["rule"]["rate"]), error_counts_html(k)):
+        assert ">오탐</span>" in h and 'data-tip="' in h
+    assert ">급변</span>" in detection_bars_html(detection_groups(METRICS))
+

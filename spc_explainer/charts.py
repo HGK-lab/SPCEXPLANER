@@ -5,8 +5,9 @@ import statistics
 
 import plotly.graph_objects as go
 
+from .glossary import GLOSSARY
 from .patterns import KOREAN, PATTERNS, Event
-from .ui_html import PATTERN_COLORS, SYMBOL, esc, span_text
+from .ui_html import PATTERN_COLORS, SYMBOL, esc, span_text, term
 
 LINE = "#2a2f35"  # 측정값 선
 LIMIT = "#5b626b"  # 중심선·관리한계
@@ -78,10 +79,11 @@ def control_chart(values, events: list[Event], center: float, ucl: float, lcl: f
         fig.add_shape(type="rect", x0=t.start - 0.5, x1=t.end + 0.5, y0=0, y1=1, xref="x", yref="paper",
                       line={"color": "#16191d", "width": 1.2, "dash": "dot"}, fillcolor="rgba(0,0,0,0)")
     # 중심선(실선)·관리한계(점선) + 오른쪽 라벨
-    for label, y, dash in (("UCL", ucl, "dash"), ("CL", center, "solid"), ("LCL", lcl, "dash")):
+    for label, y, dash, tip in (("UCL", ucl, "dash", "UCL"), ("CL", center, "solid", "중심선"), ("LCL", lcl, "dash", "LCL")):
         fig.add_hline(y=y, line={"color": LIMIT, "width": 1.2 if dash == "solid" else 1, "dash": dash}, layer="below")
         fig.add_annotation(x=1, y=y, xref="paper", yref="y", xanchor="left", yanchor="middle", xshift=8,
-                           text=f"{label} {y:.4g}", showarrow=False, font={"size": 11, "color": "#3b424a", "family": MONO})
+                           text=f"{label} {y:.4g}", hovertext=GLOSSARY[tip], showarrow=False,  # 올리면 용어 설명
+                           font={"size": 11, "color": "#3b424a", "family": MONO})
     # 측정값 선 + 정상 점(흰 원)
     dot = 6 if len(vals) <= 200 else 3
     fig.add_trace(go.Scatter(x=xs, y=vals, mode="lines+markers", name="측정값", showlegend=False,
@@ -132,13 +134,13 @@ def chart_header_html(values, title: str, show_truth: bool = False) -> str:
     vals = [float(v) for v in values]
     mean = statistics.fmean(vals) if vals else 0.0
     sd = statistics.stdev(vals) if len(vals) > 1 else 0.0
-    legend = "".join(f'<span><b style="color:{PATTERN_COLORS[p]["fill"]}">{SYMBOL[p]}</b> {KOREAN[p]}</span>'
+    legend = "".join(f'<span><b style="color:{PATTERN_COLORS[p]["fill"]}">{SYMBOL[p]}</b> {term(KOREAN[p])}</span>'
                      for p in PATTERNS)
-    legend += '<span><i class="spc-lg-line"></i>관리한계</span>'
+    legend += f'<span><i class="spc-lg-line"></i>{term("관리한계")}</span>'
     if show_truth:
         legend += '<span><i class="spc-lg-truth"></i>정답(심은 이상)</span>'
     return (f'<div class="spc-chart-head"><span class="spc-chart-title">{esc(title)}</span>'
-            f'<span class="spc-chart-stats"><span>n={len(vals)}</span><span>x̄={mean:.2f}</span><span>σ={sd:.2f}</span></span>'
+            f'<span class="spc-chart-stats"><span>n={len(vals)}</span><span>x̄={mean:.2f}</span><span>{term("σ")}={sd:.2f}</span></span>'
             f'<span class="spc-chart-legend">{legend}</span></div>')
 
 

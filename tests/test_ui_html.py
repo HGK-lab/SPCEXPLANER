@@ -1,6 +1,18 @@
 # 화면 공통 조각: 머리말·섹션 제목·01 문제·06 한계 문구, 카드 CSS, 패턴 기호·규칙 번호, 이스케이프
+import re
+
+import pytest
+
+from spc_explainer import config
+from spc_explainer.glossary import GLOSSARY
 from spc_explainer.ui_html import (CSS, PATTERN_COLORS, PROBLEM_HTML, RULE_ID, SYMBOL, esc, hero_html, limits_html,
-                                   section_html, span_text)
+                                   section_html, span_text, term)
+
+
+def text(h: str) -> str:
+    """태그를 뺀 화면 글자 (툴팁 span이 끼어도 문장으로 비교하려고)."""
+    return re.sub(r"<[^>]+>", "", h)
+
 
 METRICS = {"generated_at": "2026-09-25T23:48:41",
            "dataset": {"n_series": 20, "injected": {"spike": 7, "trend": 7, "shift": 7}}}
@@ -10,7 +22,8 @@ def test_hero_states_principle_flow_limits_and_assumption():
     h = hero_html(100.0, 103.0, 97.0, "nm")
     assert "판정은 규칙이 하고 설명은 AI가 합니다" in h
     assert "① 규칙 판정" in h and "② AI 설명" in h and "③ 검증" in h
-    assert "CL 100.0" in h and "UCL 103.0" in h and "LCL 97.0" in h
+    assert "CL 100.0" in text(h) and "UCL 103.0" in text(h) and "LCL 97.0" in text(h)
+    assert f'data-tip="{esc(GLOSSARY["UCL"])}"' in h and f'data-tip="{esc(GLOSSARY["중심선"])}"' in h
     assert "이미 안정화된 공정을 감시하는 상황을 가정" in h
 
 
@@ -43,3 +56,19 @@ def test_pattern_vocabulary():
 def test_span_and_escape():
     assert span_text(14, 14) == "#14" and span_text(45, 52) == "#45–52"
     assert esc('<b>&"') == "&lt;b&gt;&amp;&quot;"
+
+
+def test_glossary_covers_required_terms():
+    assert {"중심선", "UCL", "LCL", "σ", "급변", "추세", "치우침", "오탐"} <= set(GLOSSARY)
+    assert f"{config.TREND_POINTS}점" in GLOSSARY["추세"] and f"{config.SHIFT_POINTS}점" in GLOSSARY["치우침"]
+    assert all(v and "\n" not in v for v in GLOSSARY.values())  # 한 줄 설명
+
+
+def test_term_is_focusable_and_escaped():
+    h = term("UCL")
+    assert h.startswith('<span class="spc-term" tabindex="0"') and ">UCL</span>" in h
+    assert term("CL", "중심선").endswith(">CL</span>") and esc(GLOSSARY["중심선"]) in term("CL", "중심선")
+    assert ".spc-term:hover::after, .spc-term:focus::after" in CSS  # 모바일은 탭 → 포커스로 뜬다
+    with pytest.raises(KeyError):
+        term("없는 용어")
+

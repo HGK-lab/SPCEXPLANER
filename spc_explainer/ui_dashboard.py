@@ -2,7 +2,7 @@
 # 스타일 출처: docs/design/ref/detection-bars.png, Claude Design 2A. 모든 숫자는 metrics.json·explanations.json에서만 읽는다.
 from .explain import ISSUE_KO
 from .patterns import FROM_KOREAN, KOREAN, PATTERNS
-from .ui_html import PATTERN_COLORS, RULE_ID, SYMBOL, esc, span_text
+from .ui_html import PATTERN_COLORS, RULE_ID, SYMBOL, esc, span_text, term
 
 RULE_BAR = "#2a2f35"  # 규칙 판정 막대 (검정)
 MODEL_BARS = ["#8cbde6", "#0068a7", "#1d5f94"]  # LLM 모델 순서대로 (소형은 옅은 파랑, 상위는 진한 파랑)
@@ -104,7 +104,7 @@ def subtitle_text(metrics: dict | None) -> str:
 def kpi_rule_html(rule: dict) -> str:
     return ('<div class="spc-kpi"><div class="spc-kpi-top"><span class="b-rule">규칙</span>규칙 판정 탐지율</div>'
             f'<div class="spc-kpi-num">{fmt_pct(rule["rate"])}</div>'
-            f'<div class="spc-kpi-sub">{rule["detected"]}/{rule["injected"]} 탐지 · 오탐 {rule["false_events"]}건 '
+            f'<div class="spc-kpi-sub">{rule["detected"]}/{rule["injected"]} 탐지 · {term("오탐")} {rule["false_events"]}건 '
             f'(정상 시리즈 {rule["normal_alarmed"]}/{rule["normal_series"]}개 경보) · 매번 같은 결과</div></div>')
 
 
@@ -120,7 +120,7 @@ def kpi_model_html(m: dict, rule_rate) -> str:
             f'<div class="spc-kpi-top"><span class="b-ai">{esc(tier(m["name"]))}</span>AI 단독 판정 탐지율</div>'
             f'<div class="spc-kpi-num">{fmt_pct(m["mean"])}{delta}</div>'
             f'<div class="spc-kpi-sub"><span class="spc-kpi-name">{esc(m["name"])}</span> · {spread} · '
-            f'오탐 평균 {fmt_num(m["false_mean"])}건 · 형식 위반 {m["format_violations"]} · 호출 오류 {m["call_errors"]}</div></div>')
+            f'{term("오탐")} 평균 {fmt_num(m["false_mean"])}건 · 형식 위반 {m["format_violations"]} · 호출 오류 {m["call_errors"]}</div></div>')
 
 
 def _bar_row(who: str, color: str, rate, lo, hi, value_text: str, frac_text: str) -> str:
@@ -143,7 +143,7 @@ def detection_bars_html(groups: list[dict]) -> str:
     parts = [f'<div class="spc-bars-head"><b>패턴별 탐지율</b><span>{legend}</span></div>']
     for g in groups:
         color = PATTERN_COLORS[g["key"]]["text"] if g["key"] in PATTERN_COLORS else "#16191d"
-        title = f'{g["symbol"]} {g["label"]}'.strip()
+        title = f'{g["symbol"]} {term(g["label"])}' if g["key"] in PATTERN_COLORS else esc(g["label"])
         sub = f'{g["rule_id"]} · {g["injected"]}건' if g["rule_id"] else f'{g["injected"]}건'
         rows = [_bar_row("규칙 판정", RULE_BAR, g["rule"]["rate"], None, None,
                          fmt_pct(g["rule"]["rate"]), f'{g["rule"]["detected"]}/{g["injected"]}')]
@@ -155,7 +155,7 @@ def detection_bars_html(groups: list[dict]) -> str:
                                  value, f'{fmt_num(m["mean_detected"])}/{g["injected"]}'))
         cls = "spc-bar-group total" if g["key"] == "all" else "spc-bar-group"
         rows_html = "".join(rows)
-        parts.append(f'<div class="{cls}"><div class="spc-bar-name"><b style="color:{color}">{esc(title)}</b>'
+        parts.append(f'<div class="{cls}"><div class="spc-bar-name"><b style="color:{color}">{title}</b>'
                      f'<small>{esc(sub)}</small></div><div class="spc-bar-rows">{rows_html}</div></div>')
     return "".join(parts)
 
@@ -199,7 +199,7 @@ def error_counts_html(kpi: dict) -> str:
             parts.append(f'<div class="spc-count"><span>{label}</span><b>{n}</b></div>')
     for m in kpi["models"]:
         parts.append(f'<div class="spc-count-group">단독 판정 · {esc(m["name"])} · {m["repeats"]}회 합계</div>')
-        for label, n in (("놓친 심은 이상", m["missed_total"]), ("오탐 사건 (정답과 겹치지 않음)", m["false_total"]),
+        for label, n in (("놓친 심은 이상", m["missed_total"]), (f'{term("오탐")} 사건 (정답과 겹치지 않음)', m["false_total"]),
                          ("패턴 혼동", m["confusions_total"]), ("JSON 형식 위반", m["format_violations"]),
                          ("호출 오류", m["call_errors"])):
             parts.append(f'<div class="spc-count"><span>{label}</span><b>{n}</b></div>')

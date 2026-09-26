@@ -3,7 +3,7 @@ from .causes import CAUSES
 from .explain import ISSUE_KO
 from .patterns import FROM_KOREAN, KOREAN, Event
 from .rules import describe
-from .ui_html import PATTERN_COLORS, RULE_ID, SYMBOL, esc, span_text
+from .ui_html import PATTERN_COLORS, RULE_ID, SYMBOL, esc, span_text, term
 
 
 def _split_rule(sentence: str) -> tuple[str, str]:
@@ -21,7 +21,7 @@ def rule_card_html(events: list[Event], values) -> str:
         main, detail = _split_rule(describe(ev, values))
         color = PATTERN_COLORS[ev.pattern]["text"]
         rows.append(
-            f'<div class="spc-rule-row"><span class="spc-pat" style="color:{color}">{SYMBOL[ev.pattern]} {KOREAN[ev.pattern]}</span>'
+            f'<div class="spc-rule-row"><span class="spc-pat" style="color:{color}">{SYMBOL[ev.pattern]} {term(KOREAN[ev.pattern])}</span>'
             f'<span class="spc-mono">{span_text(ev.start, ev.end)}</span>'
             f"<span>{esc(main)}<small>{esc(detail)}</small></span>"
             f'<span class="spc-rid">{RULE_ID[ev.pattern]}</span></div>'

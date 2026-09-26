@@ -3,6 +3,8 @@
 # (st.html은 iframe 없이 페이지에 바로 들어간다).
 import html
 
+from .glossary import GLOSSARY
+
 PATTERN_COLORS = {
     "spike": {"fill": "#d02c2a", "text": "#b7191c"},
     "trend": {"fill": "#c5770f", "text": "#915200"},
@@ -22,6 +24,11 @@ def span_text(start: int, end: int) -> str:
     return f"#{start}" if start == end else f"#{start}–{end}"
 
 
+def term(label: str, key: str | None = None) -> str:
+    """용어 툴팁: 마우스를 올리거나(데스크톱) 탭하면(모바일, 포커스) 한 줄 설명이 뜬다. 설명은 glossary 한 곳에서."""
+    return f'<span class="spc-term" tabindex="0" data-tip="{esc(GLOSSARY[key or label])}">{esc(label)}</span>'
+
+
 def hero_html(center: float, ucl: float, lcl: float, unit: str) -> str:
     """머리말: 한 문장 원칙 + ① 규칙 판정 → ② AI 설명 → ③ 검증 흐름 + 관리 기준과 고정 한계 가정."""
     return (
@@ -37,7 +44,8 @@ def hero_html(center: float, ucl: float, lcl: float, unit: str) -> str:
         '<span class="spc-arr">→</span>'
         '<div class="spc-f ver"><b>③ 검증</b><span>AI 단독 판정과 같은 기준으로 비교</span></div>'
         "</div>"
-        f'<div class="spc-top"><span>관리 기준 <b>CL {center:.1f}</b> · <b>UCL {ucl:.1f}</b> · <b>LCL {lcl:.1f}</b> {esc(unit)}</span>'
+        f'<div class="spc-top"><span>관리 기준 <b>{term("CL", "중심선")} {center:.1f}</b> · <b>{term("UCL")} {ucl:.1f}</b> · '
+        f'<b>{term("LCL")} {lcl:.1f}</b> {esc(unit)}</span>'
         '<span class="spc-note">관리한계 고정값 사용 = 이미 안정화된 공정을 감시하는 상황을 가정</span></div>'
         "</div>"
     )
@@ -134,6 +142,13 @@ CSS = """<style>
 .b-auto { font-size: 11px; font-weight: 600; border: 1px solid #6b727b; color: #3b424a; padding: 1px 7px; border-radius: 3px; }
 .b-manual { font-size: 11px; font-weight: 600; background: #c5770f; color: #fff; padding: 2px 7px; border-radius: 3px; }
 .spc-mono { font-family: 'IBM Plex Mono', monospace; }
+/* 용어 툴팁: 위쪽에 띄운다 (카드 아래쪽이 잘리지 않게). 모바일은 탭하면 포커스로 뜬다 */
+.spc-term { position: relative; border-bottom: 1px dotted currentColor; cursor: help; outline: none; }
+.spc-term:hover::after, .spc-term:focus::after {
+  content: attr(data-tip); position: absolute; left: 0; bottom: calc(100% + 6px); z-index: 50;
+  width: max-content; max-width: min(260px, 70vw); white-space: normal; text-align: left;
+  background: #16191d; color: #fff; border-radius: 3px; padding: 6px 9px;
+  font: 400 12px/1.5 'IBM Plex Sans KR', sans-serif; letter-spacing: 0; }
 
 /* ── 관리도 머리말·꼬리말 ── */
 .spc-chart-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 16px; }
@@ -234,6 +249,8 @@ CSS = """<style>
 
 /* ── 모바일(2B): 한 줄로 쌓는다 ── */
 @media (max-width: 640px) {
+  .spc-term:hover::after, .spc-term:focus::after {  /* 좁은 화면: 잘리지 않게 화면 아래에 고정 */
+    position: fixed; left: 12px; right: 12px; bottom: 16px; width: auto; max-width: none; font-size: 13px; }
   .spc-hero h1 { font-size: 24px; }
   .spc-lead { font-size: 14px; }
   .spc-flow3 { flex-direction: column; }

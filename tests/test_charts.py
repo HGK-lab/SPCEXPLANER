@@ -1,5 +1,8 @@
 # 관리도 스타일: 한계선(점선+오른쪽 라벨)·중심선(실선), 패턴별 마커, 규칙 구간 음영+라벨, 정답은 테두리만
+import re
+
 from spc_explainer.charts import chart_footer_html, chart_header_html, control_chart
+from spc_explainer.glossary import GLOSSARY
 from spc_explainer.patterns import Event
 
 VALUES = [100.0 + (0.3 if i % 2 else -0.3) for i in range(100)]
@@ -42,7 +45,9 @@ def test_many_events_hide_band_labels_and_secom_arguments_still_work():
 
 def test_header_reads_stats_from_values():
     h = chart_header_html([99.0, 101.0, 100.0], "관리도 · 증착 막 두께 (nm)", show_truth=True)
-    assert "n=3" in h and "x̄=100.00" in h and "σ=1.00" in h
+    plain = re.sub(r"<[^>]+>", "", h)
+    assert "n=3" in plain and "x̄=100.00" in plain and "σ=1.00" in plain
+    assert h.count('class="spc-term"') == 5  # σ, 급변·추세·치우침, 관리한계에 툴팁
     assert "◆" in h and "▲" in h and "■" in h and "관리한계" in h and "정답" in h
     assert "정답" not in chart_header_html([100.0, 100.0], "t", show_truth=False)
 
@@ -65,3 +70,10 @@ def test_band_labels_do_not_overlap_on_narrow_screens():
     # 네 줄 이상이 필요하면 라벨을 생략한다
     crowd = [Event("spike", i, i, "up") for i in (10, 12, 14, 16)]
     assert not any("#" in a.text for a in control_chart(VALUES, crowd, 100, 103, 97).layout.annotations)
+
+
+def test_limit_labels_explain_themselves_on_hover():
+    fig = control_chart(VALUES, EVENTS, 100, 103, 97)
+    tips = {a.text: a.hovertext for a in fig.layout.annotations if a.hovertext}
+    assert tips == {"UCL 103": GLOSSARY["UCL"], "CL 100": GLOSSARY["중심선"], "LCL 97": GLOSSARY["LCL"]}
+

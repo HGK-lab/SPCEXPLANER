@@ -72,3 +72,8 @@ def test_run_line_shows_llm_ids_as_plain_text():
     assert "&lt;b&gt;E2&lt;/b&gt;:SP-1" in h and "<b>E2" not in h and "<a " not in h
     assert run_line_html(1, "호출 오류", None).endswith("호출 오류</div>")
 
+
+def test_rule_card_pattern_names_have_tooltips():
+    h = rule_card_html(EVENTS, VALUES)
+    assert 'class="spc-term"' in h and ">급변</span>" in h and ">치우침</span>" in h
+
