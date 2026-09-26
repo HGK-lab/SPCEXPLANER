@@ -98,6 +98,7 @@ def limits_html(metrics: dict | None) -> str:
 CSS = """<style>
 /* ── 카드: 키 달린 st.container에 Streamlit이 붙이는 st-key-* 클래스를 꾸민다 ── */
 .st-key-chart_card, .st-key-bars_card, .st-key-counts_card, .st-key-secom_card, .st-key-check_card,
+.st-key-feedback_card,
 [class*="st-key-kpi_"] {
   background: #ffffff !important; border: 1px solid #d9dcdf !important; border-radius: 4px !important;
   padding: 16px 20px !important; gap: 8px !important;
@@ -201,6 +202,7 @@ CSS = """<style>
 .spc-rid { font-size: 12px; font-weight: 600; border: 1px solid #16191d; border-radius: 3px; text-align: center; }
 .spc-rule-row.sel { background: #fff7e0; box-shadow: inset 4px 0 0 #c5770f; }
 .spc-prio-row.sel { background: #fff7e0; box-shadow: -8px 0 0 #fff7e0, -12px 0 0 #c5770f; }
+.spc-flag { font-size: 13px; font-weight: 600; color: #915200; }
 .spc-pick { font-size: 13px; color: #3b424a; background: #fff7e0; border: 1px solid #e3d9bd; border-radius: 4px;
   padding: 8px 12px; }
 .spc-pick.out { background: #f6f7f8; border-color: #d9dcdf; }

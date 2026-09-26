@@ -192,3 +192,16 @@ def test_guide_closes_and_stays_closed_in_the_session():
     assert not at.exception and not guide_shown(at)
     at.selectbox[0].set_value(11).run()  # 다른 곳을 눌러 다시 그려도 닫힌 채로
     assert not guide_shown(at)
+
+
+def test_false_alarm_feedback_is_kept_in_the_session():
+    at = run_app()
+    at.selectbox[0].set_value(11).run()
+    assert any("시연용: 실제 운영에서는 이 피드백으로 규칙·원인표를 개선한다" in e.proto.body for e in at.get("html"))
+    at.button(key="fb_s11_E1").click().run()
+    assert not at.exception
+    assert [(e["series"], e["event_id"], e["span"]) for e in at.session_state["feedback"]] == [("시리즈 11", "E1", "#45")]
+    assert at.button(key="fb_s11_E1").label == "오탐 표시 취소"
+    assert len(at.dataframe) == 1 and "feedback_csv" in download_keys(at)
+    at.button(key="fb_s11_E1").click().run()  # 다시 누르면 취소
+    assert at.session_state["feedback"] == []

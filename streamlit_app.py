@@ -7,7 +7,7 @@ from datetime import date, datetime
 
 import streamlit as st
 
-from spc_explainer import checklist, config, explain, generator, llm_client, rules, secom
+from spc_explainer import checklist, config, explain, feedback, generator, llm_client, rules, secom
 from spc_explainer import ui_dashboard, ui_html, ui_steps
 from spc_explainer.charts import chart_footer_html, chart_header_html, control_chart
 from spc_explainer.patterns import KOREAN
@@ -152,10 +152,18 @@ def render_ai_card(sid: int, values, events, selected: str | None = None) -> dic
     return ai
 
 
+def toggle_feedback(series: str, event_id: str, pattern: str, span: str, rule: str) -> None:
+    """'오탐이에요' 버튼: 누르면 세션 목록에 넣고, 다시 누르면 뺀다."""
+    entry = {"series": series, "event_id": event_id, "pattern": pattern, "span": span, "rule": rule,
+             "time": datetime.now().strftime("%Y-%m-%d %H:%M:%S")}
+    st.session_state["feedback"] = feedback.toggle(st.session_state.get("feedback", []), entry)
+
+
 def render_checklist(scope: str, title: str, events, values, limits: dict | None, ai: dict | None,
-                     picked: int | None = None) -> None:
+                     picked: int | None = None, feedback_series: str | None = None) -> None:
     """지금 확인할 것: 사건마다 원인표 항목 체크박스 + 교대 인수인계 메모(.md 내려받기·복사).
-    항목은 원인표에서만 온다. 검증을 통과한 AI 설명이 있으면 그 점검 순서를 앞에 둔다."""
+    항목은 원인표에서만 온다. 검증을 통과한 AI 설명이 있으면 그 점검 순서를 앞에 둔다.
+    feedback_series를 주면 사건마다 '오탐이에요' 버튼을 붙인다."""
     order = checklist.ai_order(ai["data"], ai["inp"]) if ai and ai["ok"] else {}
     cards = checklist.build(events, values, limits, order)
     st.html(ui_steps.check_head_html(ai is not None, bool(order)))
@@ -165,6 +173,14 @@ def render_checklist(scope: str, title: str, events, values, limits: dict | None
             for it in card["items"]:
                 if st.checkbox(checklist.item_label(it), key=f"chk_{scope}_{card['event_id']}_{it['cause_id']}"):
                     checked.add((card["event_id"], it["cause_id"]))
+            if feedback_series:
+                pattern, span = KOREAN[card["pattern"]], card["title"].rsplit(" ", 1)[-1]
+                flagged = feedback.is_flagged(st.session_state.get("feedback", []), feedback_series, pattern, span)
+                if flagged:
+                    st.html('<div class="spc-flag">✓ 오탐으로 표시했습니다 (이번 세션에만 저장)</div>')
+                st.button("오탐 표시 취소" if flagged else "오탐이에요", key=f"fb_{scope}_{card['event_id']}",
+                          help=feedback.DEMO_NOTE, on_click=toggle_feedback,
+                          args=(feedback_series, card["event_id"], pattern, span, card["rule"]))
     ai_meta = None
     if ai and ai["data"]:
         ai_meta = {"model": ai["model"], "status": ai["status"], "summary": ai["data"].get("summary", "")}
@@ -173,6 +189,19 @@ def render_checklist(scope: str, title: str, events, values, limits: dict | None
                        mime="text/markdown", on_click="ignore", key=f"memo_{scope}")
     with st.expander("메모를 텍스트로 보기·복사 (오른쪽 위 복사 버튼)"):
         st.code(memo, language="markdown")
+
+
+def render_feedback_list() -> None:
+    """이번 세션에 모은 '오탐이에요' 피드백 목록과 CSV 내려받기. 외부에 저장하지 않는다."""
+    entries = st.session_state.get("feedback", [])
+    st.html(f'<div class="spc-box-head"><b>오탐 피드백</b><span class="b-manual">시연용</span>'
+            f'<span class="spc-note">{ui_html.esc(feedback.DEMO_NOTE)} · 이번 세션에만 모으고 저장하지 않습니다.</span></div>')
+    if not entries:
+        st.caption("아직 없습니다. 위 사건 항목을 펼쳐 '오탐이에요'를 누르면 여기에 모입니다.")
+        return
+    st.dataframe(feedback.table(entries), hide_index=True, width="stretch")
+    st.download_button(f"피드백 {len(entries)}건 CSV 내려받기", feedback.to_csv(entries).encode("utf-8-sig"),
+                       file_name="spc_feedback.csv", mime="text/csv", on_click="ignore", key="feedback_csv")
 
 
 def close_guide() -> None:
@@ -244,7 +273,10 @@ def series_sections(dataset: dict) -> None:
                 st.success("규칙 판정이 없어 LLM을 호출하지 않습니다.")
     if events:
         with st.container(key="check_card"):
-            render_checklist(f"s{sid:02d}", series_label(s), events, values, None, ai, picked)
+            render_checklist(f"s{sid:02d}", series_label(s), events, values, None, ai, picked,
+                             feedback_series=f"시리즈 {sid:02d}")
+    with st.container(key="feedback_card"):
+        render_feedback_list()
 
 
 def verification_section(metrics: dict | None) -> None:
