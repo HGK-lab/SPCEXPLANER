@@ -3,7 +3,8 @@ import json
 
 from spc_explainer.explain import build_input
 from spc_explainer.patterns import Event
-from spc_explainer.ui_steps import ai_body_html, ai_head_html, issues_html, priority_items, rule_card_html
+from spc_explainer.ui_steps import (ai_body_html, ai_head_html, issues_html, priority_items, rule_card_html,
+                                    run_line_html)
 
 VALUES = [104.2 if i == 14 else 99.0 if 40 <= i <= 49 else 100.0 for i in range(100)]
 EVENTS = [Event("spike", 14, 14, "up"), Event("shift", 40, 49, "down")]
@@ -61,3 +62,13 @@ def test_llm_text_is_escaped():
     h = ai_body_html(bad, INP)
     assert "<script>" not in h and "&lt;script&gt;" in h and "<img" not in h
     assert "&lt;b&gt;" in issues_html([{"type": "format", "detail": "<b>"}])
+
+
+def test_run_line_shows_llm_ids_as_plain_text():
+    # 반복 결과 줄: LLM이 준 사건·원인 id는 마크다운 링크·HTML로 해석되지 않고 글자 그대로 보인다
+    items = [{"event_id": "E1", "cause_id": "[눌러](http://evil.example)"}, {"event_id": "<b>E2</b>", "cause_id": "SP-1"}]
+    h = run_line_html(2, "원인표 밖 원인", items)
+    assert "2회차" in h and "원인표 밖 원인" in h and "E1:[눌러](http://evil.example)" in h
+    assert "&lt;b&gt;E2&lt;/b&gt;:SP-1" in h and "<b>E2" not in h and "<a " not in h
+    assert run_line_html(1, "호출 오류", None).endswith("호출 오류</div>")
+

@@ -135,13 +135,12 @@ def render_ai_card(sid: int, values, events) -> None:
         with st.container(key="ai_runs"), st.expander(f"같은 입력 {len(runs)}회 반복 결과 (저장된 설명)"):
             for r in runs:
                 if r["error"]:
-                    st.markdown(f"**{r['run'] + 1}회차** · 호출 오류")
+                    st.html(ui_steps.run_line_html(r["run"] + 1, "호출 오류", None))
                     continue
                 data, issues = explain.validate(r["text"], cached["input"])
                 state = ", ".join(sorted({explain.ISSUE_KO[i["type"]] for i in issues})) if issues else "검증 통과"
                 items = ui_steps.priority_items(data, cached["input"]) if isinstance(data, dict) else []
-                order_text = " → ".join(f"{it['event_id']}:{it['cause_id']}" for it in items) or "-"
-                st.markdown(f"**{r['run'] + 1}회차** · {state} · 점검 순서 {order_text}")
+                st.html(ui_steps.run_line_html(r["run"] + 1, state, items))
 
 
 @st.fragment

@@ -181,6 +181,7 @@ CSS = """<style>
   font-size: 12.5px; color: #7a1512; }
 .spc-issues ul { margin: 6px 0 0; padding-left: 18px; }
 .spc-status { display: flex; align-items: center; gap: 6px; font-size: 12px; color: #4d545c; }
+.spc-run { font-size: 14px; line-height: 1.6; color: #3b424a; word-break: break-all; }
 .spc-dot { width: 7px; height: 7px; border-radius: 50%; background: #6b727b; display: inline-block; flex: none; }
 
 /* ── 04 검증 ── */

@@ -58,6 +58,16 @@ def status_html(text: str) -> str:
     return f'<div class="spc-status"><span class="spc-dot"></span>{esc(text)}</div>'
 
 
+def run_line_html(run_no: int, state: str, items: list[dict] | None) -> str:
+    """'같은 입력 반복 결과'의 한 줄. LLM이 준 사건·원인 id는 이스케이프해 글자 그대로 보인다
+    (st.markdown에 넣으면 링크 서식이 해석된다). items가 None이면 호출 오류 줄."""
+    head = f'<div class="spc-run"><b>{run_no}회차</b> · {esc(state)}'
+    if items is None:
+        return head + "</div>"
+    order = " → ".join(f"{it['event_id']}:{it['cause_id']}" for it in items) or "-"
+    return head + f" · 점검 순서 {esc(order)}</div>"
+
+
 def priority_items(data: dict, inp: dict) -> list[dict]:
     """priority 순서대로 사건별 checks를 펼친 점검 목록. 규칙 번호는 LLM이 아니라 규칙 판정에서 가져온다.
     모양이 틀린 출력도 예외 없이 처리한다."""

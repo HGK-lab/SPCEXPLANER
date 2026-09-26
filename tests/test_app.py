@@ -81,3 +81,22 @@ def test_verification_renders_from_metrics_without_llm_results(monkeypatch, tmp_
     at = run_app()
     assert not at.exception
     assert any("수동 해설 본문" in m.value for m in at.markdown)
+
+
+def test_repeat_runs_show_llm_ids_as_plain_text(monkeypatch, tmp_path):
+    # 03의 "같은 입력 반복 결과": LLM이 준 id에 링크 서식이 있어도 마크다운으로 해석되지 않는다
+    saved = json.loads(config.EXPLANATIONS_PATH.read_text(encoding="utf-8"))
+    entry = saved["series"]["5"]
+    bad = {"summary": "요약", "priority": ["E1"],
+           "events": [{"event_id": "E1", "pattern": "급변", "rule": "r",
+                       "checks": [{"cause_id": "[눌러](http://evil.example)", "reason": "이유"}]}]}
+    entry["runs"][1]["text"] = json.dumps(bad, ensure_ascii=False)
+    path = tmp_path / "explanations.json"
+    path.write_text(json.dumps(saved, ensure_ascii=False), encoding="utf-8")
+    monkeypatch.setattr(config, "EXPLANATIONS_PATH", path)
+    at = run_app()
+    at.selectbox[0].set_value(5).run()
+    assert not at.exception
+    assert not any("evil.example" in m.value for m in at.markdown)
+    assert any("E1:[눌러](http://evil.example)" in e.proto.body for e in at.get("html"))
+
