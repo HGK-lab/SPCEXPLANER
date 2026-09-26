@@ -53,9 +53,15 @@ def test_footer_mentions_rule_bands_and_zero_based_index():
     assert "점선 테두리" in chart_footer_html(show_truth=True)
 
 
-def test_close_band_labels_are_staggered():
-    # 시작점이 가까운 사건의 라벨은 두 줄로 엇갈린다 (겹침 방지), 먼 사건은 첫 줄
+def test_band_labels_do_not_overlap_on_narrow_screens():
+    # 모바일 폭에서 앞 라벨과 겹칠 라벨은 다음 줄로 내린다 (시리즈 11: #45 라벨이 #76 근처까지 뻗는다)
     evs = [Event("spike", 45, 45, "up"), Event("shift", 48, 59, "up"), Event("trend", 76, 81, "up")]
     fig = control_chart(VALUES, evs, 100, 103, 97, show_legend=False)
     shifts = {a.text: a.yshift for a in fig.layout.annotations if "#" in a.text}
-    assert shifts == {"<b>◆ 급변 #45</b>": 0, "<b>■ 치우침 #48–59</b>": 16, "<b>▲ 추세 #76–81</b>": 0}
+    assert shifts == {"<b>◆ 급변 #45</b>": 0, "<b>■ 치우침 #48–59</b>": 16, "<b>▲ 추세 #76–81</b>": 32}
+    # 멀리 떨어진 라벨은 첫 줄을 같이 쓴다
+    far = control_chart(VALUES, [Event("spike", 5, 5, "up"), Event("spike", 80, 80, "up")], 100, 103, 97)
+    assert [a.yshift for a in far.layout.annotations if "#" in a.text] == [0, 0]
+    # 네 줄 이상이 필요하면 라벨을 생략한다
+    crowd = [Event("spike", i, i, "up") for i in (10, 12, 14, 16)]
+    assert not any("#" in a.text for a in control_chart(VALUES, crowd, 100, 103, 97).layout.annotations)

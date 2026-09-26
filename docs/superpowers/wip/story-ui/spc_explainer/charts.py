@@ -1,4 +1,4 @@
-# 관리도 그림(plotly)과 그림 머리말·꼬리말(HTML). 합성 데이터 탭과 SECOM 탭이 같이 쓴다.
+# 관리도 그림(plotly)과 그림 머리말·꼬리말(HTML). 02 규칙 판정(가상 데이터)과 05 실데이터(SECOM) 섹션이 같이 쓴다.
 # 스타일 출처: docs/design/ref/control-chart.png — CL 실선, UCL·LCL 점선과 오른쪽 라벨, 패턴별 마커(◆▲■),
 # 규칙이 판정한 구간의 세로 음영 + 위쪽 라벨. 정답(심은 이상)은 테두리만 있는 점선 사각형으로 구분한다.
 import statistics
@@ -16,13 +16,38 @@ MONO = "IBM Plex Mono, monospace"
 SANS = "IBM Plex Sans KR, sans-serif"
 MARKERS = {"spike": ("diamond", 12), "trend": ("triangle-up", 11), "shift": ("square", 9)}
 MAX_BAND_LABELS = 8  # 사건이 이보다 많으면(예: SECOM) 음영 위 라벨을 생략한다
-LABEL_GAP = 25  # 시작점이 이보다 가까운 사건의 라벨은 두 줄로 엇갈려 놓는다 (좁은 화면에서도 안 겹치게)
+NARROW_PLOT_PX = 200  # 모바일(폭 400px) 카드 안의 그림 영역 폭. 라벨 겹침은 가장 좁은 이 폭으로 판단한다
 LABEL_ROW_PX = 16
+MAX_LABEL_ROWS = 3  # 라벨이 이보다 많은 줄을 차지하면 생략한다 (음영과 규칙 판정 표로 충분)
 
 
 def _rgba(hex_color: str, alpha: float) -> str:
     h = hex_color.lstrip("#")
     return f"rgba({int(h[0:2], 16)},{int(h[2:4], 16)},{int(h[4:6], 16)},{alpha})"
+
+
+def _band_text(e: Event) -> str:
+    return f"{SYMBOL[e.pattern]} {KOREAN[e.pattern]} {span_text(e.start, e.end)}"
+
+
+def _label_px(text: str) -> float:
+    """굵은 12px 라벨의 대략적인 폭(px): 한글·도형 기호 12, 공백 4, 나머지(숫자·#·–) 7.5."""
+    return sum(12 if "가" <= ch <= "힣" or "■" <= ch <= "◿" else 4 if ch == " " else 7.5
+               for ch in text)
+
+
+def _label_rows(events: list[Event], n_points: int) -> list[int]:
+    """시작점 순으로 놓인 사건마다 라벨 줄 번호. 좁은 화면에서도 앞 라벨과 겹치지 않는 첫 줄에 놓는다."""
+    per_point = NARROW_PLOT_PX / (n_points + 0.6)  # x축 범위(-0.8 ~ n-0.2)에서 점 하나의 폭(px)
+    ends, rows = [], []  # 줄마다 마지막 라벨이 끝나는 x (점 단위)
+    for e in events:
+        x0 = e.start - 0.5
+        row = next((r for r, end in enumerate(ends) if end <= x0), len(ends))
+        if row == len(ends):
+            ends.append(x0)
+        ends[row] = x0 + _label_px(_band_text(e)) / per_point
+        rows.append(row)
+    return rows
 
 
 def control_chart(values, events: list[Event], center: float, ucl: float, lcl: float,
@@ -36,17 +61,17 @@ def control_chart(values, events: list[Event], center: float, ucl: float, lcl: f
         band_labels = len(events) <= MAX_BAND_LABELS
     fig = go.Figure()
     # 규칙 판정 구간: 패턴 색의 옅은 음영 + 얇은 테두리 (점·선 아래)
-    row, prev_start, two_rows = 0, None, False
-    for e in sorted(events, key=lambda ev: ev.start):
+    ordered = sorted(events, key=lambda ev: ev.start)
+    rows = _label_rows(ordered, len(vals)) if band_labels else []
+    if rows and max(rows) >= MAX_LABEL_ROWS:
+        rows = []
+    for i, e in enumerate(ordered):
         color = PATTERN_COLORS[e.pattern]
         fig.add_vrect(x0=e.start - 0.5, x1=e.end + 0.5, fillcolor=_rgba(color["fill"], 0.10),
                       line={"color": _rgba(color["fill"], 0.35), "width": 1}, layer="below")
-        if band_labels:
-            row = 1 - row if prev_start is not None and e.start - prev_start < LABEL_GAP else 0
-            prev_start, two_rows = e.start, two_rows or row == 1
+        if rows:
             fig.add_annotation(x=e.start - 0.5, y=1, xref="x", yref="paper", xanchor="left", yanchor="bottom",
-                               yshift=row * LABEL_ROW_PX,
-                               text=f"<b>{SYMBOL[e.pattern]} {KOREAN[e.pattern]} {span_text(e.start, e.end)}</b>",
+                               yshift=rows[i] * LABEL_ROW_PX, text=f"<b>{_band_text(e)}</b>",
                                showarrow=False, font={"size": 12, "color": color["text"], "family": SANS})
     # 정답 구간: 테두리만 있는 점선 사각형 (규칙 음영과 구분)
     for t in truth or []:
@@ -92,8 +117,8 @@ def control_chart(values, events: list[Event], center: float, ucl: float, lcl: f
              "tickfont": {"family": MONO, "size": 11, "color": TICK}}
     if len(vals) <= 200:
         xaxis.update(tick0=0, dtick=10)
-    top = 34 if (band_labels and events) or show_legend or phase_boundary is not None else 16
-    top += LABEL_ROW_PX if two_rows else 0
+    top = 34 if rows or show_legend or phase_boundary is not None else 16
+    top += LABEL_ROW_PX * max(rows, default=0)
     fig.update_layout(height=height, margin={"l": 44, "r": 76, "t": top, "b": 30},
                       paper_bgcolor="#ffffff", plot_bgcolor="#ffffff", xaxis=xaxis, yaxis=yaxis,
                       showlegend=show_legend, legend={"orientation": "h", "x": 1, "xanchor": "right", "y": 1.02,
