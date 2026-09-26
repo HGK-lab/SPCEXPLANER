@@ -56,6 +56,19 @@ def test_live_button_click_shows_reply_without_error(monkeypatch):
     assert any("가짜 호출 오류" in m.value for m in at.error)
 
 
+def test_stale_saved_explanation_shows_warning(monkeypatch, tmp_path):
+    # 규칙·설정을 바꾸고 실험을 다시 안 돌린 경우: 저장된 설명의 입력이 지금 판정과 달라도 화면은 그대로, 경고만 뜬다
+    saved = json.loads(config.EXPLANATIONS_PATH.read_text(encoding="utf-8"))
+    saved["series"]["5"]["input"]["events"][0]["start"] += 1
+    stale = tmp_path / "explanations.json"
+    stale.write_text(json.dumps(saved, ensure_ascii=False), encoding="utf-8")
+    monkeypatch.setattr(config, "EXPLANATIONS_PATH", stale)
+    at = run_app()
+    at.selectbox[0].set_value(5).run()
+    assert not at.exception
+    assert any("입력이 현재 규칙 판정과 다릅니다" in m.value for m in at.warning)
+
+
 def test_verification_renders_from_metrics_without_llm_results(monkeypatch, tmp_path):
     # LLM 결과가 없는 지표 파일로도 04 검증이 그려져야 한다 (숫자는 파일에서만 읽음)
     metrics_path = tmp_path / "metrics.json"
