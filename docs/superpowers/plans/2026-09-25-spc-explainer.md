@@ -28,7 +28,8 @@
 - LLM이 틀린 출력은 지우지 않고 `docs/ai_errors.md`에 남긴다 (실험 스크립트가 자동으로 덧붙임).
 - 화면의 숫자(n·x̄·σ, 탐지율, 분수, 건수)는 결과 파일에서만 읽는다. Claude Design 시안의 값(50점, 20건, 60건, 63.3% 등)은 쓰지 않는다.
 - LLM이 만든 문자열을 HTML에 넣을 때는 `ui_html.esc()`를 거친다 (Task 12부터).
-- 화면은 한 페이지 스토리형(스펙 9절, 2A): 머리말 → 01 문제 → 02 규칙 판정 → 03 AI 설명 → 04 검증 → 05 실데이터(SECOM) → 06 한계. 탭을 쓰지 않는다. 모바일은 같은 페이지의 반응형 CSS.
+- 화면은 한 페이지 스토리형(스펙 9절, 2A): 머리말(+30초 가이드) → 01 문제 → 02 규칙 판정 → 03 AI 설명 → 04 검증 → 05 실데이터(SECOM) → 06 내 데이터로 판정 → 07 한계 (Task 20부터 06·07. 그 전에는 06 한계). 탭을 쓰지 않는다. 모바일은 같은 페이지의 반응형 CSS.
+- 추가 기능(Task 15~20): 체크리스트 항목은 원인표에서만 온다(LLM이 항목을 만들지 않음). 06에 올린 데이터는 저장하지 않고 04 검증 수치에 섞지 않는다. 사용자가 올린 글자도 HTML에 넣을 때 `esc()`를 거친다.
 - 구현 마감 기준선 없음 (2026-09-26 사용자 해제). 시간 때문에 SECOM이나 화면 항목을 빼지 않는다.
 
 ## Review Focus
@@ -37,7 +38,8 @@
 2. `results/`·SECOM·사례 해설 파일이 없거나, 저장된 설명의 입력이 현재 규칙 판정과 다른 경우 → 그래프·규칙 판정은 그대로 보이고 섹션마다 안내·경고만 뜬다. Task 12·13 `test_app_without_saved_files`. 지표 파일은 있는데 LLM 결과가 없는 경우(키 없이 `--no-llm`만 돌림)는 Task 13 `test_verification_renders_from_metrics_without_llm_results`.
 3. API 키가 없거나 실시간 호출 한도를 다 쓴 경우 → 실시간 버튼만 비활성, 저장된 설명은 그대로 보인다. Task 12 `test_live_button_disabled_without_key`. 버튼 클릭이 전체 재실행으로 들어오는 경우(fragment 재실행이 아님)에도 예외 없이 결과가 떠야 한다 — Task 12 `test_live_button_click_shows_reply_without_error`.
 4. JSON으로는 읽히지만 타입이 엉뚱한 LLM 출력(최상위 배열, events가 객체, checks가 문자열, 번호가 실수) → 검증기·파서·화면이 예외 없이 형식 위반으로 처리. Task 6 `test_parseable_but_wrong_types_do_not_raise`, Task 7 `test_parse_wrong_types_do_not_raise`, Task 12 `test_priority_items_tolerate_bad_shapes`.
-5. LLM 설명에 `<`·`&`·HTML 태그가 섞인 경우 → `st.html`은 iframe이 아니라서 그대로 넣으면 화면이 깨진다. 글자 그대로 보여야 한다. Task 12 `test_llm_text_is_escaped`, Task 13 `test_error_cases_come_from_saved_explanations`.
+5. LLM 설명에 `<`·`&`·HTML 태그가 섞인 경우 → `st.html`은 iframe이 아니라서 그대로 넣으면 화면이 깨진다. 글자 그대로 보여야 한다. Task 12 `test_llm_text_is_escaped`, Task 13 `test_error_cases_come_from_saved_explanations`. 마크다운으로 그리는 곳에 LLM의 링크 서식이 섞이는 경우는 Task 14-1의 `test_repeat_runs_show_llm_ids_as_plain_text`.
+6. 06에 올린 데이터가 비었거나, 결측·문자·`nan`이 섞였거나, 2,000행을 넘거나, 열이 3개 이상이거나, 엑셀 CP949로 저장됐거나, 한계 순서가 틀린 경우 → 몇째 줄인지 알려 주는 한국어 오류로 거절하고 앱은 계속 동작한다. 오류 문장에 섞인 사용자 글자는 이스케이프한다. Task 20 `tests/test_upload.py`, `test_upload_rejects_bad_input_with_a_clear_message`, `test_upload_note_and_error_box`.
 
 (키 없이 실험 스크립트를 실행하는 경우는 Task 9 `test_script_exits_with_message_without_key`가 막는다.)
 
@@ -64,7 +66,12 @@
 | `spc_explainer/ui_steps.py` | 02 규칙 판정 카드·03 AI 설명 카드, 점검 우선순위 펼치기 | 12 |
 | `streamlit_app.py` | 한 페이지 스토리형 화면 | 12 (04·05 섹션은 13) |
 | `spc_explainer/ui_dashboard.py`, `docs/case_notes.md` | 04 검증: KPI·탐지율 막대·오류 자동 집계·사례 해설(수동 분석)·설명 오답 목록 | 13 |
-| `README.md`, `docs/HANDOFF.md` | 실행 방법, 인수인계 | 14 |
+| `README.md`, `docs/HANDOFF.md` | 실행 방법, 인수인계 | 14 (추가 기능은 21) |
+| `spc_explainer/checklist.py` | 사건별 "지금 확인할 것"(원인표 항목만) + 인수인계 메모 | 15 |
+| `spc_explainer/glossary.py` | 용어 한 줄 설명 (툴팁 문구 한 곳) | 16 |
+| `spc_explainer/feedback.py` | "오탐이에요" 피드백 (세션 안에만, CSV) | 19 |
+| `spc_explainer/upload.py` | 06 내 데이터: 입력 검사, 한계 추정·직접 입력, 판정 | 20 |
+| `docs/superpowers/tools/` | 계획 검증·화면 캡처 도구 (`extract_plan.py`, `apply_brief.py`, `cdp_shot.py`, `cdp_steps.py`, `app_steps.py`, `run_shots.sh`) | — |
 
 화면 전용 모듈(`charts.py`, `ui_*.py`)은 스펙 8절에 있다. 모두 문자열·그림을 돌려주는 순수 함수라 pytest로 확인하고, 앱(`streamlit_app.py`)은 AppTest로 확인한다. 화면 코드의 출처는 2026-09-26 프로토타입(Claude Design 2A·2B 시안을 옮긴 것)이다.
 
@@ -4545,6 +4552,3522 @@ git push origin main
 
 ---
 
+### Task 14-1: Task 14 이후 보수 (기록용 — 계획 밖에서 바로 반영·커밋함)
+
+이미 저장소에 들어간 변경이다(커밋 `9468ccb`, `232be8e`, `184ac5d`). 다시 실행하지 않는다. Task 15부터의 찾을 코드가 이 상태를 기준으로 하므로, 계획서만으로 처음부터 추출해 검증할 때 쓰려고 블록을 남긴다.
+
+- 최종 리뷰 수정: `test_stale_saved_explanation_shows_warning` — 저장된 설명의 입력이 지금 판정과 다를 때 경고 경로
+- 03 "같은 입력 반복 결과" 줄을 `st.markdown` 대신 `ui_steps.run_line_html`(이스케이프한 `st.html`)로 그림 — LLM이 준 id의 마크다운·링크 서식이 해석되지 않게. 회귀 테스트 `test_run_line_shows_llm_ids_as_plain_text`, `test_repeat_runs_show_llm_ids_as_plain_text`
+- `CLAUDE.md`에서 구현 기준선 문구 삭제 (코드 아님, 블록 없음)
+
+Modify `tests/test_app.py` — 찾을 코드:
+
+```python
+
+def test_verification_renders_from_metrics_without_llm_results(monkeypatch, tmp_path):
+```
+
+바꿀 코드:
+
+```python
+
+def test_stale_saved_explanation_shows_warning(monkeypatch, tmp_path):
+    # 규칙·설정을 바꾸고 실험을 다시 안 돌린 경우: 저장된 설명의 입력이 지금 판정과 달라도 화면은 그대로, 경고만 뜬다
+    saved = json.loads(config.EXPLANATIONS_PATH.read_text(encoding="utf-8"))
+    saved["series"]["5"]["input"]["events"][0]["start"] += 1
+    stale = tmp_path / "explanations.json"
+    stale.write_text(json.dumps(saved, ensure_ascii=False), encoding="utf-8")
+    monkeypatch.setattr(config, "EXPLANATIONS_PATH", stale)
+    at = run_app()
+    at.selectbox[0].set_value(5).run()
+    assert not at.exception
+    assert any("입력이 현재 규칙 판정과 다릅니다" in m.value for m in at.warning)
+
+
+def test_verification_renders_from_metrics_without_llm_results(monkeypatch, tmp_path):
+```
+
+Modify `tests/test_app.py` — 찾을 코드:
+
+```python
+    assert any("수동 해설 본문" in m.value for m in at.markdown)
+```
+
+바꿀 코드:
+
+```python
+    assert any("수동 해설 본문" in m.value for m in at.markdown)
+
+
+def test_repeat_runs_show_llm_ids_as_plain_text(monkeypatch, tmp_path):
+    # 03의 "같은 입력 반복 결과": LLM이 준 id에 링크 서식이 있어도 마크다운으로 해석되지 않는다
+    saved = json.loads(config.EXPLANATIONS_PATH.read_text(encoding="utf-8"))
+    entry = saved["series"]["5"]
+    bad = {"summary": "요약", "priority": ["E1"],
+           "events": [{"event_id": "E1", "pattern": "급변", "rule": "r",
+                       "checks": [{"cause_id": "[눌러](http://evil.example)", "reason": "이유"}]}]}
+    entry["runs"][1]["text"] = json.dumps(bad, ensure_ascii=False)
+    path = tmp_path / "explanations.json"
+    path.write_text(json.dumps(saved, ensure_ascii=False), encoding="utf-8")
+    monkeypatch.setattr(config, "EXPLANATIONS_PATH", path)
+    at = run_app()
+    at.selectbox[0].set_value(5).run()
+    assert not at.exception
+    assert not any("evil.example" in m.value for m in at.markdown)
+    assert any("E1:[눌러](http://evil.example)" in e.proto.body for e in at.get("html"))
+
+```
+
+Modify `tests/test_ui_steps.py` — 찾을 코드:
+
+```python
+from spc_explainer.patterns import Event
+from spc_explainer.ui_steps import ai_body_html, ai_head_html, issues_html, priority_items, rule_card_html
+
+```
+
+바꿀 코드:
+
+```python
+from spc_explainer.patterns import Event
+from spc_explainer.ui_steps import (ai_body_html, ai_head_html, issues_html, priority_items, rule_card_html,
+                                    run_line_html)
+
+```
+
+Modify `tests/test_ui_steps.py` — 찾을 코드:
+
+```python
+    assert "&lt;b&gt;" in issues_html([{"type": "format", "detail": "<b>"}])
+```
+
+바꿀 코드:
+
+```python
+    assert "&lt;b&gt;" in issues_html([{"type": "format", "detail": "<b>"}])
+
+
+def test_run_line_shows_llm_ids_as_plain_text():
+    # 반복 결과 줄: LLM이 준 사건·원인 id는 마크다운 링크·HTML로 해석되지 않고 글자 그대로 보인다
+    items = [{"event_id": "E1", "cause_id": "[눌러](http://evil.example)"}, {"event_id": "<b>E2</b>", "cause_id": "SP-1"}]
+    h = run_line_html(2, "원인표 밖 원인", items)
+    assert "2회차" in h and "원인표 밖 원인" in h and "E1:[눌러](http://evil.example)" in h
+    assert "&lt;b&gt;E2&lt;/b&gt;:SP-1" in h and "<b>E2" not in h and "<a " not in h
+    assert run_line_html(1, "호출 오류", None).endswith("호출 오류</div>")
+
+```
+
+Modify `spc_explainer/ui_html.py` — 찾을 코드:
+
+```python
+.spc-status { display: flex; align-items: center; gap: 6px; font-size: 12px; color: #4d545c; }
+.spc-dot { width: 7px; height: 7px; border-radius: 50%; background: #6b727b; display: inline-block; flex: none; }
+```
+
+바꿀 코드:
+
+```python
+.spc-status { display: flex; align-items: center; gap: 6px; font-size: 12px; color: #4d545c; }
+.spc-run { font-size: 14px; line-height: 1.6; color: #3b424a; word-break: break-all; }
+.spc-dot { width: 7px; height: 7px; border-radius: 50%; background: #6b727b; display: inline-block; flex: none; }
+```
+
+Modify `spc_explainer/ui_steps.py` — 찾을 코드:
+
+```python
+
+def priority_items(data: dict, inp: dict) -> list[dict]:
+```
+
+바꿀 코드:
+
+```python
+
+def run_line_html(run_no: int, state: str, items: list[dict] | None) -> str:
+    """'같은 입력 반복 결과'의 한 줄. LLM이 준 사건·원인 id는 이스케이프해 글자 그대로 보인다
+    (st.markdown에 넣으면 링크 서식이 해석된다). items가 None이면 호출 오류 줄."""
+    head = f'<div class="spc-run"><b>{run_no}회차</b> · {esc(state)}'
+    if items is None:
+        return head + "</div>"
+    order = " → ".join(f"{it['event_id']}:{it['cause_id']}" for it in items) or "-"
+    return head + f" · 점검 순서 {esc(order)}</div>"
+
+
+def priority_items(data: dict, inp: dict) -> list[dict]:
+```
+
+Modify `streamlit_app.py` — 찾을 코드:
+
+```python
+                if r["error"]:
+                    st.markdown(f"**{r['run'] + 1}회차** · 호출 오류")
+                    continue
+```
+
+바꿀 코드:
+
+```python
+                if r["error"]:
+                    st.html(ui_steps.run_line_html(r["run"] + 1, "호출 오류", None))
+                    continue
+```
+
+Modify `streamlit_app.py` — 찾을 코드:
+
+```python
+                items = ui_steps.priority_items(data, cached["input"]) if isinstance(data, dict) else []
+                order_text = " → ".join(f"{it['event_id']}:{it['cause_id']}" for it in items) or "-"
+                st.markdown(f"**{r['run'] + 1}회차** · {state} · 점검 순서 {order_text}")
+
+```
+
+바꿀 코드:
+
+```python
+                items = ui_steps.priority_items(data, cached["input"]) if isinstance(data, dict) else []
+                st.html(ui_steps.run_line_html(r["run"] + 1, state, items))
+
+```
+
+이 시점 테스트: 90 passed
+
+---
+
+> **Task 15~20 공통 (추가 기능 6개, 2026-09-26 사용자 승인).**
+> - 원칙은 그대로: 판정은 규칙 엔진, 설명은 LLM, 둘 다 검증. 화면의 실험 수치는 결과 파일에서만 읽는다. LLM이 만든 문자열(과 06에서 사용자가 올린 글자)은 HTML에 넣을 때 `ui_html.esc()`를 거친다. `st.markdown`·위젯 라벨에는 LLM 문자열을 넣지 않는다.
+> - 코드 출처: 2026-09-26 scratch 작업트리에서 기능마다 만들고 테스트·캡처로 확인한 뒤, 단계 사이의 차이를 이 계획서의 블록으로 옮겼다. 새 작업트리에 태스크 순서대로 "테스트 → 실패 확인 → 구현 → 통과"를 다시 돌려 아래 Expected를 얻었다.
+> - 화면 확인은 기능마다 데스크톱(1440)·모바일(400) 캡처. 도구: `docs/superpowers/tools/app_steps.py`(단계 파일 만들기) + `run_shots.sh`(앱을 새로 띄우고 `cdp_steps.py`로 실행한 뒤 끔). 예 (Git Bash):
+>   ```bash
+>   .venv/Scripts/python docs/superpowers/tools/app_steps.py /tmp/s.json http://localhost:8510 1440 0 11 /tmp/t15 "card:document.querySelector('.st-key-check_card')"
+>   bash docs/superpowers/tools/run_shots.sh . 8510 /tmp/s.json
+>   ```
+>   모바일은 폭 400, 모바일 인자 1. 헤드리스 에뮬레이션에서는 모바일 탭(버튼·차트 점)이 재현되지 않으므로, 모바일은 배치만 보고 상호작용은 데스크톱 클릭과 AppTest로 확인한다.
+
+### Task 15: 조치 체크리스트 + 인수인계 메모 (B1)
+
+**Files:**
+- Create: `spc_explainer/checklist.py`, `tests/test_checklist.py`
+- Modify: `streamlit_app.py`, `spc_explainer/ui_steps.py`, `spc_explainer/ui_html.py`, `tests/test_app.py`
+
+**Interfaces:**
+- Consumes: `causes.CAUSES`, `rules.describe(ev, values, ucl, lcl)`, `patterns.KOREAN/FROM_KOREAN`, `ui_html.SYMBOL/span_text`, `explain.validate/ISSUE_KO`, `explain.build_input` 형태(`inp["events"][i]["event_id"/"pattern"]`)
+- Produces:
+  - `checklist.ai_order(data, inp) -> {사건 id: [(원인 id, 이유)]}` — 원인표에 있고 사건과 같은 패턴인 id만
+  - `checklist.build(events, values, limits=None, order=None) -> [{"event_id", "pattern", "title", "rule", "items": [{"cause_id", "check", "cause", "ai_rank", "ai_reason"}]}]`
+  - `checklist.item_label(item) -> str`, `checklist.handover_md(title, now, cards, checked: set[(사건 id, 원인 id)], ai: {"model", "status", "summary"} | None) -> str`
+  - `ui_steps.check_head_html(has_ai, ai_applied) -> str`
+  - 앱: `render_ai_card(...)`가 보여준 설명을 `{"data", "inp", "model", "ok", "status"}`로 돌려준다 (`ok` = 검증 통과이면서 저장된 입력이 지금 판정과 같음). `render_checklist(scope, title, events, values, limits, ai)` — 체크박스 키 `chk_<scope>_<사건 id>_<원인 id>`, 메모 내려받기 키 `memo_<scope>`, 카드 키 `check_card`
+
+항목은 원인표에서만 가져온다. AI 설명은 검증을 통과했을 때만 그 사건의 점검 순서(원인표 안의 같은 패턴 id)를 앞에 둔다 — 이 문(gate)은 `check_head_html` 단위 테스트와, 저장된 설명에 원인표 밖 원인을 넣어 "AI 추천"이 사라지는지 보는 AppTest로 확인한다. 내려받기 버튼은 개수가 아니라 키(`memo_<scope>`)로 확인한다(AppTest는 요소 id 끝에 키를 붙인다). 메모는 `st.download_button`(.md, `on_click="ignore"`)과 `st.code`(오른쪽 위 복사 버튼)로 준다.
+
+- [ ] **Step 1: 실패하는 테스트 작성**
+
+Modify `tests/test_app.py` — 찾을 코드:
+
+```python
+    assert any("E1:[눌러](http://evil.example)" in e.proto.body for e in at.get("html"))
+
+```
+
+바꿀 코드:
+
+```python
+    assert any("E1:[눌러](http://evil.example)" in e.proto.body for e in at.get("html"))
+
+
+
+def download_keys(at) -> list[str]:
+    """내려받기 버튼들의 키 (AppTest는 요소 id 끝에 키를 붙인다)."""
+    return [e.proto.id.rsplit("-", 1)[-1] for e in at.get("download_button")]
+
+
+def ai_ranked_labels(at, prefix: str) -> list[str]:
+    return [c.label for c in at.checkbox if (c.key or "").startswith(prefix) and "AI 추천" in c.label]
+
+
+def test_checklist_uses_ai_order_only_when_the_explanation_passes(monkeypatch, tmp_path):
+    # 저장된 설명이 검증을 통과하면 AI 추천 순서가 붙고, 원인표 밖 원인이 섞여 통과하지 못하면 원인표 순서만
+    at = run_app()
+    at.selectbox[0].set_value(5).run()
+    assert any("AI 추천 1순위" in label for label in ai_ranked_labels(at, "chk_s05_"))
+    saved = json.loads(config.EXPLANATIONS_PATH.read_text(encoding="utf-8"))
+    run0 = saved["series"]["5"]["runs"][0]
+    data = json.loads(run0["text"])
+    data["events"][0]["checks"][0]["cause_id"] = "XX-9"
+    run0["text"] = json.dumps(data, ensure_ascii=False)
+    path = tmp_path / "explanations.json"
+    path.write_text(json.dumps(saved, ensure_ascii=False), encoding="utf-8")
+    monkeypatch.setattr(config, "EXPLANATIONS_PATH", path)
+    at = run_app()
+    at.selectbox[0].set_value(5).run()
+    assert not at.exception and ai_ranked_labels(at, "chk_s05_") == []
+    assert any("원인표 순서로 보여줍니다" in e.proto.body for e in at.get("html"))
+
+
+def test_checklist_and_handover_memo():
+    # 03 아래 '지금 확인할 것': 사건의 원인표 항목이 체크박스로 나오고, 체크하면 인수인계 메모에 [x]로 남는다
+    at = run_app()
+    at.selectbox[0].set_value(5).run()
+    assert not at.exception
+    boxes = [c for c in at.checkbox if (c.key or "").startswith("chk_s05_")]
+    assert len(boxes) == 5  # 시리즈 5는 급변 1건 → 원인표의 급변 원인 5개
+    boxes[0].check().run()
+    memo = next(c.value for c in at.code if c.value.startswith("# SPC 판정 인수인계"))
+    assert "memo_s05" in download_keys(at)
+    assert "- [x] " in memo and "시리즈 05" in memo and "## 지금 확인할 것 (원인표 기준)" in memo
+    assert len(at.get("download_button")) >= 1
+```
+
+Create `tests/test_checklist.py`:
+
+```python
+# 체크리스트: 항목은 원인표에서만, AI는 검증을 통과했을 때 순서만. 인수인계 메모 글자
+from spc_explainer.causes import CAUSES
+from spc_explainer.checklist import ai_order, build, handover_md, item_label
+from spc_explainer.explain import build_input
+from spc_explainer.patterns import Event
+from spc_explainer.ui_steps import check_head_html
+
+VALUES = [104.2 if i == 14 else 99.0 if 40 <= i <= 49 else 100.0 for i in range(100)]
+EVENTS = [Event("spike", 14, 14, "up"), Event("shift", 40, 49, "down")]
+INP = build_input(VALUES, EVENTS)
+DATA = {
+    "summary": "요약\n두 줄",
+    "priority": ["E2", "E1"],
+    "events": [
+        {"event_id": "E1", "pattern": "급변", "rule": "r",
+         "checks": [{"cause_id": "XX-9", "reason": "지어낸 원인"}, {"cause_id": "TR-1", "reason": "다른 패턴"},
+                    {"cause_id": "SP-3", "reason": "유량\n로그"}]},
+        {"event_id": "E2", "pattern": "치우침", "rule": "r", "checks": [{"cause_id": "SH-2", "reason": "로트"}]},
+    ],
+}
+
+
+def test_ai_order_keeps_only_table_ids_of_the_same_pattern():
+    order = ai_order(DATA, INP)
+    assert order == {"E1": [("SP-3", "유량 로그")], "E2": [("SH-2", "로트")]}
+    assert ai_order(None, INP) == {} and ai_order({"events": "x"}, INP) == {}
+    assert ai_order({"events": [1, {"event_id": "E1", "checks": "x"}]}, INP) == {"E1": []}
+
+
+def test_items_come_only_from_cause_table():
+    cards = build(EVENTS, VALUES, order=ai_order(DATA, INP))
+    for card, pattern in zip(cards, ("spike", "shift")):
+        ids = [it["cause_id"] for it in card["items"]]
+        assert sorted(ids) == sorted(c for c, r in CAUSES.items() if r["pattern"] == pattern)  # 원인표 행 전부, 그 외는 없음
+    first = cards[0]["items"][0]
+    assert first["cause_id"] == "SP-3" and first["ai_rank"] == 1 and first["ai_reason"] == "유량 로그"
+    assert all(it["ai_rank"] is None for it in cards[0]["items"][1:])
+    assert cards[0]["title"] == "E1 · ◆ 급변 #14" and "관리한계 밖 1점" in cards[0]["rule"]
+
+
+def test_without_ai_the_table_order_is_kept():
+    cards = build(EVENTS, VALUES)
+    assert [it["cause_id"] for it in cards[1]["items"]] == ["SH-1", "SH-2", "SH-3", "SH-4", "SH-5"]
+    assert item_label(cards[1]["items"][0]) == "PM 이력과 치우침 시작 시점 비교 — 부품 교체·PM 후 조건 변화"
+
+
+def test_limits_change_the_rule_text():
+    cards = build([Event("spike", 3, 3, "up")], [10.0, 10.0, 10.0, 20.0], limits={"ucl": 15.0, "lcl": 5.0})
+    assert "UCL 15nm 초과" in cards[0]["rule"]
+
+
+def test_check_head_says_when_ai_order_is_not_used():
+    # AI 순서는 검증을 통과한 설명일 때만 쓴다. 설명이 있는데 못 쓰면 그 이유를 적는다
+    assert "원인표 기준" in check_head_html(False, False)
+    assert "원인표 순서로 보여줍니다" in check_head_html(True, False)
+    assert "원인표 순서로 보여줍니다" not in check_head_html(True, True)
+    assert "원인표 순서로 보여줍니다" not in check_head_html(False, False)
+
+
+def test_handover_memo():
+    cards = build(EVENTS, VALUES, order=ai_order(DATA, INP))
+    memo = handover_md("시리즈 99", "2026-09-26 10:00", cards, {("E1", "SP-3")},
+                       {"model": "gpt-4.1-mini", "status": "검증 통과", "summary": DATA["summary"]})
+    assert memo.startswith("# SPC 판정 인수인계 — 시리즈 99")
+    assert "판정은 규칙 엔진(확정), 설명은 AI(참고용)" in memo and "요약: 요약 두 줄" in memo
+    assert "- [x] 해당 런의 MFC 유량 로그 확인 — 가스 유량 순간 이상 (MFC 스파이크) · AI 추천 1순위 (AI: 유량 로그)" in memo
+    assert "- [ ] 같은 웨이퍼 재측정" in memo and "### E2 · ■ 치우침 #40–49" in memo
+    assert "## AI 설명 (참고용)\n\n- 없음" in handover_md("t", "n", cards, set(), None)
+```
+
+- [ ] **Step 2: 실패 확인**
+
+Run: `.venv/Scripts/python -m pytest tests/test_checklist.py -v`
+Expected: 수집 오류 `ModuleNotFoundError: No module named 'spc_explainer.checklist'`
+
+Run: `.venv/Scripts/python -m pytest tests/test_app.py -v`
+Expected: 2 failed, 7 passed — `test_checklist_uses_ai_order_only_when_the_explanation_passes`, `test_checklist_and_handover_memo`
+
+- [ ] **Step 3: 구현**
+
+Create `spc_explainer/checklist.py`:
+
+```python
+# 사건별 "지금 확인할 것" 체크리스트와 교대 인수인계 메모.
+# 항목은 원인표(causes)에서만 가져온다. AI 설명은 검증을 통과했을 때 점검 순서만 바꾼다 (항목을 새로 만들지 않는다).
+from . import config
+from .causes import CAUSES
+from .patterns import FROM_KOREAN, KOREAN, Event
+from .rules import describe
+from .ui_html import SYMBOL, span_text
+
+
+def ai_order(data: dict | None, inp: dict) -> dict[str, list[tuple[str, str]]]:
+    """AI 설명에서 사건별 (원인 id, 이유) 순서. 원인표에 있고 사건과 같은 패턴인 id만 남긴다.
+    모양이 틀린 출력도 예외 없이 처리한다. 검증을 통과한 설명에만 쓴다 (호출하는 쪽이 판단)."""
+    if not isinstance(data, dict):
+        return {}
+    patterns = {e["event_id"]: FROM_KOREAN.get(e["pattern"]) for e in inp["events"]}
+    order: dict[str, list[tuple[str, str]]] = {}
+    for ev in data.get("events") if isinstance(data.get("events"), list) else []:
+        if not isinstance(ev, dict) or str(ev.get("event_id")) in order:
+            continue
+        eid = str(ev.get("event_id"))
+        picked: list[tuple[str, str]] = []
+        for c in ev.get("checks") if isinstance(ev.get("checks"), list) else []:
+            cid = c.get("cause_id") if isinstance(c, dict) else None
+            if (isinstance(cid, str) and cid in CAUSES and CAUSES[cid]["pattern"] == patterns.get(eid)
+                    and cid not in [p[0] for p in picked]):
+                reason = c.get("reason")
+                picked.append((cid, " ".join(reason.split()) if isinstance(reason, str) else ""))
+        order[eid] = picked
+    return order
+
+
+def build(events: list[Event], values, limits: dict | None = None,
+          order: dict[str, list[tuple[str, str]]] | None = None) -> list[dict]:
+    """사건마다 {event_id, pattern, title, rule, items}. items는 그 패턴의 원인표 행 전부:
+    AI 순서에 있는 원인이 먼저(ai_rank 1부터, ai_reason 포함), 나머지는 원인표 순서."""
+    lim = limits or {"ucl": config.UCL, "lcl": config.LCL}
+    cards = []
+    for i, ev in enumerate(events, start=1):
+        eid = f"E{i}"
+        ranked = [(cid, why) for cid, why in (order or {}).get(eid, [])
+                  if cid in CAUSES and CAUSES[cid]["pattern"] == ev.pattern]
+        ranked_ids = [cid for cid, _ in ranked]
+        rest = [cid for cid, row in CAUSES.items() if row["pattern"] == ev.pattern and cid not in ranked_ids]
+        items = []
+        for cid in ranked_ids + rest:
+            rank = ranked_ids.index(cid) + 1 if cid in ranked_ids else None
+            items.append({"cause_id": cid, "check": CAUSES[cid]["check"], "cause": CAUSES[cid]["cause"],
+                          "ai_rank": rank, "ai_reason": ranked[rank - 1][1] if rank else ""})
+        cards.append({"event_id": eid, "pattern": ev.pattern,
+                      "title": f"{eid} · {SYMBOL[ev.pattern]} {KOREAN[ev.pattern]} {span_text(ev.start, ev.end)}",
+                      "rule": describe(ev, values, lim["ucl"], lim["lcl"]), "items": items})
+    return cards
+
+
+def item_label(item: dict) -> str:
+    """체크박스 글자: 원인표의 점검 항목과 원인 (+ AI 추천 순위)."""
+    rank = f" · AI 추천 {item['ai_rank']}순위" if item["ai_rank"] else ""
+    return f"{item['check']} — {item['cause']}{rank}"
+
+
+def handover_md(title: str, now: str, cards: list[dict], checked: set[tuple[str, str]], ai: dict | None) -> str:
+    """교대 인수인계 메모(마크다운 글자). checked = {(사건 id, 원인 id)}.
+    ai = {"model", "status", "summary"} 또는 None. 판정은 규칙 엔진, 설명은 AI(참고)라고 적는다."""
+    lines = [f"# SPC 판정 인수인계 — {title}", "",
+             f"작성 {now} · 판정은 규칙 엔진(확정), 설명은 AI(참고용)", "", "## 규칙 판정 (확정)", ""]
+    lines += [f"- {c['title']} — {c['rule']}" for c in cards] or ["- 이상 없음"]
+    lines += ["", "## AI 설명 (참고용)", ""]
+    if ai:
+        lines += [f"- 모델: {ai['model']} · {ai['status']}", f"- 요약: {' '.join(str(ai['summary']).split())}"]
+    else:
+        lines.append("- 없음")
+    lines += ["", "## 지금 확인할 것 (원인표 기준)"]
+    for c in cards:
+        lines += ["", f"### {c['title']}"]
+        for it in c["items"]:
+            mark = "x" if (c["event_id"], it["cause_id"]) in checked else " "
+            why = f" (AI: {it['ai_reason']})" if it["ai_reason"] else ""
+            lines.append(f"- [{mark}] {item_label(it)}{why}")
+    return "\n".join(lines) + "\n"
+```
+
+Modify `spc_explainer/ui_html.py` — 찾을 코드:
+
+```python
+/* ── 카드: 키 달린 st.container에 Streamlit이 붙이는 st-key-* 클래스를 꾸민다 ── */
+.st-key-chart_card, .st-key-bars_card, .st-key-counts_card, .st-key-secom_card, [class*="st-key-kpi_"] {
+  background: #ffffff !important; border: 1px solid #d9dcdf !important; border-radius: 4px !important;
+```
+
+바꿀 코드:
+
+```python
+/* ── 카드: 키 달린 st.container에 Streamlit이 붙이는 st-key-* 클래스를 꾸민다 ── */
+.st-key-chart_card, .st-key-bars_card, .st-key-counts_card, .st-key-secom_card, .st-key-check_card,
+[class*="st-key-kpi_"] {
+  background: #ffffff !important; border: 1px solid #d9dcdf !important; border-radius: 4px !important;
+```
+
+Modify `spc_explainer/ui_steps.py` — 찾을 코드:
+
+```python
+            f'<div class="spc-label">점검 우선순위</div><div class="spc-prio">{rows_html}</div></div>')
+```
+
+바꿀 코드:
+
+```python
+            f'<div class="spc-label">점검 우선순위</div><div class="spc-prio">{rows_html}</div></div>')
+
+
+def check_head_html(has_ai: bool, ai_applied: bool) -> str:
+    """'지금 확인할 것' 카드 머리. 항목은 원인표에서만 오고, AI는 순서만 제안한다고 적는다."""
+    note = "항목은 원인표에서만 가져옵니다. AI는 검증을 통과한 설명이 있을 때 점검 순서(AI 추천 순위)만 제안합니다."
+    if has_ai and not ai_applied:
+        note += " 지금 설명은 검증을 통과하지 못해 원인표 순서로 보여줍니다."
+    return ('<div class="spc-box-head"><b>지금 확인할 것</b><span class="b-rule">원인표 기준</span>'
+            f'<span class="spc-note">{note}</span></div>')
+
+```
+
+Modify `streamlit_app.py` — 찾을 코드:
+
+```python
+import os
+from datetime import date
+
+```
+
+바꿀 코드:
+
+```python
+import os
+from datetime import date, datetime
+
+```
+
+Modify `streamlit_app.py` — 찾을 코드:
+
+```python
+
+from spc_explainer import config, explain, generator, llm_client, rules, secom
+from spc_explainer import ui_dashboard, ui_html, ui_steps
+```
+
+바꿀 코드:
+
+```python
+
+from spc_explainer import checklist, config, explain, generator, llm_client, rules, secom
+from spc_explainer import ui_dashboard, ui_html, ui_steps
+```
+
+Modify `streamlit_app.py` — 찾을 코드:
+
+```python
+
+def render_ai_card(sid: int, values, events) -> None:
+    """AI 설명 카드: 설명(실시간 결과가 있으면 그것, 없으면 저장된 1회차) + 검증 배지 + 저장 상태·실시간 설명 버튼."""
+    model = config.EXPLAIN_MODEL
+```
+
+바꿀 코드:
+
+```python
+
+def render_ai_card(sid: int, values, events) -> dict | None:
+    """AI 설명 카드: 설명(실시간 결과가 있으면 그것, 없으면 저장된 1회차) + 검증 배지 + 저장 상태·실시간 설명 버튼.
+    보여준 설명을 체크리스트용으로 돌려준다 (없으면 None)."""
+    model = config.EXPLAIN_MODEL
+```
+
+Modify `streamlit_app.py` — 찾을 코드:
+
+```python
+        status = f"실시간 결과 · {model['name']} · {reply.latency_s:.1f}초"
+    elif runs:
+```
+
+바꿀 코드:
+
+```python
+        status = f"실시간 결과 · {model['name']} · {reply.latency_s:.1f}초"
+        source = "실시간 설명"
+    elif runs:
+```
+
+Modify `streamlit_app.py` — 찾을 코드:
+
+```python
+        status = f"저장된 설명 · {created} 생성 · 같은 입력 {len(runs)}회 중 1회차"
+    else:
+```
+
+바꿀 코드:
+
+```python
+        status = f"저장된 설명 · {created} 생성 · 같은 입력 {len(runs)}회 중 1회차"
+        source = "저장된 설명 1회차"
+    else:
+```
+
+Modify `streamlit_app.py` — 찾을 코드:
+
+```python
+
+    if shown_inp is None or error:
+```
+
+바꿀 코드:
+
+```python
+
+    ai = None
+    if shown_inp is None or error:
+```
+
+Modify `streamlit_app.py` — 찾을 코드:
+
+```python
+        data, issues = explain.validate(text, shown_inp)
+        st.html(ui_steps.ai_head_html(issues))
+```
+
+바꿀 코드:
+
+```python
+        data, issues = explain.validate(text, shown_inp)
+        names = ", ".join(sorted({explain.ISSUE_KO[i["type"]] for i in issues}))
+        ai = {"data": data if isinstance(data, dict) else None, "inp": shown_inp, "model": model["name"],
+              "ok": not issues and shown_inp == inp,  # 저장된 입력이 지금 판정과 다르면 순서를 쓰지 않는다
+              "status": ("검증 통과" if not issues else f"검증 문제: {names}") + f" · {source}"}
+        st.html(ui_steps.ai_head_html(issues))
+```
+
+Modify `streamlit_app.py` — 찾을 코드:
+
+```python
+                st.html(ui_steps.run_line_html(r["run"] + 1, state, items))
+
+```
+
+바꿀 코드:
+
+```python
+                st.html(ui_steps.run_line_html(r["run"] + 1, state, items))
+    return ai
+
+
+def render_checklist(scope: str, title: str, events, values, limits: dict | None, ai: dict | None) -> None:
+    """지금 확인할 것: 사건마다 원인표 항목 체크박스 + 교대 인수인계 메모(.md 내려받기·복사).
+    항목은 원인표에서만 온다. 검증을 통과한 AI 설명이 있으면 그 점검 순서를 앞에 둔다."""
+    order = checklist.ai_order(ai["data"], ai["inp"]) if ai and ai["ok"] else {}
+    cards = checklist.build(events, values, limits, order)
+    st.html(ui_steps.check_head_html(ai is not None, bool(order)))
+    checked = set()
+    for card in cards:
+        with st.expander(f"{card['title']} — {card['rule']}"):
+            for it in card["items"]:
+                if st.checkbox(checklist.item_label(it), key=f"chk_{scope}_{card['event_id']}_{it['cause_id']}"):
+                    checked.add((card["event_id"], it["cause_id"]))
+    ai_meta = None
+    if ai and ai["data"]:
+        ai_meta = {"model": ai["model"], "status": ai["status"], "summary": ai["data"].get("summary", "")}
+    memo = checklist.handover_md(title, datetime.now().strftime("%Y-%m-%d %H:%M"), cards, checked, ai_meta)
+    st.download_button("인수인계 메모 내려받기 (.md)", memo, file_name=f"spc_handover_{scope}.md",
+                       mime="text/markdown", on_click="ignore", key=f"memo_{scope}")
+    with st.expander("메모를 텍스트로 보기·복사 (오른쪽 위 복사 버튼)"):
+        st.code(memo, language="markdown")
+
+```
+
+Modify `streamlit_app.py` — 찾을 코드:
+
+```python
+        if events:
+            render_ai_card(sid, values, events)
+        else:
+```
+
+바꿀 코드:
+
+```python
+        if events:
+            ai = render_ai_card(sid, values, events)
+        else:
+```
+
+Modify `streamlit_app.py` — 찾을 코드:
+
+```python
+                st.success("규칙 판정이 없어 LLM을 호출하지 않습니다.")
+
+```
+
+바꿀 코드:
+
+```python
+                st.success("규칙 판정이 없어 LLM을 호출하지 않습니다.")
+    if events:
+        with st.container(key="check_card"):
+            render_checklist(f"s{sid:02d}", series_label(s), events, values, None, ai)
+
+```
+
+- [ ] **Step 4: 통과 확인**
+
+Run: `.venv/Scripts/python -m pytest tests/test_checklist.py tests/test_app.py -v`
+Expected: 15 passed
+
+Run: `.venv/Scripts/python -m pytest -q`
+Expected: 98 passed
+
+- [ ] **Step 5: 화면 확인**
+
+시리즈 11에서 "지금 확인할 것" 카드의 첫 사건을 펼쳐 데스크톱·모바일로 캡처한다 (펼치기: `"!open:document.querySelector('.st-key-check_card [data-testid=stExpander] summary')"`, 캡처: `"check:document.querySelector('.st-key-check_card')"`).
+볼 것: "원인표 기준" 배지와 안내, 사건마다 펼치기 제목(사건·구간·근거 규칙), 원인표 5개 항목, 저장된 설명이 검증을 통과한 사건은 "AI 추천 n순위", 메모 내려받기 버튼과 "텍스트로 보기·복사". 모바일에서 체크박스 글자가 줄바꿈되고 가로 스크롤이 없다.
+
+- [ ] **Step 6: 커밋**
+
+```bash
+git add spc_explainer/checklist.py spc_explainer/ui_steps.py spc_explainer/ui_html.py streamlit_app.py tests/test_checklist.py tests/test_app.py
+git commit -m "feat: 사건별 조치 체크리스트(원인표 항목만)와 인수인계 메모 내려받기·복사" -m "Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
+git push origin main
+```
+
+---
+
+### Task 16: 용어 툴팁 (B2)
+
+**Files:**
+- Create: `spc_explainer/glossary.py`
+- Modify: `spc_explainer/ui_html.py`, `spc_explainer/charts.py`, `spc_explainer/ui_steps.py`, `spc_explainer/ui_dashboard.py`, `tests/test_ui_html.py`, `tests/test_charts.py`, `tests/test_ui_steps.py`, `tests/test_ui_dashboard.py`
+
+**Interfaces:**
+- Consumes: `config.TREND_POINTS/SHIFT_POINTS`
+- Produces:
+  - `glossary.GLOSSARY: dict[str, str]` — 키: 중심선, UCL, LCL, 관리한계, σ, 급변, 추세, 치우침, 오탐 (문구는 여기서만)
+  - `ui_html.term(label, key=None) -> str` — `<span class="spc-term" tabindex="0" data-tip="…">label</span>`. 없는 키는 `KeyError`
+  - 적용 위치: 머리말 CL·UCL·LCL, 관리도 머리의 σ·패턴 범례·관리한계, 규칙 판정 표의 패턴 이름, 04의 KPI·오류 개수의 "오탐"과 막대 패턴 이름. 관리도 오른쪽 UCL·CL·LCL 라벨은 Plotly `hovertext`
+
+툴팁은 CSS만 쓴다(`st.html`이 `tabindex`·`data-*` 속성을 남기는 것을 확인했다). 데스크톱은 마우스를 올리면, 휴대폰은 탭하면(포커스) 뜬다. 위쪽에 띄워 카드 아래가 잘리지 않게 하고, 폭 640px 이하에서는 화면 아래에 고정해 오른쪽 끝 용어도 잘리지 않게 한다. 기존 테스트 중 "CL 100.0", "σ=1.00"처럼 글자를 이어 붙여 비교하던 것은 태그를 뺀 글자로 비교하도록 고친다.
+
+- [ ] **Step 1: 실패하는 테스트 작성**
+
+Modify `tests/test_charts.py` — 찾을 코드:
+
+```python
+# 관리도 스타일: 한계선(점선+오른쪽 라벨)·중심선(실선), 패턴별 마커, 규칙 구간 음영+라벨, 정답은 테두리만
+from spc_explainer.charts import chart_footer_html, chart_header_html, control_chart
+from spc_explainer.patterns import Event
+```
+
+바꿀 코드:
+
+```python
+# 관리도 스타일: 한계선(점선+오른쪽 라벨)·중심선(실선), 패턴별 마커, 규칙 구간 음영+라벨, 정답은 테두리만
+import re
+
+from spc_explainer.charts import chart_footer_html, chart_header_html, control_chart
+from spc_explainer.glossary import GLOSSARY
+from spc_explainer.patterns import Event
+```
+
+Modify `tests/test_charts.py` — 찾을 코드:
+
+```python
+    h = chart_header_html([99.0, 101.0, 100.0], "관리도 · 증착 막 두께 (nm)", show_truth=True)
+    assert "n=3" in h and "x̄=100.00" in h and "σ=1.00" in h
+    assert "◆" in h and "▲" in h and "■" in h and "관리한계" in h and "정답" in h
+```
+
+바꿀 코드:
+
+```python
+    h = chart_header_html([99.0, 101.0, 100.0], "관리도 · 증착 막 두께 (nm)", show_truth=True)
+    plain = re.sub(r"<[^>]+>", "", h)
+    assert "n=3" in plain and "x̄=100.00" in plain and "σ=1.00" in plain
+    assert h.count('class="spc-term"') == 5  # σ, 급변·추세·치우침, 관리한계에 툴팁
+    assert "◆" in h and "▲" in h and "■" in h and "관리한계" in h and "정답" in h
+```
+
+Modify `tests/test_charts.py` — 찾을 코드:
+
+```python
+    assert not any("#" in a.text for a in control_chart(VALUES, crowd, 100, 103, 97).layout.annotations)
+```
+
+바꿀 코드:
+
+```python
+    assert not any("#" in a.text for a in control_chart(VALUES, crowd, 100, 103, 97).layout.annotations)
+
+
+def test_limit_labels_explain_themselves_on_hover():
+    fig = control_chart(VALUES, EVENTS, 100, 103, 97)
+    tips = {a.text: a.hovertext for a in fig.layout.annotations if a.hovertext}
+    assert tips == {"UCL 103": GLOSSARY["UCL"], "CL 100": GLOSSARY["중심선"], "LCL 97": GLOSSARY["LCL"]}
+
+```
+
+Modify `tests/test_ui_dashboard.py` — 찾을 코드:
+
+```python
+    assert "문제가 나온 설명 출력이 없습니다" in cases_html([], METRICS["explain"])
+```
+
+바꿀 코드:
+
+```python
+    assert "문제가 나온 설명 출력이 없습니다" in cases_html([], METRICS["explain"])
+
+
+def test_false_alarm_term_has_tooltip_in_kpi_and_counts():
+    k = kpi_summary(METRICS)
+    for h in (kpi_rule_html(k["rule"]), kpi_model_html(k["models"][0], k["rule"]["rate"]), error_counts_html(k)):
+        assert ">오탐</span>" in h and 'data-tip="' in h
+    assert ">급변</span>" in detection_bars_html(detection_groups(METRICS))
+
+```
+
+Modify `tests/test_ui_html.py` — 찾을 코드:
+
+```python
+# 화면 공통 조각: 머리말·섹션 제목·01 문제·06 한계 문구, 카드 CSS, 패턴 기호·규칙 번호, 이스케이프
+from spc_explainer.ui_html import (CSS, PATTERN_COLORS, PROBLEM_HTML, RULE_ID, SYMBOL, esc, hero_html, limits_html,
+                                   section_html, span_text)
+
+```
+
+바꿀 코드:
+
+```python
+# 화면 공통 조각: 머리말·섹션 제목·01 문제·06 한계 문구, 카드 CSS, 패턴 기호·규칙 번호, 이스케이프
+import re
+
+import pytest
+
+from spc_explainer import config
+from spc_explainer.glossary import GLOSSARY
+from spc_explainer.ui_html import (CSS, PATTERN_COLORS, PROBLEM_HTML, RULE_ID, SYMBOL, esc, hero_html, limits_html,
+                                   section_html, span_text, term)
+
+
+def text(h: str) -> str:
+    """태그를 뺀 화면 글자 (툴팁 span이 끼어도 문장으로 비교하려고)."""
+    return re.sub(r"<[^>]+>", "", h)
+
+
+```
+
+Modify `tests/test_ui_html.py` — 찾을 코드:
+
+```python
+    assert "① 규칙 판정" in h and "② AI 설명" in h and "③ 검증" in h
+    assert "CL 100.0" in h and "UCL 103.0" in h and "LCL 97.0" in h
+    assert "이미 안정화된 공정을 감시하는 상황을 가정" in h
+```
+
+바꿀 코드:
+
+```python
+    assert "① 규칙 판정" in h and "② AI 설명" in h and "③ 검증" in h
+    assert "CL 100.0" in text(h) and "UCL 103.0" in text(h) and "LCL 97.0" in text(h)
+    assert f'data-tip="{esc(GLOSSARY["UCL"])}"' in h and f'data-tip="{esc(GLOSSARY["중심선"])}"' in h
+    assert "이미 안정화된 공정을 감시하는 상황을 가정" in h
+```
+
+Modify `tests/test_ui_html.py` — 찾을 코드:
+
+```python
+    assert esc('<b>&"') == "&lt;b&gt;&amp;&quot;"
+```
+
+바꿀 코드:
+
+```python
+    assert esc('<b>&"') == "&lt;b&gt;&amp;&quot;"
+
+
+def test_glossary_covers_required_terms():
+    assert {"중심선", "UCL", "LCL", "σ", "급변", "추세", "치우침", "오탐"} <= set(GLOSSARY)
+    assert f"{config.TREND_POINTS}점" in GLOSSARY["추세"] and f"{config.SHIFT_POINTS}점" in GLOSSARY["치우침"]
+    assert all(v and "\n" not in v for v in GLOSSARY.values())  # 한 줄 설명
+
+
+def test_term_is_focusable_and_escaped():
+    h = term("UCL")
+    assert h.startswith('<span class="spc-term" tabindex="0"') and ">UCL</span>" in h
+    assert term("CL", "중심선").endswith(">CL</span>") and esc(GLOSSARY["중심선"]) in term("CL", "중심선")
+    assert ".spc-term:hover::after, .spc-term:focus::after" in CSS  # 모바일은 탭 → 포커스로 뜬다
+    with pytest.raises(KeyError):
+        term("없는 용어")
+
+```
+
+Modify `tests/test_ui_steps.py` — 찾을 코드:
+
+```python
+    assert run_line_html(1, "호출 오류", None).endswith("호출 오류</div>")
+
+```
+
+바꿀 코드:
+
+```python
+    assert run_line_html(1, "호출 오류", None).endswith("호출 오류</div>")
+
+
+def test_rule_card_pattern_names_have_tooltips():
+    h = rule_card_html(EVENTS, VALUES)
+    assert 'class="spc-term"' in h and ">급변</span>" in h and ">치우침</span>" in h
+
+```
+
+- [ ] **Step 2: 실패 확인**
+
+Run: `.venv/Scripts/python -m pytest tests/test_ui_html.py tests/test_charts.py -v`
+Expected: 수집 오류 2개 — `ModuleNotFoundError: No module named 'spc_explainer.glossary'`
+
+- [ ] **Step 3: 구현**
+
+Modify `spc_explainer/charts.py` — 찾을 코드:
+
+```python
+
+from .patterns import KOREAN, PATTERNS, Event
+from .ui_html import PATTERN_COLORS, SYMBOL, esc, span_text
+
+```
+
+바꿀 코드:
+
+```python
+
+from .glossary import GLOSSARY
+from .patterns import KOREAN, PATTERNS, Event
+from .ui_html import PATTERN_COLORS, SYMBOL, esc, span_text, term
+
+```
+
+Modify `spc_explainer/charts.py` — 찾을 코드:
+
+```python
+    # 중심선(실선)·관리한계(점선) + 오른쪽 라벨
+    for label, y, dash in (("UCL", ucl, "dash"), ("CL", center, "solid"), ("LCL", lcl, "dash")):
+        fig.add_hline(y=y, line={"color": LIMIT, "width": 1.2 if dash == "solid" else 1, "dash": dash}, layer="below")
+        fig.add_annotation(x=1, y=y, xref="paper", yref="y", xanchor="left", yanchor="middle", xshift=8,
+                           text=f"{label} {y:.4g}", showarrow=False, font={"size": 11, "color": "#3b424a", "family": MONO})
+    # 측정값 선 + 정상 점(흰 원)
+```
+
+바꿀 코드:
+
+```python
+    # 중심선(실선)·관리한계(점선) + 오른쪽 라벨
+    for label, y, dash, tip in (("UCL", ucl, "dash", "UCL"), ("CL", center, "solid", "중심선"), ("LCL", lcl, "dash", "LCL")):
+        fig.add_hline(y=y, line={"color": LIMIT, "width": 1.2 if dash == "solid" else 1, "dash": dash}, layer="below")
+        fig.add_annotation(x=1, y=y, xref="paper", yref="y", xanchor="left", yanchor="middle", xshift=8,
+                           text=f"{label} {y:.4g}", hovertext=GLOSSARY[tip], showarrow=False,  # 올리면 용어 설명
+                           font={"size": 11, "color": "#3b424a", "family": MONO})
+    # 측정값 선 + 정상 점(흰 원)
+```
+
+Modify `spc_explainer/charts.py` — 찾을 코드:
+
+```python
+    sd = statistics.stdev(vals) if len(vals) > 1 else 0.0
+    legend = "".join(f'<span><b style="color:{PATTERN_COLORS[p]["fill"]}">{SYMBOL[p]}</b> {KOREAN[p]}</span>'
+                     for p in PATTERNS)
+    legend += '<span><i class="spc-lg-line"></i>관리한계</span>'
+    if show_truth:
+```
+
+바꿀 코드:
+
+```python
+    sd = statistics.stdev(vals) if len(vals) > 1 else 0.0
+    legend = "".join(f'<span><b style="color:{PATTERN_COLORS[p]["fill"]}">{SYMBOL[p]}</b> {term(KOREAN[p])}</span>'
+                     for p in PATTERNS)
+    legend += f'<span><i class="spc-lg-line"></i>{term("관리한계")}</span>'
+    if show_truth:
+```
+
+Modify `spc_explainer/charts.py` — 찾을 코드:
+
+```python
+    return (f'<div class="spc-chart-head"><span class="spc-chart-title">{esc(title)}</span>'
+            f'<span class="spc-chart-stats"><span>n={len(vals)}</span><span>x̄={mean:.2f}</span><span>σ={sd:.2f}</span></span>'
+            f'<span class="spc-chart-legend">{legend}</span></div>')
+```
+
+바꿀 코드:
+
+```python
+    return (f'<div class="spc-chart-head"><span class="spc-chart-title">{esc(title)}</span>'
+            f'<span class="spc-chart-stats"><span>n={len(vals)}</span><span>x̄={mean:.2f}</span><span>{term("σ")}={sd:.2f}</span></span>'
+            f'<span class="spc-chart-legend">{legend}</span></div>')
+```
+
+Create `spc_explainer/glossary.py`:
+
+```python
+# 화면 용어의 한 줄 설명(툴팁). 문구는 여기서만 고친다.
+from . import config
+
+GLOSSARY = {
+    "중심선": "관리도의 기준선(CL). 공정이 안정적일 때의 평균 수준입니다.",
+    "UCL": "관리 상한선. 중심선 + 3σ입니다. 이보다 큰 점은 급변(R1)으로 판정합니다.",
+    "LCL": "관리 하한선. 중심선 − 3σ입니다. 이보다 작은 점은 급변(R1)으로 판정합니다.",
+    "관리한계": "UCL(관리 상한)과 LCL(관리 하한). 중심선 ± 3σ입니다.",
+    "σ": "시그마. 표준편차, 즉 값이 평균에서 흩어진 정도입니다. 관리한계는 중심선 ± 3σ입니다.",
+    "급변": "R1 · 관리한계(UCL·LCL) 밖으로 나간 점. 계측 오류나 순간적인 이상을 먼저 의심합니다.",
+    "추세": f"R3 · 연속 {config.TREND_POINTS}점이 계속 오르거나 계속 내림. 누적·마모 같은 점진적 변화를 의심합니다.",
+    "치우침": f"R2 · 연속 {config.SHIFT_POINTS}점이 모두 중심선 한쪽. PM·로트 교체 같은 조건 변화를 의심합니다.",
+    "오탐": "실제 이상이 없는데 울린 경보. 이 앱은 심은 이상(정답)과 겹치지 않는 경보를 오탐으로 셉니다.",
+}
+```
+
+Modify `spc_explainer/ui_dashboard.py` — 찾을 코드:
+
+```python
+from .patterns import FROM_KOREAN, KOREAN, PATTERNS
+from .ui_html import PATTERN_COLORS, RULE_ID, SYMBOL, esc, span_text
+
+```
+
+바꿀 코드:
+
+```python
+from .patterns import FROM_KOREAN, KOREAN, PATTERNS
+from .ui_html import PATTERN_COLORS, RULE_ID, SYMBOL, esc, span_text, term
+
+```
+
+Modify `spc_explainer/ui_dashboard.py` — 찾을 코드:
+
+```python
+            f'<div class="spc-kpi-num">{fmt_pct(rule["rate"])}</div>'
+            f'<div class="spc-kpi-sub">{rule["detected"]}/{rule["injected"]} 탐지 · 오탐 {rule["false_events"]}건 '
+            f'(정상 시리즈 {rule["normal_alarmed"]}/{rule["normal_series"]}개 경보) · 매번 같은 결과</div></div>')
+```
+
+바꿀 코드:
+
+```python
+            f'<div class="spc-kpi-num">{fmt_pct(rule["rate"])}</div>'
+            f'<div class="spc-kpi-sub">{rule["detected"]}/{rule["injected"]} 탐지 · {term("오탐")} {rule["false_events"]}건 '
+            f'(정상 시리즈 {rule["normal_alarmed"]}/{rule["normal_series"]}개 경보) · 매번 같은 결과</div></div>')
+```
+
+Modify `spc_explainer/ui_dashboard.py` — 찾을 코드:
+
+```python
+            f'<div class="spc-kpi-sub"><span class="spc-kpi-name">{esc(m["name"])}</span> · {spread} · '
+            f'오탐 평균 {fmt_num(m["false_mean"])}건 · 형식 위반 {m["format_violations"]} · 호출 오류 {m["call_errors"]}</div></div>')
+
+```
+
+바꿀 코드:
+
+```python
+            f'<div class="spc-kpi-sub"><span class="spc-kpi-name">{esc(m["name"])}</span> · {spread} · '
+            f'{term("오탐")} 평균 {fmt_num(m["false_mean"])}건 · 형식 위반 {m["format_violations"]} · 호출 오류 {m["call_errors"]}</div></div>')
+
+```
+
+Modify `spc_explainer/ui_dashboard.py` — 찾을 코드:
+
+```python
+        color = PATTERN_COLORS[g["key"]]["text"] if g["key"] in PATTERN_COLORS else "#16191d"
+        title = f'{g["symbol"]} {g["label"]}'.strip()
+        sub = f'{g["rule_id"]} · {g["injected"]}건' if g["rule_id"] else f'{g["injected"]}건'
+```
+
+바꿀 코드:
+
+```python
+        color = PATTERN_COLORS[g["key"]]["text"] if g["key"] in PATTERN_COLORS else "#16191d"
+        title = f'{g["symbol"]} {term(g["label"])}' if g["key"] in PATTERN_COLORS else esc(g["label"])
+        sub = f'{g["rule_id"]} · {g["injected"]}건' if g["rule_id"] else f'{g["injected"]}건'
+```
+
+Modify `spc_explainer/ui_dashboard.py` — 찾을 코드:
+
+```python
+        rows_html = "".join(rows)
+        parts.append(f'<div class="{cls}"><div class="spc-bar-name"><b style="color:{color}">{esc(title)}</b>'
+                     f'<small>{esc(sub)}</small></div><div class="spc-bar-rows">{rows_html}</div></div>')
+```
+
+바꿀 코드:
+
+```python
+        rows_html = "".join(rows)
+        parts.append(f'<div class="{cls}"><div class="spc-bar-name"><b style="color:{color}">{title}</b>'
+                     f'<small>{esc(sub)}</small></div><div class="spc-bar-rows">{rows_html}</div></div>')
+```
+
+Modify `spc_explainer/ui_dashboard.py` — 찾을 코드:
+
+```python
+        parts.append(f'<div class="spc-count-group">단독 판정 · {esc(m["name"])} · {m["repeats"]}회 합계</div>')
+        for label, n in (("놓친 심은 이상", m["missed_total"]), ("오탐 사건 (정답과 겹치지 않음)", m["false_total"]),
+                         ("패턴 혼동", m["confusions_total"]), ("JSON 형식 위반", m["format_violations"]),
+```
+
+바꿀 코드:
+
+```python
+        parts.append(f'<div class="spc-count-group">단독 판정 · {esc(m["name"])} · {m["repeats"]}회 합계</div>')
+        for label, n in (("놓친 심은 이상", m["missed_total"]), (f'{term("오탐")} 사건 (정답과 겹치지 않음)', m["false_total"]),
+                         ("패턴 혼동", m["confusions_total"]), ("JSON 형식 위반", m["format_violations"]),
+```
+
+Modify `spc_explainer/ui_html.py` — 찾을 코드:
+
+```python
+import html
+
+```
+
+바꿀 코드:
+
+```python
+import html
+
+from .glossary import GLOSSARY
+
+```
+
+Modify `spc_explainer/ui_html.py` — 찾을 코드:
+
+```python
+
+def hero_html(center: float, ucl: float, lcl: float, unit: str) -> str:
+```
+
+바꿀 코드:
+
+```python
+
+def term(label: str, key: str | None = None) -> str:
+    """용어 툴팁: 마우스를 올리거나(데스크톱) 탭하면(모바일, 포커스) 한 줄 설명이 뜬다. 설명은 glossary 한 곳에서."""
+    return f'<span class="spc-term" tabindex="0" data-tip="{esc(GLOSSARY[key or label])}">{esc(label)}</span>'
+
+
+def hero_html(center: float, ucl: float, lcl: float, unit: str) -> str:
+```
+
+Modify `spc_explainer/ui_html.py` — 찾을 코드:
+
+```python
+        "</div>"
+        f'<div class="spc-top"><span>관리 기준 <b>CL {center:.1f}</b> · <b>UCL {ucl:.1f}</b> · <b>LCL {lcl:.1f}</b> {esc(unit)}</span>'
+        '<span class="spc-note">관리한계 고정값 사용 = 이미 안정화된 공정을 감시하는 상황을 가정</span></div>'
+```
+
+바꿀 코드:
+
+```python
+        "</div>"
+        f'<div class="spc-top"><span>관리 기준 <b>{term("CL", "중심선")} {center:.1f}</b> · <b>{term("UCL")} {ucl:.1f}</b> · '
+        f'<b>{term("LCL")} {lcl:.1f}</b> {esc(unit)}</span>'
+        '<span class="spc-note">관리한계 고정값 사용 = 이미 안정화된 공정을 감시하는 상황을 가정</span></div>'
+```
+
+Modify `spc_explainer/ui_html.py` — 찾을 코드:
+
+```python
+.spc-mono { font-family: 'IBM Plex Mono', monospace; }
+
+```
+
+바꿀 코드:
+
+```python
+.spc-mono { font-family: 'IBM Plex Mono', monospace; }
+/* 용어 툴팁: 위쪽에 띄운다 (카드 아래쪽이 잘리지 않게). 모바일은 탭하면 포커스로 뜬다 */
+.spc-term { position: relative; border-bottom: 1px dotted currentColor; cursor: help; outline: none; }
+.spc-term:hover::after, .spc-term:focus::after {
+  content: attr(data-tip); position: absolute; left: 0; bottom: calc(100% + 6px); z-index: 50;
+  width: max-content; max-width: min(260px, 70vw); white-space: normal; text-align: left;
+  background: #16191d; color: #fff; border-radius: 3px; padding: 6px 9px;
+  font: 400 12px/1.5 'IBM Plex Sans KR', sans-serif; letter-spacing: 0; }
+
+```
+
+Modify `spc_explainer/ui_html.py` — 찾을 코드:
+
+```python
+@media (max-width: 640px) {
+  .spc-hero h1 { font-size: 24px; }
+```
+
+바꿀 코드:
+
+```python
+@media (max-width: 640px) {
+  .spc-term:hover::after, .spc-term:focus::after {  /* 좁은 화면: 잘리지 않게 화면 아래에 고정 */
+    position: fixed; left: 12px; right: 12px; bottom: 16px; width: auto; max-width: none; font-size: 13px; }
+  .spc-hero h1 { font-size: 24px; }
+```
+
+Modify `spc_explainer/ui_steps.py` — 찾을 코드:
+
+```python
+from .rules import describe
+from .ui_html import PATTERN_COLORS, RULE_ID, SYMBOL, esc, span_text
+
+```
+
+바꿀 코드:
+
+```python
+from .rules import describe
+from .ui_html import PATTERN_COLORS, RULE_ID, SYMBOL, esc, span_text, term
+
+```
+
+Modify `spc_explainer/ui_steps.py` — 찾을 코드:
+
+```python
+        rows.append(
+            f'<div class="spc-rule-row"><span class="spc-pat" style="color:{color}">{SYMBOL[ev.pattern]} {KOREAN[ev.pattern]}</span>'
+            f'<span class="spc-mono">{span_text(ev.start, ev.end)}</span>'
+```
+
+바꿀 코드:
+
+```python
+        rows.append(
+            f'<div class="spc-rule-row"><span class="spc-pat" style="color:{color}">{SYMBOL[ev.pattern]} {term(KOREAN[ev.pattern])}</span>'
+            f'<span class="spc-mono">{span_text(ev.start, ev.end)}</span>'
+```
+
+- [ ] **Step 4: 통과 확인**
+
+Run: `.venv/Scripts/python -m pytest tests/test_ui_html.py tests/test_charts.py tests/test_ui_steps.py tests/test_ui_dashboard.py -v`
+Expected: 32 passed
+
+Run: `.venv/Scripts/python -m pytest -q`
+Expected: 103 passed
+
+- [ ] **Step 5: 화면 확인**
+
+용어를 눌러(포커스) 툴팁을 띄운 채 캡처한다. 데스크톱: 머리말 CL(`"!hero:document.querySelector('.spc-top .spc-term')"`), 규칙 판정 표의 두 번째 패턴 이름, 04 KPI의 "오탐". 모바일: 관리도 머리의 σ를 누르고 화면 전체를 찍는다(툴팁이 화면 아래에 고정되어 전부 보이는지). 관리도 오른쪽 UCL 라벨에 마우스를 올리면 설명이 뜨는지는 데스크톱에서 본다.
+
+- [ ] **Step 6: 커밋**
+
+```bash
+git add spc_explainer/glossary.py spc_explainer/ui_html.py spc_explainer/charts.py spc_explainer/ui_steps.py spc_explainer/ui_dashboard.py tests/test_ui_html.py tests/test_charts.py tests/test_ui_steps.py tests/test_ui_dashboard.py
+git commit -m "feat: 용어 툴팁 (UCL·LCL·중심선·σ·급변·추세·치우침·오탐, 문구는 glossary 한 곳)" -m "Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
+git push origin main
+```
+
+---
+
+### Task 17: 관리도 점 클릭 → 해당 사건 설명으로 (B3)
+
+**Files:**
+- Modify: `spc_explainer/ui_steps.py`, `spc_explainer/ui_html.py`, `spc_explainer/charts.py`, `streamlit_app.py`, `tests/test_ui_steps.py`, `tests/test_app.py`
+
+**Interfaces:**
+- Consumes: `st.plotly_chart(..., on_select="rerun", selection_mode="points", key=...)`의 반환값(`state["selection"]["points"][i]["x"]`)
+- Produces:
+  - `ui_steps.selected_x(state) -> int | None`, `ui_steps.event_index_at(events, x) -> int | None`
+  - `ui_steps.NO_PICK = -1`, `ui_steps.event_option(events, i) -> str`, `ui_steps.pick_note_html(events, picked, outside) -> str`
+  - `ui_steps.rule_card_html(events, values, limits=None, selected=None)`, `ui_steps.ai_body_html(data, inp, selected=None)` — 고른 사건 강조 (`sel` 클래스)
+  - `ui_html.section_html(kicker, title, sub="", anchor="")` — 03은 `anchor="spc-ai"`
+  - 앱 세션 키(시리즈 번호 두 자리, 예 `chart_05`): 차트 `chart_<sid:02d>`, 사건 선택 상자 `pick_<sid:02d>`(값 -1 = 선택 안 함), 마지막으로 반영한 점 `seen_<sid:02d>`, 사건 밖 점 `outside_<sid:02d>`. `render_ai_card(..., selected)`, `render_checklist(..., picked)`
+
+점을 누르면 그 점이 속한 사건을 사건 선택 상자에 넣는다(새로 누른 점일 때만 — 드롭다운으로 바꾼 선택을 덮지 않게). 사건 밖이면 "#63 · 이 점은 판정된 사건에 속하지 않습니다.". 고른 사건은 규칙 판정 표와 03 점검 우선순위에서 강조하고, 체크리스트에서 그 사건만 펼치며, 관리도 아래 안내에 03으로 가는 링크(`#spc-ai`)를 둔다. 재그리기는 02·03 fragment 안에서만. 휴대폰에서 점 탭 선택을 헤드리스로 확인하지 못해 사건 선택 드롭다운을 대체 수단으로 항상 둔다. 선택 상자의 "선택 안 함"을 `None`으로 두면 Streamlit이 빈 선택으로 보고 영어 안내문("Choose an option")을 띄우므로 -1을 쓴다. 점을 눌러도 나머지 점이 흐려지지 않게 트레이스에 `unselected={"marker": {"opacity": 1}}`를 준다. AppTest는 차트를 직접 누를 수 없어 `at.session_state["chart_11"]`에 선택 상태를 넣어 확인한다.
+
+- [ ] **Step 1: 실패하는 테스트 작성**
+
+Modify `tests/test_app.py` — 찾을 코드:
+
+```python
+    assert len(at.get("download_button")) >= 1
+```
+
+바꿀 코드:
+
+```python
+    assert len(at.get("download_button")) >= 1
+
+
+def pick_notes(at) -> list[str]:
+    return [e.proto.body for e in at.get("html") if 'class="spc-pick' in e.proto.body]
+
+
+def click_point(at, sid: int, x: int) -> None:
+    """관리도에서 점 하나를 누른 것과 같은 선택 상태를 넣는다 (AppTest는 차트를 직접 누를 수 없다)."""
+    at.session_state[f"chart_{sid:02d}"] = {"selection": {"points": [{"x": x}], "point_indices": [x],
+                                                          "box": [], "lasso": []}}
+    at.run()
+
+
+def test_chart_click_picks_the_event_and_highlights_it():
+    at = run_app()
+    at.selectbox[0].set_value(11).run()  # 시리즈 11: 급변 #45, 치우침 #48–59, 추세 #76–81
+    click_point(at, 11, 52)
+    assert not at.exception
+    assert at.selectbox(key="pick_11").value == 1
+    assert any("E2 · ■ 치우침 #48–59 선택" in b and 'href="#spc-ai"' in b for b in pick_notes(at))
+    assert any("spc-rule-row sel" in e.proto.body for e in at.get("html"))
+    assert [x.proto.expanded for x in at.expander if "E2 ·" in x.label] == [True]
+    # 드롭다운으로 바꾸면 차트 선택이 남아 있어도 덮어쓰지 않는다
+    at.selectbox(key="pick_11").set_value(2).run()
+    assert at.selectbox(key="pick_11").value == 2
+
+
+def test_click_outside_events_says_so():
+    at = run_app()
+    at.selectbox[0].set_value(11).run()
+    click_point(at, 11, 63)
+    assert not at.exception
+    assert at.selectbox(key="pick_11").value == -1  # "선택 안 함"
+    assert any("#63 · 이 점은 판정된 사건에 속하지 않습니다." in b for b in pick_notes(at))
+
+```
+
+Modify `tests/test_ui_steps.py` — 찾을 코드:
+
+```python
+from spc_explainer.patterns import Event
+from spc_explainer.ui_steps import (ai_body_html, ai_head_html, issues_html, priority_items, rule_card_html,
+                                    run_line_html)
+
+```
+
+바꿀 코드:
+
+```python
+from spc_explainer.patterns import Event
+from spc_explainer.ui_steps import (ai_body_html, ai_head_html, event_index_at, event_option, issues_html,
+                                    pick_note_html, priority_items, rule_card_html, run_line_html, selected_x)
+
+```
+
+Modify `tests/test_ui_steps.py` — 찾을 코드:
+
+```python
+    assert 'class="spc-term"' in h and ">급변</span>" in h and ">치우침</span>" in h
+
+```
+
+바꿀 코드:
+
+```python
+    assert 'class="spc-term"' in h and ">급변</span>" in h and ">치우침</span>" in h
+
+
+def test_selected_x_reads_the_clicked_point():
+    assert selected_x({"selection": {"points": [{"x": 52.0, "y": 101.2}]}}) == 52
+    assert selected_x({"selection": {"points": []}}) is None
+    assert selected_x(None) is None and selected_x({}) is None and selected_x({"selection": {"points": "x"}}) is None
+    assert selected_x({"selection": {"points": [{"x": True}, {"x": 7}]}}) == 7
+
+
+def test_event_lookup_option_and_note():
+    assert event_index_at(EVENTS, 14) == 0 and event_index_at(EVENTS, 45) == 1 and event_index_at(EVENTS, 13) is None
+    assert event_option(EVENTS, 1) == "E2 · ■ 치우침 #40–49" and event_option(EVENTS, -1) == "선택 안 함"
+    assert pick_note_html(EVENTS, None, 63) == '<div class="spc-pick out">#63 · 이 점은 판정된 사건에 속하지 않습니다.</div>'
+    note = pick_note_html(EVENTS, 1, None)
+    assert "E2 · ■ 치우침 #40–49 선택" in note and 'href="#spc-ai"' in note
+    assert pick_note_html(EVENTS, None, None) == ""
+
+
+def test_selected_event_is_highlighted_in_rule_card_and_ai_body():
+    h = rule_card_html(EVENTS, VALUES, selected=1)
+    assert h.count("spc-rule-row sel") == 1 and h.index("spc-rule-row sel") > h.index("#14")
+    body = ai_body_html(DATA, INP, selected="E2")
+    assert body.count("spc-prio-row sel") == 2  # E2의 점검 항목 2개
+    assert "spc-prio-row sel" not in ai_body_html(DATA, INP)
+
+```
+
+- [ ] **Step 2: 실패 확인**
+
+Run: `.venv/Scripts/python -m pytest tests/test_ui_steps.py -v`
+Expected: 수집 오류 `ImportError: cannot import name 'event_index_at' from 'spc_explainer.ui_steps'`
+
+Run: `.venv/Scripts/python -m pytest tests/test_app.py -v`
+Expected: 2 failed, 9 passed — `test_chart_click_picks_the_event_and_highlights_it`, `test_click_outside_events_says_so`
+
+- [ ] **Step 3: 구현**
+
+Modify `spc_explainer/charts.py` — 찾을 코드:
+
+```python
+                             marker={"size": dot, "color": "#ffffff", "line": {"color": LINE, "width": 1}},
+                             hovertemplate="#%{x}: %{y:.2f}<extra></extra>"))
+```
+
+바꿀 코드:
+
+```python
+                             marker={"size": dot, "color": "#ffffff", "line": {"color": LINE, "width": 1}},
+                             unselected={"marker": {"opacity": 1}},  # 점을 눌러도 나머지 점을 흐리게 하지 않는다
+                             hovertemplate="#%{x}: %{y:.2f}<extra></extra>"))
+```
+
+Modify `spc_explainer/charts.py` — 찾을 코드:
+
+```python
+                                             "line": {"color": PATTERN_COLORS[p]["text"], "width": 1}},
+                                     hovertemplate="#%{x}: %{y:.2f}<extra>" + KOREAN[p] + "</extra>"))
+```
+
+바꿀 코드:
+
+```python
+                                             "line": {"color": PATTERN_COLORS[p]["text"], "width": 1}},
+                                     unselected={"marker": {"opacity": 1}},
+                                     hovertemplate="#%{x}: %{y:.2f}<extra>" + KOREAN[p] + "</extra>"))
+```
+
+Modify `spc_explainer/ui_html.py` — 찾을 코드:
+
+```python
+
+def section_html(kicker: str, title: str, sub: str = "") -> str:
+    """섹션 머리: 번호·이름(작게) + 제목 + 한 줄 설명."""
+    sub_html = f'<p class="spc-sec-sub">{esc(sub)}</p>' if sub else ""
+    return f'<div class="spc-sec"><span class="spc-kicker">{esc(kicker)}</span><h2>{esc(title)}</h2>{sub_html}</div>'
+
+```
+
+바꿀 코드:
+
+```python
+
+def section_html(kicker: str, title: str, sub: str = "", anchor: str = "") -> str:
+    """섹션 머리: 번호·이름(작게) + 제목 + 한 줄 설명. anchor를 주면 페이지 안 링크(#anchor)의 목적지가 된다."""
+    sub_html = f'<p class="spc-sec-sub">{esc(sub)}</p>' if sub else ""
+    anchor_attr = f' id="{esc(anchor)}"' if anchor else ""
+    return (f'<div class="spc-sec"{anchor_attr}><span class="spc-kicker">{esc(kicker)}</span><h2>{esc(title)}</h2>'
+            f"{sub_html}</div>")
+
+```
+
+Modify `spc_explainer/ui_html.py` — 찾을 코드:
+
+```python
+.spc-rid { font-size: 12px; font-weight: 600; border: 1px solid #16191d; border-radius: 3px; text-align: center; }
+.spc-rule-empty { padding: 14px 18px; font-size: 13.5px; color: #3b424a; }
+```
+
+바꿀 코드:
+
+```python
+.spc-rid { font-size: 12px; font-weight: 600; border: 1px solid #16191d; border-radius: 3px; text-align: center; }
+.spc-rule-row.sel { background: #fff7e0; box-shadow: inset 4px 0 0 #c5770f; }
+.spc-prio-row.sel { background: #fff7e0; box-shadow: -8px 0 0 #fff7e0, -12px 0 0 #c5770f; }
+.spc-pick { font-size: 13px; color: #3b424a; background: #fff7e0; border: 1px solid #e3d9bd; border-radius: 4px;
+  padding: 8px 12px; }
+.spc-pick.out { background: #f6f7f8; border-color: #d9dcdf; }
+.spc-pick a { color: #0068a7; font-weight: 600; margin-left: 6px; }
+.spc-sec[id] { scroll-margin-top: 64px; }
+.spc-rule-empty { padding: 14px 18px; font-size: 13.5px; color: #3b424a; }
+```
+
+Modify `spc_explainer/ui_steps.py` — 찾을 코드:
+
+```python
+# 02 규칙 판정 카드와 03 AI 설명 카드의 HTML, 점검 우선순위 가공. 판정은 항상 규칙 결과가 기준이다.
+from .causes import CAUSES
+```
+
+바꿀 코드:
+
+```python
+# 02 규칙 판정 카드와 03 AI 설명 카드의 HTML, 점검 우선순위 가공. 판정은 항상 규칙 결과가 기준이다.
+from . import config
+from .causes import CAUSES
+```
+
+Modify `spc_explainer/ui_steps.py` — 찾을 코드:
+
+```python
+
+def rule_card_html(events: list[Event], values) -> str:
+    """규칙 판정 결과 카드: 머리줄(확정·건수) + 사건 표(패턴·구간·판정 근거·규칙 번호) + 결정적 계산 문구."""
+    head = ('<div class="spc-step-head rule"><b>규칙 판정 결과</b>'
+```
+
+바꿀 코드:
+
+```python
+
+def rule_card_html(events: list[Event], values, limits: dict | None = None, selected: int | None = None) -> str:
+    """규칙 판정 결과 카드: 머리줄(확정·건수) + 사건 표(패턴·구간·판정 근거·규칙 번호) + 결정적 계산 문구.
+    limits = {"ucl", "lcl"} (없으면 설정값), selected = 강조할 사건 번호(0부터)."""
+    lim = limits or {"ucl": config.UCL, "lcl": config.LCL}
+    head = ('<div class="spc-step-head rule"><b>규칙 판정 결과</b>'
+```
+
+Modify `spc_explainer/ui_steps.py` — 찾을 코드:
+
+```python
+    rows = ['<div class="spc-rule-row spc-rule-th"><span>패턴</span><span>구간</span><span>판정 근거</span><span>규칙</span></div>']
+    for ev in events:
+        main, detail = _split_rule(describe(ev, values))
+        color = PATTERN_COLORS[ev.pattern]["text"]
+        rows.append(
+            f'<div class="spc-rule-row"><span class="spc-pat" style="color:{color}">{SYMBOL[ev.pattern]} {term(KOREAN[ev.pattern])}</span>'
+            f'<span class="spc-mono">{span_text(ev.start, ev.end)}</span>'
+```
+
+바꿀 코드:
+
+```python
+    rows = ['<div class="spc-rule-row spc-rule-th"><span>패턴</span><span>구간</span><span>판정 근거</span><span>규칙</span></div>']
+    for i, ev in enumerate(events):
+        main, detail = _split_rule(describe(ev, values, lim["ucl"], lim["lcl"]))
+        color = PATTERN_COLORS[ev.pattern]["text"]
+        cls = "spc-rule-row sel" if i == selected else "spc-rule-row"
+        rows.append(
+            f'<div class="{cls}"><span class="spc-pat" style="color:{color}">{SYMBOL[ev.pattern]} {term(KOREAN[ev.pattern])}</span>'
+            f'<span class="spc-mono">{span_text(ev.start, ev.end)}</span>'
+```
+
+Modify `spc_explainer/ui_steps.py` — 찾을 코드:
+
+```python
+
+def ai_body_html(data: dict, inp: dict) -> str:
+    """패턴 해석(summary) + 점검 우선순위 목록. LLM 문자열은 모두 이스케이프한다."""
+    summary = data.get("summary") if isinstance(data.get("summary"), str) else ""
+```
+
+바꿀 코드:
+
+```python
+
+def ai_body_html(data: dict, inp: dict, selected: str | None = None) -> str:
+    """패턴 해석(summary) + 점검 우선순위 목록. LLM 문자열은 모두 이스케이프한다. selected 사건(E1 등)의 줄은 강조."""
+    summary = data.get("summary") if isinstance(data.get("summary"), str) else ""
+```
+
+Modify `spc_explainer/ui_steps.py` — 찾을 코드:
+
+```python
+        cls = "spc-prio-row" if it["known"] else "spc-prio-row unknown"
+        rows.append(
+```
+
+바꿀 코드:
+
+```python
+        cls = "spc-prio-row" if it["known"] else "spc-prio-row unknown"
+        cls += " sel" if selected is not None and it["event_id"] == selected else ""
+        rows.append(
+```
+
+Modify `spc_explainer/ui_steps.py` — 찾을 코드:
+
+```python
+            f'<span class="spc-note">{note}</span></div>')
+
+```
+
+바꿀 코드:
+
+```python
+            f'<span class="spc-note">{note}</span></div>')
+
+
+def selected_x(state) -> int | None:
+    """st.plotly_chart 선택 상태에서 누른 점의 번호. 선택이 없거나 모양이 다르면 None."""
+    try:
+        points = state["selection"]["points"]
+    except (KeyError, TypeError):
+        return None
+    for p in points if isinstance(points, list) else []:
+        x = p.get("x") if hasattr(p, "get") else None
+        if isinstance(x, (int, float)) and not isinstance(x, bool):
+            return int(round(x))
+    return None
+
+
+def event_index_at(events: list[Event], x: int) -> int | None:
+    """점 번호 x가 속한 첫 사건의 번호(0부터). 어느 사건에도 속하지 않으면 None."""
+    return next((i for i, e in enumerate(events) if e.start <= x <= e.end), None)
+
+
+NO_PICK = -1  # 사건 선택 상자의 "선택 안 함" (None을 쓰면 Streamlit이 빈 선택으로 보고 영어 안내문을 띄운다)
+
+
+def event_option(events: list[Event], i: int | None) -> str:
+    """사건 선택 상자의 글자."""
+    if i is None or i == NO_PICK:
+        return "선택 안 함"
+    e = events[i]
+    return f"E{i + 1} · {SYMBOL[e.pattern]} {KOREAN[e.pattern]} {span_text(e.start, e.end)}"
+
+
+def pick_note_html(events: list[Event], picked: int | None, outside: int | None) -> str:
+    """관리도 아래 안내: 사건 밖의 점을 눌렀을 때 / 사건을 골랐을 때 (03 설명으로 가는 링크)."""
+    if outside is not None:
+        return f'<div class="spc-pick out">#{outside} · 이 점은 판정된 사건에 속하지 않습니다.</div>'
+    if picked is None or picked == NO_PICK:
+        return ""
+    return (f'<div class="spc-pick">{esc(event_option(events, picked))} 선택 — 03의 설명과 체크리스트에서 강조했습니다 '
+            '<a href="#spc-ai">설명으로 이동 ↓</a></div>')
+```
+
+Modify `streamlit_app.py` — 찾을 코드:
+
+```python
+
+def render_ai_card(sid: int, values, events) -> dict | None:
+    """AI 설명 카드: 설명(실시간 결과가 있으면 그것, 없으면 저장된 1회차) + 검증 배지 + 저장 상태·실시간 설명 버튼.
+```
+
+바꿀 코드:
+
+```python
+
+def render_ai_card(sid: int, values, events, selected: str | None = None) -> dict | None:
+    """AI 설명 카드: 설명(실시간 결과가 있으면 그것, 없으면 저장된 1회차) + 검증 배지 + 저장 상태·실시간 설명 버튼.
+```
+
+Modify `streamlit_app.py` — 찾을 코드:
+
+```python
+        if isinstance(data, dict):
+            st.html(ui_steps.ai_body_html(data, shown_inp))
+        else:
+```
+
+바꿀 코드:
+
+```python
+        if isinstance(data, dict):
+            st.html(ui_steps.ai_body_html(data, shown_inp, selected))
+        else:
+```
+
+Modify `streamlit_app.py` — 찾을 코드:
+
+```python
+
+def render_checklist(scope: str, title: str, events, values, limits: dict | None, ai: dict | None) -> None:
+    """지금 확인할 것: 사건마다 원인표 항목 체크박스 + 교대 인수인계 메모(.md 내려받기·복사).
+```
+
+바꿀 코드:
+
+```python
+
+def render_checklist(scope: str, title: str, events, values, limits: dict | None, ai: dict | None,
+                     picked: int | None = None) -> None:
+    """지금 확인할 것: 사건마다 원인표 항목 체크박스 + 교대 인수인계 메모(.md 내려받기·복사).
+```
+
+Modify `streamlit_app.py` — 찾을 코드:
+
+```python
+    checked = set()
+    for card in cards:
+        with st.expander(f"{card['title']} — {card['rule']}"):
+            for it in card["items"]:
+```
+
+바꿀 코드:
+
+```python
+    checked = set()
+    for i, card in enumerate(cards):
+        with st.expander(f"{card['title']} — {card['rule']}", expanded=i == picked):
+            for it in card["items"]:
+```
+
+Modify `streamlit_app.py` — 찾을 코드:
+
+```python
+    truth = generator.truth_events(s) if show_truth else None
+    with st.container(key="chart_card"):
+```
+
+바꿀 코드:
+
+```python
+    truth = generator.truth_events(s) if show_truth else None
+    pick_key, seen_key, out_key = f"pick_{sid:02d}", f"seen_{sid:02d}", f"outside_{sid:02d}"
+    with st.container(key="chart_card"):
+```
+
+Modify `streamlit_app.py` — 찾을 코드:
+
+```python
+                            truth=truth, show_legend=False)
+        st.plotly_chart(fig, width="stretch", config={"displayModeBar": False})
+        st.html(chart_footer_html(show_truth))
+    with st.container(key="rule_card"):
+        st.html(ui_steps.rule_card_html(events, values))
+
+    st.html(ui_html.section_html("03 AI 설명", "규칙 판정 결과를 받아 AI가 설명합니다",
+                                 "AI는 새로운 판정을 만들지 않습니다 · 규칙이 넘긴 구간·규칙 번호만 해설합니다"))
+    with st.container(key="ai_card"):
+        if events:
+            ai = render_ai_card(sid, values, events)
+        else:
+```
+
+바꿀 코드:
+
+```python
+                            truth=truth, show_legend=False)
+        state = st.plotly_chart(fig, width="stretch", config={"displayModeBar": False}, key=f"chart_{sid:02d}",
+                                on_select="rerun", selection_mode="points")
+        st.html(chart_footer_html(show_truth))
+        # 점을 누르면 그 점이 속한 사건을 고른다. 새로 누른 점일 때만 반영해서, 드롭다운으로 바꾼 선택을 덮지 않는다
+        x = ui_steps.selected_x(state)
+        if x != st.session_state.get(seen_key):
+            st.session_state[seen_key] = x
+            if x is not None:
+                idx = ui_steps.event_index_at(events, x)
+                st.session_state[pick_key] = ui_steps.NO_PICK if idx is None else idx
+                st.session_state[out_key] = x if idx is None else None
+        picked = None
+        if events:  # 터치 화면에서 점 누르기가 안 될 때를 위한 대체 수단
+            choice = st.selectbox("사건 선택 — 관리도의 점을 눌러도 됩니다 (휴대폰은 여기서 고르세요)",
+                                  [ui_steps.NO_PICK] + list(range(len(events))), key=pick_key,
+                                  format_func=lambda i: ui_steps.event_option(events, i),
+                                  on_change=lambda: st.session_state.update({out_key: None}))
+            picked = None if choice == ui_steps.NO_PICK else choice
+        note = ui_steps.pick_note_html(events, picked, st.session_state.get(out_key))
+        if note:
+            st.html(note)
+    with st.container(key="rule_card"):
+        st.html(ui_steps.rule_card_html(events, values, selected=picked))
+
+    st.html(ui_html.section_html("03 AI 설명", "규칙 판정 결과를 받아 AI가 설명합니다",
+                                 "AI는 새로운 판정을 만들지 않습니다 · 규칙이 넘긴 구간·규칙 번호만 해설합니다", anchor="spc-ai"))
+    with st.container(key="ai_card"):
+        if events:
+            ai = render_ai_card(sid, values, events, None if picked is None else f"E{picked + 1}")
+        else:
+```
+
+Modify `streamlit_app.py` — 찾을 코드:
+
+```python
+        with st.container(key="check_card"):
+            render_checklist(f"s{sid:02d}", series_label(s), events, values, None, ai)
+
+```
+
+바꿀 코드:
+
+```python
+        with st.container(key="check_card"):
+            render_checklist(f"s{sid:02d}", series_label(s), events, values, None, ai, picked)
+
+```
+
+- [ ] **Step 4: 통과 확인**
+
+Run: `.venv/Scripts/python -m pytest tests/test_ui_steps.py tests/test_app.py -v`
+Expected: 22 passed
+
+Run: `.venv/Scripts/python -m pytest -q`
+Expected: 108 passed
+
+- [ ] **Step 5: 화면 확인**
+
+데스크톱에서 시리즈 11의 #52 점을 실제로 누른다 (`PT="document.querySelectorAll('.st-key-chart_card .js-plotly-plot .scatterlayer .trace')[0].querySelectorAll('path.point')"`, 동작 `"!click52:${PT}[52]"`). 캡처: 관리도 카드, 규칙 판정 카드, AI 카드, 체크리스트 카드. 이어서 #63(사건 밖)을 누르고 관리도 카드를 다시 캡처한다. 마지막으로 안내의 "설명으로 이동 ↓"를 눌러 `#spc-ai`의 화면 위치가 약 64px로 바뀌는지 `eval` 단계로 확인한다.
+볼 것: 선택 상자 "E2 · ■ 치우침 #48–59", 안내 상자와 링크, 규칙 판정 표 둘째 줄 강조, 03 점검 우선순위의 E2 줄 강조, 체크리스트에서 E2만 펼침, 나머지 점이 흐려지지 않음. #63은 "선택 안 함" + "이 점은 판정된 사건에 속하지 않습니다". 모바일: 선택 상자 배치.
+
+- [ ] **Step 6: 커밋**
+
+```bash
+git add spc_explainer/ui_steps.py spc_explainer/ui_html.py spc_explainer/charts.py streamlit_app.py tests/test_ui_steps.py tests/test_app.py
+git commit -m "feat: 관리도 점 클릭으로 사건 선택 → 규칙 표·AI 설명·체크리스트 강조 (터치용 드롭다운 병행)" -m "Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
+git push origin main
+```
+
+---
+
+### Task 18: 첫 방문 30초 가이드 (B4)
+
+**Files:**
+- Modify: `spc_explainer/ui_html.py`, `streamlit_app.py`, `tests/test_ui_html.py`, `tests/test_app.py`
+
+**Interfaces:**
+- Produces: `ui_html.guide_html(n_normal, n_anomalous) -> str` (3단계: 시리즈 고르기 → 판정 보기 → 설명·검증 보기), 앱 `guide(dataset)` — 정상·이상 시리즈 수는 데이터에서 센다. 카드 키 `guide_card`, 닫기 버튼 키 `guide_close`(콜백이 `st.session_state["guide_closed"] = True`)
+
+닫기 버튼은 `on_click` 콜백으로 상태를 먼저 바꿔, 누른 그 실행에서 바로 사라진다. 시리즈 개수를 글자로 박지 않고 데이터에서 센다(화면 숫자는 데이터에서만 — 계획 검토에서 잡음). 버튼이 하나 늘어 기존 테스트의 `at.button[0]`(실시간 설명 버튼을 가리키던 것)은 `at.button(key="live_button")`으로 바꾼다.
+
+- [ ] **Step 1: 실패하는 테스트 작성**
+
+Modify `tests/test_app.py` — 찾을 코드:
+
+```python
+    assert not at.exception
+    assert at.button[0].proto.disabled
+
+```
+
+바꿀 코드:
+
+```python
+    assert not at.exception
+    assert at.button(key="live_button").proto.disabled
+
+```
+
+Modify `tests/test_app.py` — 찾을 코드:
+
+```python
+    at.selectbox[0].set_value(5).run()
+    at.button[0].click().run()
+    assert not at.exception
+```
+
+바꿀 코드:
+
+```python
+    at.selectbox[0].set_value(5).run()
+    at.button(key="live_button").click().run()
+    assert not at.exception
+```
+
+Modify `tests/test_app.py` — 찾을 코드:
+
+```python
+    assert any("#63 · 이 점은 판정된 사건에 속하지 않습니다." in b for b in pick_notes(at))
+
+```
+
+바꿀 코드:
+
+```python
+    assert any("#63 · 이 점은 판정된 사건에 속하지 않습니다." in b for b in pick_notes(at))
+
+
+def guide_shown(at) -> bool:
+    return any("30초 가이드" in e.proto.body for e in at.get("html"))
+
+
+def test_guide_closes_and_stays_closed_in_the_session():
+    at = run_app()
+    assert guide_shown(at)
+    series = json.loads(config.SERIES_PATH.read_text(encoding="utf-8"))["series"]
+    n_normal = sum(1 for s in series if not s["anomalies"])
+    assert any(f"정상 {n_normal}개와 이상을 심은 {len(series) - n_normal}개" in e.proto.body for e in at.get("html"))
+    at.button(key="guide_close").click().run()
+    assert not at.exception and not guide_shown(at)
+    at.selectbox[0].set_value(11).run()  # 다른 곳을 눌러 다시 그려도 닫힌 채로
+    assert not guide_shown(at)
+```
+
+Modify `tests/test_ui_html.py` — 찾을 코드:
+
+```python
+from spc_explainer.glossary import GLOSSARY
+from spc_explainer.ui_html import (CSS, PATTERN_COLORS, PROBLEM_HTML, RULE_ID, SYMBOL, esc, hero_html, limits_html,
+                                   section_html, span_text, term)
+
+```
+
+바꿀 코드:
+
+```python
+from spc_explainer.glossary import GLOSSARY
+from spc_explainer.ui_html import (CSS, PATTERN_COLORS, PROBLEM_HTML, RULE_ID, SYMBOL, esc, guide_html, hero_html,
+                                   limits_html, section_html, span_text, term)
+
+```
+
+Modify `tests/test_ui_html.py` — 찾을 코드:
+
+```python
+        term("없는 용어")
+
+```
+
+바꿀 코드:
+
+```python
+        term("없는 용어")
+
+
+def test_guide_has_three_steps_in_order():
+    steps = ["시리즈 고르기", "판정 보기", "설명·검증 보기"]
+    h = guide_html(5, 15)
+    assert "30초 가이드" in h and h.count("<li>") == 3 and "정상 5개와 이상을 심은 15개" in h
+    assert [h.index(s) for s in steps] == sorted(h.index(s) for s in steps)
+    assert "정상 2개와 이상을 심은 7개" in guide_html(2, 7)  # 숫자는 받은 값 그대로 (데이터에서 센 값)
+    assert ".st-key-guide_card" in CSS
+```
+
+- [ ] **Step 2: 실패 확인**
+
+Run: `.venv/Scripts/python -m pytest tests/test_ui_html.py -v`
+Expected: 수집 오류 `ImportError: cannot import name 'guide_html' from 'spc_explainer.ui_html'`
+
+Run: `.venv/Scripts/python -m pytest tests/test_app.py -v`
+Expected: 1 failed, 11 passed — `test_guide_closes_and_stays_closed_in_the_session`
+
+- [ ] **Step 3: 구현**
+
+Modify `spc_explainer/ui_html.py` — 찾을 코드:
+
+```python
+
+PROBLEM_HTML = section_html("01 문제 상황", "엔지니어는 관리도를 보고, 경험으로 우선순위를 정한다") + (
+```
+
+바꿀 코드:
+
+```python
+
+def guide_html(n_normal: int, n_anomalous: int) -> str:
+    """첫 방문 30초 가이드 (3단계). 시리즈 개수는 데이터에서 센 값을 받는다."""
+    return (
+        '<div class="spc-guide"><b>처음이라면 30초 가이드</b><ol>'
+        f"<li><b>시리즈 고르기</b> — 02 규칙 판정에서 시리즈를 고릅니다. 정상 {n_normal}개와 이상을 심은 "
+        f"{n_anomalous}개가 있습니다.</li>"
+        "<li><b>판정 보기</b> — 관리도의 색 음영과 아래 표가 규칙 엔진의 확정 판정입니다. 점을 누르면 그 사건을 고릅니다.</li>"
+        "<li><b>설명·검증 보기</b> — 03에서 AI 설명과 “지금 확인할 것”을, 04에서 AI가 직접 판정했을 때와의 비교를 봅니다.</li>"
+        "</ol></div>"
+    )
+
+PROBLEM_HTML = section_html("01 문제 상황", "엔지니어는 관리도를 보고, 경험으로 우선순위를 정한다") + (
+```
+
+Modify `spc_explainer/ui_html.py` — 찾을 코드:
+
+```python
+.st-key-notes_card li, .st-key-notes_card p { font-size: 13.5px !important; line-height: 1.6 !important; }
+.st-key-ai_body, .st-key-ai_warn, .st-key-ai_runs { padding: 10px 18px !important; }
+```
+
+바꿀 코드:
+
+```python
+.st-key-notes_card li, .st-key-notes_card p { font-size: 13.5px !important; line-height: 1.6 !important; }
+.st-key-guide_card {
+  background: #f7fbfe !important; border: 1px solid #92c4ee !important; border-radius: 4px !important;
+  padding: 14px 18px !important; gap: 6px !important;
+}
+.spc-guide b { font-size: 15px; }
+.spc-guide ol { margin: 6px 0 0; padding-left: 20px; display: flex; flex-direction: column; gap: 4px; }
+.spc-guide li { font-size: 14px; line-height: 1.55; color: #3b424a; }
+.spc-guide li b { font-size: 14px; color: #16191d; }
+.st-key-ai_body, .st-key-ai_warn, .st-key-ai_runs { padding: 10px 18px !important; }
+```
+
+Modify `streamlit_app.py` — 찾을 코드:
+
+```python
+
+
+@st.fragment
+def series_sections(dataset: dict) -> None:
+```
+
+바꿀 코드:
+
+```python
+
+
+def close_guide() -> None:
+    st.session_state["guide_closed"] = True
+
+
+def guide(dataset: dict) -> None:
+    """첫 방문 30초 가이드. 닫으면 이 세션 동안 다시 보이지 않는다 (콜백이 먼저 돌아 닫은 실행에서 바로 사라진다)."""
+    if st.session_state.get("guide_closed"):
+        return
+    n_normal = sum(1 for s in dataset["series"] if not s["anomalies"])
+    with st.container(key="guide_card"):
+        st.html(ui_html.guide_html(n_normal, len(dataset["series"]) - n_normal))
+        st.button("가이드 닫기", key="guide_close", on_click=close_guide)
+
+
+@st.fragment
+def series_sections(dataset: dict) -> None:
+```
+
+Modify `streamlit_app.py` — 찾을 코드:
+
+```python
+st.html(ui_html.hero_html(dataset["center"], dataset["ucl"], dataset["lcl"], config.UNIT))
+st.html(ui_html.PROBLEM_HTML)
+```
+
+바꿀 코드:
+
+```python
+st.html(ui_html.hero_html(dataset["center"], dataset["ucl"], dataset["lcl"], config.UNIT))
+guide(dataset)
+st.html(ui_html.PROBLEM_HTML)
+```
+
+- [ ] **Step 4: 통과 확인**
+
+Run: `.venv/Scripts/python -m pytest -q`
+Expected: 110 passed
+
+- [ ] **Step 5: 화면 확인**
+
+첫 화면의 가이드 카드를 데스크톱·모바일로 캡처하고, 데스크톱에서 "가이드 닫기"를 눌러 카드가 사라지는지 `eval`로 확인한다 (`document.querySelector('.st-key-guide_card') ? 'still shown' : 'closed'`).
+
+- [ ] **Step 6: 커밋**
+
+```bash
+git add spc_explainer/ui_html.py streamlit_app.py tests/test_ui_html.py tests/test_app.py
+git commit -m "feat: 첫 방문 30초 가이드 (닫으면 세션 동안 유지)" -m "Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
+git push origin main
+```
+
+---
+
+### Task 19: "오탐이에요" 피드백 (B5)
+
+**Files:**
+- Create: `spc_explainer/feedback.py`, `tests/test_feedback.py`
+- Modify: `streamlit_app.py`, `spc_explainer/ui_html.py`, `tests/test_app.py`
+
+**Interfaces:**
+- Produces:
+  - `feedback.DEMO_NOTE` = "시연용: 실제 운영에서는 이 피드백으로 규칙·원인표를 개선한다"
+  - `feedback.is_flagged(entries, series, pattern, span) -> bool`, `feedback.toggle(entries, entry) -> list` (같은 시리즈·패턴·구간이면 취소), `feedback.to_csv(entries) -> str`(한국어 머리글), `feedback.table(entries) -> list[dict]`
+  - 앱: 세션 키 `feedback`(목록), 사건마다 버튼 키 `fb_<scope>_<사건 id>`(체크리스트 펼치기 안), 목록 카드 키 `feedback_card`, CSV 내려받기 키 `feedback_csv`(UTF-8 BOM, 엑셀에서 한글이 안 깨지게). `render_checklist(..., feedback_series=None)` — 값을 주면 버튼을 붙인다
+
+목록은 03 아래 한 곳(`feedback_card`)에 모은다. 06 업로드 사건의 버튼은 Task 20에서 붙인다(06은 다른 fragment라서, 06에서 누르면 앱 전체를 다시 그려 목록을 갱신한다). 외부 저장소는 쓰지 않는다. CSV 버튼은 개수가 아니라 키(`feedback_csv`)로 확인한다.
+
+- [ ] **Step 1: 실패하는 테스트 작성**
+
+Modify `tests/test_app.py` — 찾을 코드:
+
+```python
+    assert not guide_shown(at)
+```
+
+바꿀 코드:
+
+```python
+    assert not guide_shown(at)
+
+
+def test_false_alarm_feedback_is_kept_in_the_session():
+    at = run_app()
+    at.selectbox[0].set_value(11).run()
+    assert any("시연용: 실제 운영에서는 이 피드백으로 규칙·원인표를 개선한다" in e.proto.body for e in at.get("html"))
+    at.button(key="fb_s11_E1").click().run()
+    assert not at.exception
+    assert [(e["series"], e["event_id"], e["span"]) for e in at.session_state["feedback"]] == [("시리즈 11", "E1", "#45")]
+    assert at.button(key="fb_s11_E1").label == "오탐 표시 취소"
+    assert len(at.dataframe) == 1 and "feedback_csv" in download_keys(at)
+    at.button(key="fb_s11_E1").click().run()  # 다시 누르면 취소
+    assert at.session_state["feedback"] == []
+```
+
+Create `tests/test_feedback.py`:
+
+```python
+# 오탐 피드백: 세션 목록 넣고 빼기, CSV, 시연용 문구
+from spc_explainer.feedback import DEMO_NOTE, is_flagged, table, to_csv, toggle
+
+A = {"series": "시리즈 11", "event_id": "E1", "pattern": "급변", "span": "#45", "rule": "관리한계 밖 1점 (45번)",
+     "time": "2026-09-26 11:00:00"}
+B = dict(A, event_id="E2", pattern="치우침", span="#48–59", rule="12점 연속 중심선 위")
+
+
+def test_toggle_adds_then_removes_the_same_event():
+    entries = toggle(toggle([], A), B)
+    assert [e["event_id"] for e in entries] == ["E1", "E2"]
+    assert is_flagged(entries, "시리즈 11", "급변", "#45") and not is_flagged(entries, "시리즈 12", "급변", "#45")
+    assert toggle(entries, dict(A, time="나중")) == [B]  # 같은 사건을 다시 누르면 취소
+
+
+def test_csv_and_table_use_korean_headers():
+    text = to_csv([A, B])
+    assert text.splitlines()[0] == "시리즈,사건,패턴,구간,근거 규칙,표시 시각"
+    assert text.splitlines()[1] == "시리즈 11,E1,급변,#45,관리한계 밖 1점 (45번),2026-09-26 11:00:00"
+    assert table([A])[0]["구간"] == "#45" and to_csv([]).count("\n") == 1
+
+
+def test_demo_note_wording():
+    assert DEMO_NOTE == "시연용: 실제 운영에서는 이 피드백으로 규칙·원인표를 개선한다"
+```
+
+- [ ] **Step 2: 실패 확인**
+
+Run: `.venv/Scripts/python -m pytest tests/test_feedback.py -v`
+Expected: 수집 오류 `ModuleNotFoundError: No module named 'spc_explainer.feedback'`
+
+Run: `.venv/Scripts/python -m pytest tests/test_app.py -v`
+Expected: 1 failed, 12 passed — `test_false_alarm_feedback_is_kept_in_the_session`
+
+- [ ] **Step 3: 구현**
+
+Create `spc_explainer/feedback.py`:
+
+```python
+# "오탐이에요" 피드백: 이 세션 안에만 모은다 (외부 저장소에 쓰지 않는다). 시연용이다.
+import csv
+import io
+
+DEMO_NOTE = "시연용: 실제 운영에서는 이 피드백으로 규칙·원인표를 개선한다"
+COLUMNS = {"series": "시리즈", "event_id": "사건", "pattern": "패턴", "span": "구간", "rule": "근거 규칙",
+           "time": "표시 시각"}
+
+
+def _key(e: dict) -> tuple:
+    return e["series"], e["pattern"], e["span"]
+
+
+def is_flagged(entries: list[dict], series: str, pattern: str, span: str) -> bool:
+    return any(_key(e) == (series, pattern, span) for e in entries)
+
+
+def toggle(entries: list[dict], entry: dict) -> list[dict]:
+    """같은 사건(시리즈·패턴·구간)이 이미 있으면 뺀(취소) 목록, 없으면 더한 목록을 새로 만든다."""
+    if is_flagged(entries, *_key(entry)):
+        return [e for e in entries if _key(e) != _key(entry)]
+    return entries + [entry]
+
+
+def to_csv(entries: list[dict]) -> str:
+    """피드백 목록 CSV (머리글은 한국어)."""
+    buf = io.StringIO()
+    writer = csv.writer(buf, lineterminator="\n")
+    writer.writerow(COLUMNS.values())
+    for e in entries:
+        writer.writerow([e[k] for k in COLUMNS])
+    return buf.getvalue()
+
+
+def table(entries: list[dict]) -> list[dict]:
+    """화면 표용: 열 이름을 한국어로."""
+    return [{label: e[k] for k, label in COLUMNS.items()} for e in entries]
+```
+
+Modify `spc_explainer/ui_html.py` — 찾을 코드:
+
+```python
+.st-key-chart_card, .st-key-bars_card, .st-key-counts_card, .st-key-secom_card, .st-key-check_card,
+[class*="st-key-kpi_"] {
+```
+
+바꿀 코드:
+
+```python
+.st-key-chart_card, .st-key-bars_card, .st-key-counts_card, .st-key-secom_card, .st-key-check_card,
+.st-key-feedback_card,
+[class*="st-key-kpi_"] {
+```
+
+Modify `spc_explainer/ui_html.py` — 찾을 코드:
+
+```python
+.spc-prio-row.sel { background: #fff7e0; box-shadow: -8px 0 0 #fff7e0, -12px 0 0 #c5770f; }
+.spc-pick { font-size: 13px; color: #3b424a; background: #fff7e0; border: 1px solid #e3d9bd; border-radius: 4px;
+```
+
+바꿀 코드:
+
+```python
+.spc-prio-row.sel { background: #fff7e0; box-shadow: -8px 0 0 #fff7e0, -12px 0 0 #c5770f; }
+.spc-flag { font-size: 13px; font-weight: 600; color: #915200; }
+.spc-pick { font-size: 13px; color: #3b424a; background: #fff7e0; border: 1px solid #e3d9bd; border-radius: 4px;
+```
+
+Modify `streamlit_app.py` — 찾을 코드:
+
+```python
+
+from spc_explainer import checklist, config, explain, generator, llm_client, rules, secom
+from spc_explainer import ui_dashboard, ui_html, ui_steps
+```
+
+바꿀 코드:
+
+```python
+
+from spc_explainer import checklist, config, explain, feedback, generator, llm_client, rules, secom
+from spc_explainer import ui_dashboard, ui_html, ui_steps
+```
+
+Modify `streamlit_app.py` — 찾을 코드:
+
+```python
+
+def render_checklist(scope: str, title: str, events, values, limits: dict | None, ai: dict | None,
+                     picked: int | None = None) -> None:
+    """지금 확인할 것: 사건마다 원인표 항목 체크박스 + 교대 인수인계 메모(.md 내려받기·복사).
+    항목은 원인표에서만 온다. 검증을 통과한 AI 설명이 있으면 그 점검 순서를 앞에 둔다."""
+    order = checklist.ai_order(ai["data"], ai["inp"]) if ai and ai["ok"] else {}
+```
+
+바꿀 코드:
+
+```python
+
+def toggle_feedback(series: str, event_id: str, pattern: str, span: str, rule: str) -> None:
+    """'오탐이에요' 버튼: 누르면 세션 목록에 넣고, 다시 누르면 뺀다."""
+    entry = {"series": series, "event_id": event_id, "pattern": pattern, "span": span, "rule": rule,
+             "time": datetime.now().strftime("%Y-%m-%d %H:%M:%S")}
+    st.session_state["feedback"] = feedback.toggle(st.session_state.get("feedback", []), entry)
+
+
+def render_checklist(scope: str, title: str, events, values, limits: dict | None, ai: dict | None,
+                     picked: int | None = None, feedback_series: str | None = None) -> None:
+    """지금 확인할 것: 사건마다 원인표 항목 체크박스 + 교대 인수인계 메모(.md 내려받기·복사).
+    항목은 원인표에서만 온다. 검증을 통과한 AI 설명이 있으면 그 점검 순서를 앞에 둔다.
+    feedback_series를 주면 사건마다 '오탐이에요' 버튼을 붙인다."""
+    order = checklist.ai_order(ai["data"], ai["inp"]) if ai and ai["ok"] else {}
+```
+
+Modify `streamlit_app.py` — 찾을 코드:
+
+```python
+                    checked.add((card["event_id"], it["cause_id"]))
+    ai_meta = None
+```
+
+바꿀 코드:
+
+```python
+                    checked.add((card["event_id"], it["cause_id"]))
+            if feedback_series:
+                pattern, span = KOREAN[card["pattern"]], card["title"].rsplit(" ", 1)[-1]
+                flagged = feedback.is_flagged(st.session_state.get("feedback", []), feedback_series, pattern, span)
+                if flagged:
+                    st.html('<div class="spc-flag">✓ 오탐으로 표시했습니다 (이번 세션에만 저장)</div>')
+                st.button("오탐 표시 취소" if flagged else "오탐이에요", key=f"fb_{scope}_{card['event_id']}",
+                          help=feedback.DEMO_NOTE, on_click=toggle_feedback,
+                          args=(feedback_series, card["event_id"], pattern, span, card["rule"]))
+    ai_meta = None
+```
+
+Modify `streamlit_app.py` — 찾을 코드:
+
+```python
+        st.code(memo, language="markdown")
+
+```
+
+바꿀 코드:
+
+```python
+        st.code(memo, language="markdown")
+
+
+def render_feedback_list() -> None:
+    """이번 세션에 모은 '오탐이에요' 피드백 목록과 CSV 내려받기. 외부에 저장하지 않는다."""
+    entries = st.session_state.get("feedback", [])
+    st.html(f'<div class="spc-box-head"><b>오탐 피드백</b><span class="b-manual">시연용</span>'
+            f'<span class="spc-note">{ui_html.esc(feedback.DEMO_NOTE)} · 이번 세션에만 모으고 저장하지 않습니다.</span></div>')
+    if not entries:
+        st.caption("아직 없습니다. 위 사건 항목을 펼쳐 '오탐이에요'를 누르면 여기에 모입니다.")
+        return
+    st.dataframe(feedback.table(entries), hide_index=True, width="stretch")
+    st.download_button(f"피드백 {len(entries)}건 CSV 내려받기", feedback.to_csv(entries).encode("utf-8-sig"),
+                       file_name="spc_feedback.csv", mime="text/csv", on_click="ignore", key="feedback_csv")
+
+```
+
+Modify `streamlit_app.py` — 찾을 코드:
+
+```python
+        with st.container(key="check_card"):
+            render_checklist(f"s{sid:02d}", series_label(s), events, values, None, ai, picked)
+
+```
+
+바꿀 코드:
+
+```python
+        with st.container(key="check_card"):
+            render_checklist(f"s{sid:02d}", series_label(s), events, values, None, ai, picked,
+                             feedback_series=f"시리즈 {sid:02d}")
+    with st.container(key="feedback_card"):
+        render_feedback_list()
+
+```
+
+- [ ] **Step 4: 통과 확인**
+
+Run: `.venv/Scripts/python -m pytest -q`
+Expected: 114 passed
+
+- [ ] **Step 5: 화면 확인**
+
+데스크톱: 시리즈 11 → 체크리스트 첫 사건 펼치기 → `.st-key-fb_s11_E1 button` 누르기 → 체크리스트 카드와 `.st-key-feedback_card` 캡처. 모바일: 피드백 카드 배치.
+볼 것: "✓ 오탐으로 표시했습니다", 버튼이 "오탐 표시 취소"로 바뀜, 목록 표 1행(시리즈 11, E1, 급변, #45, 근거 규칙, 시각), "시연용" 배지와 문구, CSV 내려받기 버튼.
+
+- [ ] **Step 6: 커밋**
+
+```bash
+git add spc_explainer/feedback.py streamlit_app.py spc_explainer/ui_html.py tests/test_feedback.py tests/test_app.py
+git commit -m "feat: 사건별 '오탐이에요' 피드백 (세션 안에만, 목록·CSV, 시연용 표기)" -m "Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
+git push origin main
+```
+
+---
+
+### Task 20: 내 데이터 CSV 올리기·붙여넣기 판정 (B6)
+
+**Files:**
+- Create: `spc_explainer/upload.py`, `tests/test_upload.py`
+- Modify: `spc_explainer/explain.py`, `spc_explainer/rules.py`, `spc_explainer/ui_html.py`, `spc_explainer/ui_steps.py`, `spc_explainer/charts.py`, `streamlit_app.py`, `tests/test_explain.py`, `tests/test_ui_html.py`, `tests/test_ui_steps.py`, `tests/test_charts.py`, `tests/test_app.py`
+
+**Interfaces:**
+- Consumes: `rules.detect(values, center, ucl, lcl)`, `secom.phase1_limits/monitor`(Task 11), `checklist.*`(Task 15), `charts.control_chart(..., phase_boundary=...)`
+- Produces:
+  - `upload.MAX_ROWS = 2000`, `MIN_ROWS = 10`, `MIN_PHASE1 = 20`, `PHASE1_CAP = 100`, `upload.UploadError`(화면에 그대로 보여줄 한국어 메시지)
+  - `upload.decode(raw: bytes) -> str` (UTF-8 BOM → CP949 순), `upload.read_input(raw: bytes | None, pasted) -> str | None` (올린 파일이 비면 오류, 아무것도 없으면 None), `upload.parse(text) -> {"values", "times" | None, "name"}`, `upload.MAX_ABS_VALUE = 1e9`, `upload.MISSING_TOKENS`
+  - `rules.SPIKE_LISTED = 5` — 급변 사건이 이보다 길면 `describe`는 앞 3개 값 + "외 N점", `explain.build_input`은 값 5개 + `n_points`·`min`·`max`만 넣는다 (가상 데이터 급변은 1~2점이라 저장된 실험 입력은 글자까지 그대로)
+  - `upload.default_phase1(n) -> int` = max(20, min(100, n // 2))
+  - `upload.judge_estimated(values, phase1_n) -> {"mode": "estimated", "limits": {center, sigma, ucl, lcl}, "events", "phase1_n"}`, `upload.judge_fixed(values, center, ucl, lcl) -> {"mode": "fixed", ...}`
+  - `upload.example_csv(values) -> str` (머리글 `시점,막두께_nm`, 30분 간격)
+  - `explain.build_input(values, events, limits=None)` — 한계를 받는다. 없으면 설정값이며 저장된 실험 입력과 글자까지 같다(캐시가 깨지지 않음)
+  - `ui_html.UPLOAD_NOTE_HTML`, `ui_html.error_html(message)`, `ui_steps.upload_limits_html(result)`, `limits_html`의 섹션 번호 07
+  - 앱: `live_quota() -> (키 있음, 남은 횟수, 안내)`, `spend_live_call()` — 03과 06이 같은 한도를 쓴다. 06에서 부른 뒤에도 앱 전체를 다시 그려 03의 남은 횟수가 맞게 보인다.
+  - 06 사건에도 "오탐이에요"(키 `fb_up_<사건 id>`, 시리즈 이름 `내 데이터 (<행 수>점)`). `render_checklist(..., feedback_refresh_all=True)` → 콜백이 `feedback_refresh`를 세우고, 06 fragment가 끝에서 앱 전체를 다시 그려 03의 목록을 갱신한다
+  - 06 위젯·요소 키 추가: 예시 CSV 버튼 `up_example`, AI 영역 `up_ai_foot`·`up_ai_msg` `upload_section(dataset)` fragment, `render_upload_ai(values, events, limits)`. 위젯 키 `up_file`, `up_text`, `up_mode`, `up_n_<행 수>`, `up_cl`/`up_ucl`/`up_lcl`, `up_live_button`, 카드 키 `upload_card`, `up_rule_card`, `up_ai_card`, `up_check_card`
+
+입력: 열 1개(막 두께) 또는 2개(앞은 시점). 첫 줄의 막 두께 칸이 숫자가 아니면 머리글. 끝의 빈 줄만 무시하고, 중간의 빈 줄·빈 칸은 결측으로 거절한다. `nan`·`inf`도 숫자가 아닌 값으로 거절한다. 오류 문장에는 몇째 줄인지 넣고, 화면에는 이스케이프한 상자(`error_html`)로 보인다. 앞 N점 기본값은 행 수의 절반과 100 중 작은 값(최소 20)이며, 추정 방식은 30행(추정 20 + 감시 10) 이상일 때만 쓴다. 섹션 번호는 06 내 데이터, 07 한계. 추정 모드에서 경계에서 시작하는 사건의 음영 라벨과 "Phase I | Phase II" 글자가 겹쳐서, Phase 글자를 그림 아래쪽 안(흰 배경)으로 옮긴다.
+
+계획 검토(워크플로, 반박 검증 통과분)에서 더한 것: 빈 파일·BOM만 있는 파일을 올리면 대기 안내가 아니라 오류. NUL 문자·CSV 모듈 오류(한 칸 13만 자 초과 등)·닫히지 않은 따옴표는 예외 대신 오류 문장(따옴표는 줄 끝을 붙여 csv에 넘겨 알아챈다). 1행의 빈 칸·`nan`·`#N/A` 같은 결측 표시는 머리글로 삼지 않고 오류. 절댓값 10억 초과 값은 오류(통계 계산이 넘쳐 예외가 나던 것), 추정 σ가 무한이면 오류. 붙여넣기 칸 20만 자 제한. 한계 밖 점이 길게 이어지는 데이터에서 규칙 문장·LLM 입력에 원시값이 수천 개 들어가던 것을 요약(`SPIKE_LISTED`). 작은 단위 데이터(0.5 부근 등)에 y축 눈금이 사라지던 것 → 정수 눈금 고정은 범위 3~14일 때만.
+
+- [ ] **Step 1: 실패하는 테스트 작성**
+
+Modify `tests/test_app.py` — 찾을 코드:
+
+```python
+    assert at.session_state["feedback"] == []
+```
+
+바꿀 코드:
+
+```python
+    assert at.session_state["feedback"] == []
+
+
+def upload_texts(at) -> list[str]:
+    return [e.proto.body for e in at.get("html")]
+
+
+def test_upload_paste_judges_with_the_same_rules():
+    # 가상 시리즈 11을 예시 CSV로 붙여넣고 한계를 직접 입력하면 02와 같은 3건
+    from spc_explainer.upload import example_csv
+    at = run_app()
+    series = json.loads(config.SERIES_PATH.read_text(encoding="utf-8"))["series"]
+    at.text_area(key="up_text").set_value(example_csv(series[11]["values"])).run()
+    assert not at.exception
+    assert any("관리도 · 내 데이터 (막두께_nm, 100점" in b for b in upload_texts(at))
+    assert any("OpenAI로 전송" in b for b in upload_texts(at)) and "up_example" in download_keys(at)
+    assert any("앞 50점으로 추정한 한계" in b for b in upload_texts(at))  # 기본: 앞 N점 추정 (100행 → N=50)
+    at.radio(key="up_mode").set_value("직접 입력").run()
+    assert not at.exception
+    assert any("직접 입력한 한계" in b for b in upload_texts(at))
+    up = [b for b in upload_texts(at) if "규칙 판정 결과" in b and "#76–81" in b]
+    assert len(up) == 1 and "3건 감지" in up[0] and "#45" in up[0] and "#48–59" in up[0]
+    assert at.button(key="up_live_button").label
+    assert any((c.key or "").startswith("chk_up_") for c in at.checkbox)
+
+
+def test_upload_rejects_bad_input_with_a_clear_message():
+    at = run_app()
+    at.text_area(key="up_text").set_value("100.1\nabc\n" + "\n".join(["100"] * 10)).run()
+    assert not at.exception
+    assert any("2행: 막 두께 값 &#x27;abc&#x27;이(가) 숫자가 아닙니다." in b for b in upload_texts(at))
+    at.text_area(key="up_text").set_value("\n".join(["100.0"] * 25)).run()  # 추정에는 30행이 필요
+    assert any("30행 이상 필요합니다" in b for b in upload_texts(at))
+
+
+def test_upload_live_call_shares_the_quota_and_refreshes(monkeypatch):
+    # 06에서 AI 설명을 받으면 03과 같은 세션 한도를 쓰고, 앱 전체를 다시 그려 03의 남은 횟수도 맞게 보인다
+    from spc_explainer.upload import example_csv
+    monkeypatch.setattr(llm_client, "get_api_key", lambda: "test-key")
+    monkeypatch.setattr(llm_client, "call_json",
+                        lambda model, system, user: llm_client.LLMReply(None, "가짜 호출 오류", 0.1, None))
+    at = run_app()
+    at.selectbox[0].set_value(5).run()
+    series = json.loads(config.SERIES_PATH.read_text(encoding="utf-8"))["series"]
+    at.text_area(key="up_text").set_value(example_csv(series[11]["values"])).run()
+    at.radio(key="up_mode").set_value("직접 입력").run()
+    at.button(key="up_live_button").click().run()
+    assert not at.exception
+    assert at.session_state["live_used"] == 1
+    assert any("가짜 호출 오류" in m.value for m in at.error)
+    assert any(f"남은 횟수 {config.LIVE_CALLS_PER_SESSION - 1}/" in e.proto.body for e in at.get("html")
+               if "spc-status" in e.proto.body and "저장된 설명" in e.proto.body)  # 03의 안내도 갱신됨
+
+
+def test_upload_events_also_take_false_alarm_feedback():
+    # 06 사건에도 '오탐이에요'. 목록은 03 한 곳에 모이고, 06에서 눌러도 앱 전체를 다시 그려 바로 보인다
+    from spc_explainer.upload import example_csv
+    at = run_app()
+    series = json.loads(config.SERIES_PATH.read_text(encoding="utf-8"))["series"]
+    at.text_area(key="up_text").set_value(example_csv(series[11]["values"])).run()
+    at.radio(key="up_mode").set_value("직접 입력").run()
+    at.button(key="fb_up_E1").click().run()
+    assert not at.exception
+    assert [(e["series"], e["span"]) for e in at.session_state["feedback"]] == [("내 데이터 (100점)", "#45")]
+    assert len(at.dataframe) == 1 and "feedback_csv" in download_keys(at)
+
+```
+
+Modify `tests/test_charts.py` — 찾을 코드:
+
+```python
+    assert tips == {"UCL 103": GLOSSARY["UCL"], "CL 100": GLOSSARY["중심선"], "LCL 97": GLOSSARY["LCL"]}
+
+```
+
+바꿀 코드:
+
+```python
+    assert tips == {"UCL 103": GLOSSARY["UCL"], "CL 100": GLOSSARY["중심선"], "LCL 97": GLOSSARY["LCL"]}
+
+
+
+def test_phase_label_sits_at_the_bottom_so_band_labels_stay_readable():
+    # 경계(#50)에서 시작하는 사건의 음영 라벨은 위, Phase 글자는 아래 → 겹치지 않는다
+    fig = control_chart(VALUES, [Event("shift", 50, 59, "up")], 100, 103, 97, phase_boundary=50, show_legend=False)
+    phase = [a for a in fig.layout.annotations if a.text == "Phase I | Phase II"][0]
+    band = [a for a in fig.layout.annotations if "치우침" in a.text][0]
+    assert (phase.y, phase.yanchor) == (0, "bottom") and (band.y, band.yanchor) == (1, "bottom")
+
+
+def test_small_scale_data_keeps_y_tick_labels():
+    # 06에 올린 작은 단위 데이터(0.500~0.506)도 눈금이 보여야 한다 (정수 눈금 고정은 범위가 3~14일 때만)
+    vals = [0.500 + (i % 7) * 0.001 for i in range(60)]
+    fig = control_chart(vals, [], 0.503, 0.506, 0.500)
+    assert fig.layout.yaxis.dtick is None
+    assert control_chart(VALUES, EVENTS, 100, 103, 97).layout.yaxis.dtick == 1
+```
+
+Modify `tests/test_explain.py` — 찾을 코드:
+
+```python
+    assert signature(None) is None
+```
+
+바꿀 코드:
+
+```python
+    assert signature(None) is None
+
+
+def test_build_input_uses_given_limits_and_keeps_default_identical():
+    from spc_explainer import config
+    values = [100.0] * 20
+    values[5] = 104.0
+    events = [Event("spike", 5, 5, "up")]
+    assert build_input(values, events) == build_input(values, events, {"center": config.CENTER, "ucl": config.UCL,
+                                                                        "lcl": config.LCL})
+    custom = build_input(values, events, {"center": 101.0, "ucl": 103.5, "lcl": 98.5})
+    assert custom["process"]["target"] == 101.0 and custom["process"]["ucl"] == 103.5
+    assert "UCL 103.5nm 초과" in custom["events"][0]["rule"]
+
+
+def test_saved_experiment_inputs_are_unchanged():
+    # 급변 요약(6점 이상)을 넣어도 저장된 실험 입력과 글자까지 같아야 캐시가 깨지지 않는다
+    from spc_explainer import config, rules
+    saved = json.loads(config.EXPLANATIONS_PATH.read_text(encoding="utf-8"))["series"]
+    series = json.loads(config.SERIES_PATH.read_text(encoding="utf-8"))["series"]
+    for sid, entry in saved.items():
+        values = series[int(sid)]["values"]
+        assert build_input(values, rules.detect(values)) == entry["input"], sid
+```
+
+Modify `tests/test_ui_html.py` — 찾을 코드:
+
+```python
+from spc_explainer.glossary import GLOSSARY
+from spc_explainer.ui_html import (CSS, PATTERN_COLORS, PROBLEM_HTML, RULE_ID, SYMBOL, esc, guide_html, hero_html,
+                                   limits_html, section_html, span_text, term)
+
+```
+
+바꿀 코드:
+
+```python
+from spc_explainer.glossary import GLOSSARY
+from spc_explainer.ui_html import (CSS, PATTERN_COLORS, PROBLEM_HTML, RULE_ID, SYMBOL, UPLOAD_NOTE_HTML, error_html,
+                                   esc, guide_html, hero_html, limits_html, section_html, span_text, term)
+
+```
+
+Modify `tests/test_ui_html.py` — 찾을 코드:
+
+```python
+    h = limits_html(METRICS)
+    assert "06 한계" in h and "가상 데이터" in h and "교과서 수준" in h
+    assert "가상 시리즈 20개 · 심은 이상 21건" in h and "2026-09-25T23:48:41" in h
+```
+
+바꿀 코드:
+
+```python
+    h = limits_html(METRICS)
+    assert "07 한계" in h and "가상 데이터" in h and "교과서 수준" in h and "04 검증 수치에 섞지 않습니다" in h
+    assert "가상 시리즈 20개 · 심은 이상 21건" in h and "2026-09-25T23:48:41" in h
+```
+
+Modify `tests/test_ui_html.py` — 찾을 코드:
+
+```python
+    assert ".st-key-guide_card" in CSS
+```
+
+바꿀 코드:
+
+```python
+    assert ".st-key-guide_card" in CSS
+
+
+def test_upload_note_and_error_box():
+    assert "저장하지 않고" in UPLOAD_NOTE_HTML and "OpenAI로 전송" in UPLOAD_NOTE_HTML
+    assert error_html("3행: 값 '<b>'") == '<div class="spc-err">⚠ 3행: 값 &#x27;&lt;b&gt;&#x27;</div>'
+    assert 'id="spc-ai"' in section_html("03", "t", anchor="spc-ai")
+```
+
+Modify `tests/test_ui_steps.py` — 찾을 코드:
+
+```python
+from spc_explainer.ui_steps import (ai_body_html, ai_head_html, event_index_at, event_option, issues_html,
+                                    pick_note_html, priority_items, rule_card_html, run_line_html, selected_x)
+
+```
+
+바꿀 코드:
+
+```python
+from spc_explainer.ui_steps import (ai_body_html, ai_head_html, event_index_at, event_option, issues_html,
+                                    pick_note_html, priority_items, rule_card_html, run_line_html, selected_x,
+                                    upload_limits_html)
+
+```
+
+Modify `tests/test_ui_steps.py` — 찾을 코드:
+
+```python
+    assert "spc-prio-row sel" not in ai_body_html(DATA, INP)
+
+```
+
+바꿀 코드:
+
+```python
+    assert "spc-prio-row sel" not in ai_body_html(DATA, INP)
+
+
+def test_rule_card_uses_given_limits():
+    h = rule_card_html([Event("spike", 3, 3, "up")], [10.0, 10.0, 10.0, 20.0], limits={"ucl": 15.0, "lcl": 5.0})
+    assert "UCL 15nm 초과" in h
+
+
+def test_upload_limits_line():
+    est = {"mode": "estimated", "phase1_n": 50, "limits": {"center": 0.5, "ucl": 3.16, "lcl": -2.16, "sigma": 0.8865}}
+    assert "앞 50점으로 추정한 한계 · CL 0.5 · UCL 3.16 · LCL -2.16 · σ 0.8865" in upload_limits_html(est)
+    assert "50번 점부터 (Phase II)" in upload_limits_html(est)
+    fixed = {"mode": "fixed", "phase1_n": None, "limits": {"center": 100, "ucl": 103, "lcl": 97}}
+    assert "직접 입력한 한계 · CL 100 · UCL 103 · LCL 97 · 모든 점을 판정" in upload_limits_html(fixed)
+```
+
+Create `tests/test_upload.py`:
+
+```python
+# 내 데이터 판정: 입력 검사(결측·문자·행 수·열 수·인코딩), 한계 추정·직접 입력, 가상 시리즈를 CSV로 넣었을 때 같은 판정
+import json
+
+import pytest
+
+from spc_explainer import config, rules
+from spc_explainer.upload import (MAX_ROWS, UploadError, decode, default_phase1, example_csv, judge_estimated,
+                                  judge_fixed, parse, read_input)
+
+SERIES = json.loads(config.SERIES_PATH.read_text(encoding="utf-8"))["series"]
+
+
+def numbers(n: int, start: float = 100.0) -> str:
+    return "\n".join(f"{start + (i % 5) * 0.3:.2f}" for i in range(n))
+
+
+def test_normal_csv_with_header_and_time_column():
+    text = "시점,막두께_nm\n" + "\n".join(f"2026-09-01 {8 + i // 60:02d}:{i % 60:02d},{100 + i * 0.01:.2f}" for i in range(12))
+    p = parse(text + "\n\n")  # 끝의 빈 줄은 무시
+    assert p["name"] == "막두께_nm" and len(p["values"]) == 12 and p["values"][1] == 100.01
+    assert p["times"][0] == "2026-09-01 08:00"
+
+
+def test_single_column_without_header_and_tab_or_semicolon_paste():
+    assert parse(numbers(10))["name"] == "막 두께" and parse(numbers(10))["times"] is None
+    assert len(parse("\n".join(f"t{i}\t{100 + i}" for i in range(10)))["values"]) == 10  # 엑셀 복사(탭)
+    assert len(parse("\n".join(f"t{i};{100 + i}" for i in range(10)))["values"]) == 10
+
+
+def test_missing_value_is_rejected_with_line_number():
+    lines = numbers(12).split("\n")
+    lines[3] = ""
+    with pytest.raises(UploadError, match="4행이 비어 있습니다"):
+        parse("\n".join(lines))
+    with pytest.raises(UploadError, match="3행: 막 두께 값이 비어 있습니다"):
+        parse("t,v\nt1,100\nt2,\n" + "\n".join(f"t{i},100" for i in range(10)))
+
+
+def test_text_value_is_rejected():
+    lines = numbers(12).split("\n")
+    lines[5] = "10O.2"  # 숫자 0 대신 영문 O
+    with pytest.raises(UploadError, match="6행: 막 두께 값 '10O.2'이\\(가\\) 숫자가 아닙니다"):
+        parse("\n".join(lines))
+    with pytest.raises(UploadError, match="숫자가 아닙니다"):
+        parse(numbers(12) + "\nnan")
+
+
+def test_row_limits_empty_file_and_column_count():
+    with pytest.raises(UploadError, match=f"최대 {MAX_ROWS:,}행"):
+        parse(numbers(MAX_ROWS + 1))
+    assert len(parse(numbers(MAX_ROWS))["values"]) == MAX_ROWS
+    with pytest.raises(UploadError, match="10행 이상"):
+        parse(numbers(9))
+    with pytest.raises(UploadError, match="비어 있습니다"):
+        parse(" \n\n")
+    with pytest.raises(UploadError, match="열이 3개"):
+        parse("a,b,c\n1,2,3")
+    with pytest.raises(UploadError, match="2행의 열이 1개"):
+        parse("t,v\n100\n" + "\n".join(f"t{i},100" for i in range(10)))
+
+
+def test_decode_accepts_utf8_and_cp949():
+    assert decode("시점,값\n".encode("utf-8-sig")) == "시점,값\n"
+    assert decode("시점,값\n".encode("cp949")) == "시점,값\n"
+    with pytest.raises(UploadError, match="인코딩"):
+        decode(b"\xff\xfe\xfa\x80\x81")
+
+
+def test_estimated_limits_use_the_first_n_points():
+    assert default_phase1(30) == 20 and default_phase1(120) == 60 and default_phase1(2000) == 100
+    values = [0.0, 1.0] * 25 + [10.0] + [0.5] * 9  # 앞 50점으로 추정 → 50번 점이 급변
+    r = judge_estimated(values, 50)
+    assert r["mode"] == "estimated" and r["phase1_n"] == 50 and abs(r["limits"]["sigma"] - 1 / 1.128) < 1e-9
+    assert r["events"][0].pattern == "spike" and r["events"][0].start == 50
+    assert all(e.start >= 50 for e in r["events"])
+    with pytest.raises(UploadError, match="30행 이상"):
+        judge_estimated(values[:29], 20)
+    with pytest.raises(UploadError, match="모두 같아"):
+        judge_estimated([5.0] * 40, 20)
+    with pytest.raises(UploadError, match="20~50"):
+        judge_estimated(values, 55)
+
+
+def test_fixed_limits_are_checked():
+    r = judge_fixed([100.0] * 9 + [104.0], 100, 103, 97)
+    assert r["mode"] == "fixed" and r["phase1_n"] is None and [(e.pattern, e.start) for e in r["events"]] == [("spike", 9)]
+    with pytest.raises(UploadError, match="LCL < 중심선"):
+        judge_fixed([100.0] * 10, 100, 97, 103)
+
+
+def test_synthetic_series_as_csv_gives_the_same_judgement():
+    for s in (SERIES[11], SERIES[14], SERIES[0]):
+        p = parse(example_csv(s["values"]))
+        assert p["values"] == s["values"] and p["name"] == "막두께_nm" and p["times"][1] == "2026-09-01 08:30"
+        assert judge_fixed(p["values"], config.CENTER, config.UCL, config.LCL)["events"] == rules.detect(s["values"])
+
+
+def test_empty_uploaded_file_is_an_error_but_empty_paste_is_idle():
+    for raw in (b"", b"\xef\xbb\xbf", b"\r\n\r\n"):  # 빈 파일, BOM만 있는 파일(엑셀 빈 시트), 빈 줄뿐
+        with pytest.raises(UploadError, match="올린 파일이 비어 있습니다"):
+            read_input(raw, "")
+    assert read_input(None, "  \n") is None  # 아무것도 안 넣음 → 기다림
+    assert read_input(None, "100\n") == "100\n" and read_input("100\n".encode(), "999") == "100\n"  # 파일이 먼저
+
+
+def test_broken_csv_text_is_rejected_not_crashing():
+    with pytest.raises(UploadError, match="NUL"):
+        parse("100\x00.1\n" + numbers(12))
+    with pytest.raises(UploadError, match="CSV 형식을 읽을 수 없습니다"):
+        parse("1" * 140_000 + "\n" + numbers(12))  # 한 칸이 csv 모듈 한도(131072자)를 넘음
+    with pytest.raises(UploadError, match="따옴표"):
+        parse('t,v\n"t1,100\n' + "\n".join(f"t{i},100" for i in range(12)))
+
+
+def test_missing_or_nan_first_row_is_not_taken_as_header():
+    with pytest.raises(UploadError, match="1행: 막 두께 값이 비어 있습니다"):
+        parse("t0,\n" + "\n".join(f"t{i},100" for i in range(1, 20)))
+    for token in ("NaN", "inf", "#N/A", "n/a"):
+        with pytest.raises(UploadError, match="1행: 막 두께 값"):
+            parse(token + "\n" + numbers(20))
+
+
+def test_absurdly_large_values_are_rejected():
+    with pytest.raises(UploadError, match="3행: 막 두께 값 '1e300'이\\(가\\) 너무 큽니다"):
+        parse("100\n101\n1e300\n" + numbers(12))
+
+
+def test_long_spike_run_is_summarized():
+    # 추정 한계 뒤로 공정이 크게 옮겨 가면 한계 밖 점이 수백 개 이어진다 → 규칙 문장과 LLM 입력은 요약만
+    from spc_explainer.explain import build_input, build_messages
+    values = [100.0 + (i % 7 - 3) * 0.2 for i in range(100)] + [110.0 + (i % 5) * 0.1 for i in range(1500)]
+    r = judge_estimated(values, 100)
+    spike = [e for e in r["events"] if e.pattern == "spike"][0]
+    assert spike.end - spike.start + 1 == 1500
+    rule = rules.describe(spike, values, r["limits"]["ucl"], r["limits"]["lcl"])
+    assert len(rule) < 160 and "외 1497점" in rule
+    inp = build_input(values, r["events"], r["limits"])
+    item = [e for e in inp["events"] if e["pattern"] == "급변"][0]
+    assert len(item["values"]) == 5 and item["n_points"] == 1500 and item["max"] >= item["min"]
+    assert len(build_messages(inp)[1]) < 4000
+```
+
+- [ ] **Step 2: 실패 확인**
+
+Run: `.venv/Scripts/python -m pytest tests/test_upload.py tests/test_ui_html.py tests/test_ui_steps.py -v`
+Expected: 수집 오류 — `ModuleNotFoundError: No module named 'spc_explainer.upload'`, `ImportError: cannot import name 'UPLOAD_NOTE_HTML'`, `ImportError: cannot import name 'upload_limits_html'`
+
+Run: `.venv/Scripts/python -m pytest tests/test_explain.py tests/test_charts.py -v`
+Expected: 3 failed — `test_build_input_uses_given_limits_and_keeps_default_identical`, `test_phase_label_sits_at_the_bottom_so_band_labels_stay_readable`, `test_small_scale_data_keeps_y_tick_labels` (`test_saved_experiment_inputs_are_unchanged`는 지금도 통과 — 구현 뒤에도 통과해야 하는 조건)
+
+Run: `.venv/Scripts/python -m pytest tests/test_app.py -v`
+Expected: 4 failed, 13 passed — `test_upload_paste_judges_with_the_same_rules`, `test_upload_rejects_bad_input_with_a_clear_message`, `test_upload_live_call_shares_the_quota_and_refreshes`, `test_upload_events_also_take_false_alarm_feedback`
+
+- [ ] **Step 3: 구현**
+
+Modify `spc_explainer/charts.py` — 찾을 코드:
+
+```python
+        fig.add_vline(x=phase_boundary - 0.5, line={"color": "#555555", "dash": "dot"})
+        fig.add_annotation(x=phase_boundary - 0.5, y=1, xref="x", yref="paper", yanchor="bottom",
+                           text="Phase I | Phase II", showarrow=False, font={"size": 11, "color": "#3b424a"})
+    # 축: 값 범위가 좁으면 y는 정수 눈금, x는 10 간격. 눈금 글꼴은 모노
+```
+
+바꿀 코드:
+
+```python
+        fig.add_vline(x=phase_boundary - 0.5, line={"color": "#555555", "dash": "dot"})
+        # 그림 아래쪽 안에 둔다 (위쪽은 경계에서 시작하는 사건의 음영 라벨과 겹친다)
+        fig.add_annotation(x=phase_boundary - 0.5, y=0, xref="x", yref="paper", yanchor="bottom", yshift=4,
+                           text="Phase I | Phase II", showarrow=False, bgcolor="rgba(255,255,255,0.85)",
+                           font={"size": 11, "color": "#3b424a"})
+    # 축: 값 범위가 좁으면 y는 정수 눈금, x는 10 간격. 눈금 글꼴은 모노
+```
+
+Modify `spc_explainer/charts.py` — 찾을 코드:
+
+```python
+             "title": {"text": y_title, "font": {"size": 12, "color": TICK}}}
+    if hi - lo + 2 * pad <= 14:
+        yaxis["dtick"] = 1
+```
+
+바꿀 코드:
+
+```python
+             "title": {"text": y_title, "font": {"size": 12, "color": TICK}}}
+    if 3 <= hi - lo + 2 * pad <= 14:  # 가상 데이터(97~103nm 부근)는 1 간격. 더 좁거나 넓으면 Plotly가 정한다
+        yaxis["dtick"] = 1
+```
+
+Modify `spc_explainer/explain.py` — 찾을 코드:
+
+```python
+from .patterns import FROM_KOREAN, KOREAN, Event
+from .rules import describe
+
+```
+
+바꿀 코드:
+
+```python
+from .patterns import FROM_KOREAN, KOREAN, Event
+from .rules import SPIKE_LISTED, describe
+
+```
+
+Modify `spc_explainer/explain.py` — 찾을 코드:
+
+```python
+
+def build_input(values, events: list[Event]) -> dict:
+    """설명 LLM 입력: 공정 정보 + 규칙 사건 요약 + 해당 패턴의 원인표. 원시 시계열은 넣지 않는다."""
+    items = []
+```
+
+바꿀 코드:
+
+```python
+
+def build_input(values, events: list[Event], limits: dict | None = None) -> dict:
+    """설명 LLM 입력: 공정 정보 + 규칙 사건 요약 + 해당 패턴의 원인표. 원시 시계열은 넣지 않는다.
+    limits = {"center", "ucl", "lcl"} (06 내 데이터 판정). 없으면 설정값 — 저장된 실험 입력과 글자까지 같다."""
+    lim = limits or {"center": config.CENTER, "ucl": config.UCL, "lcl": config.LCL}
+    items = []
+```
+
+Modify `spc_explainer/explain.py` — 찾을 코드:
+
+```python
+            "end": ev.end,
+            "rule": describe(ev, values),
+        }
+        if ev.pattern == "spike":
+            item["values"] = seg
+```
+
+바꿀 코드:
+
+```python
+            "end": ev.end,
+            "rule": describe(ev, values, lim["ucl"], lim["lcl"]),
+        }
+        if ev.pattern == "spike" and len(seg) > SPIKE_LISTED:  # 원시 시계열을 넣지 않도록 요약
+            item["values"] = seg[:SPIKE_LISTED]
+            item["n_points"], item["min"], item["max"] = len(seg), min(seg), max(seg)
+        elif ev.pattern == "spike":
+            item["values"] = seg
+```
+
+Modify `spc_explainer/explain.py` — 찾을 코드:
+
+```python
+    return {
+        "process": {"name": config.PROCESS_NAME, "unit": config.UNIT, "target": config.CENTER,
+                    "ucl": config.UCL, "lcl": config.LCL},
+        "events": items,
+```
+
+바꿀 코드:
+
+```python
+    return {
+        "process": {"name": config.PROCESS_NAME, "unit": config.UNIT, "target": lim["center"],
+                    "ucl": lim["ucl"], "lcl": lim["lcl"]},
+        "events": items,
+```
+
+Modify `spc_explainer/rules.py` — 찾을 코드:
+
+```python
+
+def describe(ev: Event, values, ucl: float = config.UCL, lcl: float = config.LCL) -> str:
+```
+
+바꿀 코드:
+
+```python
+
+SPIKE_LISTED = 5  # 급변 사건의 값을 전부 적는 최대 점 수 (가상 데이터의 급변은 1~2점이라 그대로 나온다)
+
+
+def describe(ev: Event, values, ucl: float = config.UCL, lcl: float = config.LCL) -> str:
+```
+
+Modify `spc_explainer/rules.py` — 찾을 코드:
+
+```python
+        vals = ", ".join(f"{v:.2f}" for v in seg)
+        return f"관리한계 밖 {n}점 ({span} {vals}{u}, {limit})"
+```
+
+바꿀 코드:
+
+```python
+        vals = ", ".join(f"{v:.2f}" for v in seg)
+        if n > SPIKE_LISTED:  # 한계 밖 점이 길게 이어지면(올린 데이터) 앞 3개만 적는다
+            vals = ", ".join(f"{v:.2f}" for v in seg[:3]) + f" … 외 {n - 3}점"
+        return f"관리한계 밖 {n}점 ({span} {vals}{u}, {limit})"
+```
+
+Modify `spc_explainer/ui_html.py` — 찾을 코드:
+
+```python
+
+PROBLEM_HTML = section_html("01 문제 상황", "엔지니어는 관리도를 보고, 경험으로 우선순위를 정한다") + (
+```
+
+바꿀 코드:
+
+```python
+
+UPLOAD_NOTE_HTML = (
+    '<div class="spc-upnote"><b>데이터 안내</b> 올린 파일은 서버에 저장하지 않고 이 화면(세션)에서만 판정에 씁니다. '
+    "개인정보나 회사 기밀이 담긴 데이터는 올리지 마세요. ‘AI 설명 받기’를 누르면 판정 요약(사건 구간·값)이 "
+    "OpenAI로 전송됩니다.</div>"
+)
+
+
+def error_html(message: str) -> str:
+    """입력 오류 상자 (사용자가 올린 글자가 섞일 수 있어 이스케이프한다)."""
+    return f'<div class="spc-err">⚠ {esc(message)}</div>'
+
+
+PROBLEM_HTML = section_html("01 문제 상황", "엔지니어는 관리도를 보고, 경험으로 우선순위를 정한다") + (
+```
+
+Modify `spc_explainer/ui_html.py` — 찾을 코드:
+
+```python
+        "관리도 데이터는 규칙 정의대로 패턴을 심은 <b>가상 데이터</b>입니다. 실제 공정 데이터가 아닙니다.",
+        "AI가 고르는 점검 원인표는 <b>교과서 수준의 일반 지식</b>에 기반한 가정이며, 실제 설비·레시피와 다를 수 있습니다.",
+```
+
+바꿀 코드:
+
+```python
+        "관리도 데이터는 규칙 정의대로 패턴을 심은 <b>가상 데이터</b>입니다. 실제 공정 데이터가 아닙니다.",
+        "06에 올린 데이터의 판정은 <b>참고용</b>이며 04 검증 수치에 섞지 않습니다. 추정 한계는 앞 N점이 안정적이라는 가정에 기댑니다.",
+        "AI가 고르는 점검 원인표는 <b>교과서 수준의 일반 지식</b>에 기반한 가정이며, 실제 설비·레시피와 다를 수 있습니다.",
+```
+
+Modify `spc_explainer/ui_html.py` — 찾을 코드:
+
+```python
+    rows = "".join(f'<div class="spc-limit"><span>—</span><span>{t}</span></div>' for t in items)
+    return section_html("06 한계", "정직하게 밝혀둘 것") + f'<div class="spc-limits">{rows}</div>'
+
+```
+
+바꿀 코드:
+
+```python
+    rows = "".join(f'<div class="spc-limit"><span>—</span><span>{t}</span></div>' for t in items)
+    return section_html("07 한계", "정직하게 밝혀둘 것") + f'<div class="spc-limits">{rows}</div>'
+
+```
+
+Modify `spc_explainer/ui_html.py` — 찾을 코드:
+
+```python
+.st-key-chart_card, .st-key-bars_card, .st-key-counts_card, .st-key-secom_card, .st-key-check_card,
+.st-key-feedback_card,
+[class*="st-key-kpi_"] {
+```
+
+바꿀 코드:
+
+```python
+.st-key-chart_card, .st-key-bars_card, .st-key-counts_card, .st-key-secom_card, .st-key-check_card,
+.st-key-feedback_card, .st-key-upload_card, .st-key-up_check_card,
+[class*="st-key-kpi_"] {
+```
+
+Modify `spc_explainer/ui_html.py` — 찾을 코드:
+
+```python
+}
+.st-key-rule_card {
+  background: #ffffff !important; border: 1px solid #16191d !important; border-radius: 4px !important;
+```
+
+바꿀 코드:
+
+```python
+}
+.st-key-rule_card, .st-key-up_rule_card {
+  background: #ffffff !important; border: 1px solid #16191d !important; border-radius: 4px !important;
+```
+
+Modify `spc_explainer/ui_html.py` — 찾을 코드:
+
+```python
+}
+.st-key-ai_card {
+  background: #f7fbfe !important; border: 1px dashed #6da4d3 !important; border-radius: 4px !important;
+```
+
+바꿀 코드:
+
+```python
+}
+.st-key-ai_card, .st-key-up_ai_card {
+  background: #f7fbfe !important; border: 1px dashed #6da4d3 !important; border-radius: 4px !important;
+```
+
+Modify `spc_explainer/ui_html.py` — 찾을 코드:
+
+```python
+.spc-guide li b { font-size: 14px; color: #16191d; }
+.st-key-ai_body, .st-key-ai_warn, .st-key-ai_runs { padding: 10px 18px !important; }
+.st-key-ai_foot { padding: 8px 18px !important; border-top: 1px solid #e3e5e8 !important; }
+```
+
+바꿀 코드:
+
+```python
+.spc-guide li b { font-size: 14px; color: #16191d; }
+.st-key-ai_body, .st-key-ai_warn, .st-key-ai_runs, .st-key-up_ai_msg { padding: 10px 18px !important; }
+.st-key-up_ai_foot { padding: 10px 18px !important; border-top: 1px solid #e3e5e8 !important; }
+.spc-upnote { font-size: 13px; line-height: 1.6; color: #3b424a; background: #f6f7f8; border-radius: 4px; padding: 8px 12px; }
+.spc-upnote b { margin-right: 6px; }
+.spc-err { font-size: 14px; color: #7a1512; background: #fdecea; border: 1px solid #f1a9a5; border-radius: 4px;
+  padding: 10px 12px; }
+.st-key-ai_foot { padding: 8px 18px !important; border-top: 1px solid #e3e5e8 !important; }
+```
+
+Modify `spc_explainer/ui_steps.py` — 찾을 코드:
+
+```python
+            '<a href="#spc-ai">설명으로 이동 ↓</a></div>')
+```
+
+바꿀 코드:
+
+```python
+            '<a href="#spc-ai">설명으로 이동 ↓</a></div>')
+
+
+def upload_limits_html(result: dict) -> str:
+    """06 판정에 쓴 관리한계 한 줄: 앞 N점 추정(σ 포함) 또는 직접 입력."""
+    lim = result["limits"]
+    nums = f"CL {lim['center']:.4g} · UCL {lim['ucl']:.4g} · LCL {lim['lcl']:.4g}"
+    if result["mode"] == "estimated":
+        n = result["phase1_n"]
+        text = (f"앞 {n}점으로 추정한 한계 · {nums} · σ {lim['sigma']:.4g} (평균 이동범위 ÷ 1.128) · "
+                f"판정은 {n}번 점부터 (Phase II)")
+    else:
+        text = f"직접 입력한 한계 · {nums} · 모든 점을 판정"
+    return f'<div class="spc-status"><span class="spc-dot"></span>{esc(text)}</div>'
+```
+
+Create `spc_explainer/upload.py`:
+
+```python
+# 내 데이터 판정: 올리거나 붙여넣은 글자를 검사해 막 두께 숫자 열을 꺼내고,
+# 관리한계(앞 N점 추정 또는 직접 입력)로 기존 규칙 엔진을 그대로 돌린다.
+# 파일은 저장하지 않는다. 결과는 실험 지표(04 검증)에 섞지 않는다.
+import csv
+import math
+from datetime import datetime, timedelta
+
+from . import rules, secom
+
+MAX_ROWS = 2000
+MIN_ROWS = 10  # 판정에 쓸 최소 행 수
+MIN_PHASE1 = 20  # 한계 추정에 쓸 앞 구간의 최소 점 수
+PHASE1_CAP = 100  # 앞 N점 기본값의 상한
+MAX_ABS_VALUE = 1e9  # 이보다 큰 값은 막 두께로 볼 수 없다 (그림·통계 계산이 넘치는 것도 막는다)
+MISSING_TOKENS = {"nan", "inf", "+inf", "-inf", "infinity", "-infinity", "#n/a", "n/a", "na", "null", "none"}
+
+
+class UploadError(ValueError):
+    """화면에 그대로 보여줄 한국어 오류 (몇째 줄인지 포함)."""
+
+
+def decode(raw: bytes) -> str:
+    """올린 파일의 글자. UTF-8(BOM 포함)을 먼저, 안 되면 엑셀 기본인 CP949로 읽는다."""
+    for encoding in ("utf-8-sig", "cp949"):
+        try:
+            return raw.decode(encoding)
+        except UnicodeDecodeError:
+            continue
+    raise UploadError("글자 인코딩을 읽을 수 없습니다. UTF-8 또는 CP949(엑셀 기본)로 저장한 CSV를 올려 주세요.")
+
+
+def read_input(raw: bytes | None, pasted: str) -> str | None:
+    """판정할 글자. 올린 파일이 있으면 그것(비어 있으면 오류), 없으면 붙여넣은 글자. 둘 다 비었으면 None(기다림)."""
+    if raw is not None:
+        text = decode(raw)
+        if not text.strip():
+            raise UploadError("올린 파일이 비어 있습니다. 막 두께 숫자가 한 줄에 하나씩 있는 CSV를 올려 주세요.")
+        return text
+    return pasted if pasted.strip() else None
+
+
+def _number(cell: str) -> float | None:
+    """숫자 칸이면 값, 아니면 None. nan·inf도 숫자가 아닌 것으로 본다."""
+    try:
+        v = float(cell.strip())
+    except ValueError:
+        return None
+    return v if math.isfinite(v) else None
+
+
+def parse(text: str) -> dict:
+    """{"values": [막 두께], "times": [시점 글자] 또는 None, "name": 값 열 이름}.
+    열은 1개(막 두께) 또는 2개(시점, 막 두께). 첫 줄의 막 두께 칸이 숫자가 아니면 머리글로 본다.
+    빈 줄·빈 칸(결측), 숫자가 아닌 값, 열 개수 불일치, 행 수 초과·부족은 UploadError."""
+    if "\x00" in text:
+        raise UploadError("글자에 NUL 문자가 있습니다. UTF-8 또는 CP949 CSV로 저장해 주세요 (UTF-16은 읽지 않습니다).")
+    lines = text.replace("\r\n", "\n").replace("\r", "\n").split("\n")
+    while lines and not lines[-1].strip():  # 끝의 빈 줄만 무시한다 (중간의 빈 줄은 결측)
+        lines.pop()
+    if not lines:
+        raise UploadError("비어 있습니다. 막 두께 숫자가 한 줄에 하나씩 있는 CSV를 올리거나 붙여넣어 주세요.")
+    first = lines[0]
+    delimiter = "\t" if "\t" in first else (";" if ";" in first and "," not in first else ",")
+    try:
+        # 줄 끝을 붙여 넘긴다: 닫히지 않은 따옴표가 여러 줄을 삼키면 그 칸에 줄바꿈이 남아 아래에서 알아챈다
+        rows = list(csv.reader((line + "\n" for line in lines), delimiter=delimiter))
+    except csv.Error as e:
+        raise UploadError(f"CSV 형식을 읽을 수 없습니다 ({e}). 한 줄에 시점과 막 두께만 쉼표로 구분해 주세요.") from None
+    width = len(rows[0])
+    if width == 0 or all(not c.strip() for c in rows[0]):
+        raise UploadError("1행이 비어 있습니다(결측). 빈 줄을 지워 주세요.")
+    if width > 2:
+        raise UploadError(f"1행에 열이 {width}개 있습니다. 막 두께 숫자 열 1개(앞에 시점 열은 선택)만 올려 주세요.")
+    first = rows[0][-1].strip()
+    if not first:
+        raise UploadError("1행: 막 두께 값이 비어 있습니다(결측). 머리글이라면 이름을 적어 주세요.")
+    if first.lower() in MISSING_TOKENS:
+        raise UploadError(f"1행: 막 두께 값 '{first}'은(는) 결측 표시입니다. 값을 채우거나 그 줄을 지워 주세요.")
+    header = _number(first) is None
+    values, times = [], []
+    for line_no, row in enumerate(rows[1:] if header else rows, start=2 if header else 1):
+        if not row or all(not c.strip() for c in row):
+            raise UploadError(f"{line_no}행이 비어 있습니다(결측). 값을 채우거나 그 줄을 지워 주세요.")
+        if any("\n" in c for c in row):  # 닫히지 않은 따옴표가 다음 줄들을 한 칸으로 삼킨 경우
+            raise UploadError(f"{line_no}행: 따옴표가 닫히지 않았습니다.")
+        if len(row) != width:
+            raise UploadError(f"{line_no}행의 열이 {len(row)}개입니다. 1행처럼 {width}개여야 합니다.")
+        cell = row[-1].strip()
+        if not cell:
+            raise UploadError(f"{line_no}행: 막 두께 값이 비어 있습니다(결측).")
+        value = _number(cell)
+        if value is None:
+            raise UploadError(f"{line_no}행: 막 두께 값 '{cell[:20]}'이(가) 숫자가 아닙니다.")
+        if abs(value) > MAX_ABS_VALUE:
+            raise UploadError(f"{line_no}행: 막 두께 값 '{cell[:20]}'이(가) 너무 큽니다 (절댓값 10억 이하).")
+        values.append(value)
+        times.append(row[0].strip() if width == 2 else "")
+    if len(values) > MAX_ROWS:
+        raise UploadError(f"데이터가 {len(values):,}행입니다. 최대 {MAX_ROWS:,}행까지 판정합니다.")
+    if len(values) < MIN_ROWS:
+        raise UploadError(f"데이터가 {len(values)}행뿐입니다. {MIN_ROWS}행 이상 올려 주세요.")
+    return {"values": values, "times": times if width == 2 else None,
+            "name": rows[0][-1].strip() if header else "막 두께"}
+
+
+def default_phase1(n: int) -> int:
+    """앞 N점 기본값: 행 수의 절반과 100 중 작은 값, 최소 20."""
+    return max(MIN_PHASE1, min(PHASE1_CAP, n // 2))
+
+
+def judge_estimated(values: list[float], phase1_n: int) -> dict:
+    """앞 phase1_n점으로 한계를 추정(SECOM과 같은 방식: 평균, σ = 평균 이동범위 / 1.128)하고 나머지를 판정한다."""
+    if len(values) < MIN_PHASE1 + MIN_ROWS:
+        raise UploadError(f"추정 방식은 {MIN_PHASE1 + MIN_ROWS}행 이상 필요합니다 (앞 {MIN_PHASE1}점으로 추정 + "
+                          f"{MIN_ROWS}점 이상 감시). 한계를 직접 입력해 주세요.")
+    if not MIN_PHASE1 <= phase1_n <= len(values) - MIN_ROWS:
+        raise UploadError(f"앞 N점은 {MIN_PHASE1}~{len(values) - MIN_ROWS} 사이여야 합니다.")
+    limits = secom.phase1_limits(values[:phase1_n])
+    if not math.isfinite(limits["sigma"]) or limits["sigma"] <= 0:
+        raise UploadError(f"앞 {phase1_n}점의 값이 모두 같아 한계를 추정할 수 없습니다. 한계를 직접 입력해 주세요.")
+    limits, events = secom.monitor(values, phase1_n)
+    return {"mode": "estimated", "limits": limits, "events": events, "phase1_n": phase1_n}
+
+
+def judge_fixed(values: list[float], center: float, ucl: float, lcl: float) -> dict:
+    """직접 입력한 한계로 모든 점을 판정한다."""
+    if not lcl < center < ucl:
+        raise UploadError("관리한계는 LCL < 중심선(CL) < UCL 이어야 합니다.")
+    limits = {"center": center, "ucl": ucl, "lcl": lcl}
+    return {"mode": "fixed", "limits": limits, "events": rules.detect(values, center, ucl, lcl), "phase1_n": None}
+
+
+def example_csv(values: list[float], start: str = "2026-09-01 08:00", minutes: int = 30) -> str:
+    """예시 CSV (시점, 막 두께). 가상 시리즈 값을 그대로 쓴다."""
+    t0 = datetime.strptime(start, "%Y-%m-%d %H:%M")
+    rows = ["시점,막두께_nm"]
+    rows += [f"{(t0 + timedelta(minutes=minutes * i)):%Y-%m-%d %H:%M},{v:.2f}" for i, v in enumerate(values)]
+    return "\n".join(rows) + "\n"
+```
+
+Modify `streamlit_app.py` — 찾을 코드:
+
+```python
+# SPC 설명기 화면: 한 페이지 스토리형 (머리말 → 01 문제 → 02 규칙 판정 → 03 AI 설명 → 04 검증 → 05 실데이터 → 06 한계).
+# 판정은 규칙 엔진, 설명은 LLM(저장된 결과 우선, 실시간 호출은 횟수 제한).
+# 시리즈·센서를 고르면 st.fragment로 감싼 그 섹션만 다시 그린다. 결과 파일 읽기와 SECOM 계산은 캐시한다.
+import json
+```
+
+바꿀 코드:
+
+```python
+# SPC 설명기 화면: 한 페이지 스토리형
+# (머리말·가이드 → 01 문제 → 02 규칙 판정 → 03 AI 설명 → 04 검증 → 05 실데이터 → 06 내 데이터 판정 → 07 한계).
+# 판정은 규칙 엔진, 설명은 LLM(저장된 결과 우선, 실시간 호출은 횟수 제한).
+# 시리즈·센서·올린 데이터를 바꾸면 st.fragment로 감싼 그 섹션만 다시 그린다. 결과 파일 읽기와 SECOM 계산은 캐시한다.
+import hashlib
+import json
+```
+
+Modify `streamlit_app.py` — 찾을 코드:
+
+```python
+
+from spc_explainer import checklist, config, explain, feedback, generator, llm_client, rules, secom
+from spc_explainer import ui_dashboard, ui_html, ui_steps
+```
+
+바꿀 코드:
+
+```python
+
+from spc_explainer import checklist, config, explain, feedback, generator, llm_client, rules, secom, upload
+from spc_explainer import ui_dashboard, ui_html, ui_steps
+```
+
+Modify `streamlit_app.py` — 찾을 코드:
+
+```python
+    return {"date": date.today(), "n": 0}
+
+```
+
+바꿀 코드:
+
+```python
+    return {"date": date.today(), "n": 0}
+
+
+def live_quota() -> tuple[bool, int, str]:
+    """실시간 설명을 부를 수 있는지: (키 있음, 남은 횟수, 안내 글자). 세션당·하루 한도는 03과 06이 같이 쓴다."""
+    counter = daily_counter()
+    if counter["date"] != date.today():
+        counter.update(date=date.today(), n=0)
+    used = st.session_state.get("live_used", 0)
+    left = max(0, min(config.LIVE_CALLS_PER_SESSION - used, config.LIVE_CALLS_PER_DAY - counter["n"]))
+    has_key = bool(llm_client.get_api_key())
+    if not has_key:
+        return has_key, left, "API 키 없음 — 실시간 설명 꺼짐"
+    if left == 0:
+        return has_key, left, "실시간 호출 한도 소진"
+    return has_key, left, f"남은 횟수 {left}/{config.LIVE_CALLS_PER_SESSION}"
+
+
+def spend_live_call() -> None:
+    st.session_state["live_used"] = st.session_state.get("live_used", 0) + 1
+    daily_counter()["n"] += 1
+
+```
+
+Modify `streamlit_app.py` — 찾을 코드:
+
+```python
+    # 실시간 설명: 세션당·하루 호출 수를 제한하고, 키가 없으면 끈다
+    counter = daily_counter()
+    if counter["date"] != date.today():
+        counter.update(date=date.today(), n=0)
+    used = st.session_state.get("live_used", 0)
+    left = max(0, min(config.LIVE_CALLS_PER_SESSION - used, config.LIVE_CALLS_PER_DAY - counter["n"]))
+    has_key = bool(llm_client.get_api_key())
+    if not has_key:
+        limit_text = "API 키 없음 — 실시간 설명 꺼짐"
+    elif left == 0:
+        limit_text = "실시간 호출 한도 소진"
+    else:
+        limit_text = f"남은 횟수 {left}/{config.LIVE_CALLS_PER_SESSION}"
+    with st.container(key="ai_foot"):
+```
+
+바꿀 코드:
+
+```python
+    # 실시간 설명: 세션당·하루 호출 수를 제한하고, 키가 없으면 끈다
+    has_key, left, limit_text = live_quota()
+    with st.container(key="ai_foot"):
+```
+
+Modify `streamlit_app.py` — 찾을 코드:
+
+```python
+    if clicked:
+        st.session_state["live_used"] = used + 1
+        counter["n"] += 1
+        with st.spinner("LLM 호출 중…"):
+```
+
+바꿀 코드:
+
+```python
+    if clicked:
+        spend_live_call()
+        with st.spinner("LLM 호출 중…"):
+```
+
+Modify `streamlit_app.py` — 찾을 코드:
+
+```python
+
+def toggle_feedback(series: str, event_id: str, pattern: str, span: str, rule: str) -> None:
+    """'오탐이에요' 버튼: 누르면 세션 목록에 넣고, 다시 누르면 뺀다."""
+    entry = {"series": series, "event_id": event_id, "pattern": pattern, "span": span, "rule": rule,
+```
+
+바꿀 코드:
+
+```python
+
+def toggle_feedback(series: str, event_id: str, pattern: str, span: str, rule: str, refresh_all: bool = False) -> None:
+    """'오탐이에요' 버튼: 누르면 세션 목록에 넣고, 다시 누르면 뺀다.
+    refresh_all: 목록이 다른 fragment(03)에 있을 때 앱 전체를 다시 그리라고 표시한다 (06에서 누른 경우)."""
+    st.session_state["feedback_refresh"] = refresh_all
+    entry = {"series": series, "event_id": event_id, "pattern": pattern, "span": span, "rule": rule,
+```
+
+Modify `streamlit_app.py` — 찾을 코드:
+
+```python
+def render_checklist(scope: str, title: str, events, values, limits: dict | None, ai: dict | None,
+                     picked: int | None = None, feedback_series: str | None = None) -> None:
+    """지금 확인할 것: 사건마다 원인표 항목 체크박스 + 교대 인수인계 메모(.md 내려받기·복사).
+```
+
+바꿀 코드:
+
+```python
+def render_checklist(scope: str, title: str, events, values, limits: dict | None, ai: dict | None,
+                     picked: int | None = None, feedback_series: str | None = None, feedback_refresh_all: bool = False) -> None:
+    """지금 확인할 것: 사건마다 원인표 항목 체크박스 + 교대 인수인계 메모(.md 내려받기·복사).
+```
+
+Modify `streamlit_app.py` — 찾을 코드:
+
+```python
+                          help=feedback.DEMO_NOTE, on_click=toggle_feedback,
+                          args=(feedback_series, card["event_id"], pattern, span, card["rule"]))
+    ai_meta = None
+```
+
+바꿀 코드:
+
+```python
+                          help=feedback.DEMO_NOTE, on_click=toggle_feedback,
+                          args=(feedback_series, card["event_id"], pattern, span, card["rule"], feedback_refresh_all))
+    ai_meta = None
+```
+
+Modify `streamlit_app.py` — 찾을 코드:
+
+```python
+
+dataset = load_json(config.SERIES_PATH) or generator.generate_dataset()
+```
+
+바꿀 코드:
+
+```python
+
+def render_upload_ai(values, events, limits: dict) -> dict | None:
+    """06의 AI 설명: 저장된 설명이 없어 실시간으로만 부른다 (호출 한도는 03과 같이 쓴다). 체크리스트용 설명을 돌려준다."""
+    model = config.EXPLAIN_MODEL
+    inp = explain.build_input(values, events, limits)
+    sig = hashlib.sha256(json.dumps(inp, ensure_ascii=False, sort_keys=True).encode("utf-8")).hexdigest()[:16]
+    with st.container(key="up_ai_foot"):
+        has_key, left, _ = live_quota()
+        if st.button("AI 설명 받기 (실시간)" if has_key and left > 0 else "AI 설명 불가", key="up_live_button",
+                     disabled=not (has_key and left > 0)):
+            spend_live_call()
+            with st.spinner("LLM 호출 중…"):
+                st.session_state["up_live"] = (sig, llm_client.call_json(model, *explain.build_messages(inp)))
+            st.rerun()  # 03과 06의 남은 횟수·버튼을 함께 갱신한다 (이 fragment만 다시 그리면 03이 옛 숫자로 남는다)
+        st.html(ui_steps.status_html(f"누르면 판정 요약(사건 구간·값)만 {model['name']}에 보냅니다 · {live_quota()[2]}"))
+    live = st.session_state.get("up_live")
+    reply = live[1] if live and live[0] == sig else None  # 데이터·한계를 바꾸면 이전 설명은 쓰지 않는다
+    if reply is None:
+        return None
+    if reply.error:
+        with st.container(key="up_ai_msg"):
+            st.error(f"호출 오류: {reply.error}")
+        return None
+    data, issues = explain.validate(reply.text, inp)
+    st.html(ui_steps.ai_head_html(issues))
+    if issues:
+        st.html(ui_steps.issues_html(issues))
+    if not isinstance(data, dict):
+        with st.container(key="up_ai_msg"):
+            st.code(reply.text or "", language="json")
+        return None
+    st.html(ui_steps.ai_body_html(data, inp))
+    names = ", ".join(sorted({explain.ISSUE_KO[i["type"]] for i in issues}))
+    return {"data": data, "inp": inp, "model": model["name"], "ok": not issues,
+            "status": ("검증 통과" if not issues else f"검증 문제: {names}") + " · 실시간 설명"}
+
+
+@st.fragment
+def upload_section(dataset: dict) -> None:
+    """06 내 데이터 판정: CSV 올리기·붙여넣기 → 같은 규칙 엔진. 파일은 저장하지 않고, 결과는 04 검증 수치에 섞지 않는다."""
+    st.html(ui_html.section_html(
+        "06 내 데이터로 판정", "내 관리도 데이터에 같은 규칙을 돌려 봅니다",
+        f"숫자 열 1개(막 두께, 앞에 시점 열은 선택) · 최대 {upload.MAX_ROWS:,}행 · 결과는 04 검증 수치에 섞지 않습니다"))
+    with st.container(key="upload_card"):
+        st.html(ui_html.UPLOAD_NOTE_HTML)
+        file_col, paste_col = st.columns(2)
+        with file_col:
+            file = st.file_uploader("CSV 파일 올리기", type=["csv", "txt"], max_upload_size=1, key="up_file")
+            st.download_button("예시 CSV 내려받기 (가상 시리즈 11)", upload.example_csv(dataset["series"][11]["values"]),
+                               file_name="spc_example.csv", mime="text/csv", on_click="ignore", key="up_example")
+        with paste_col:
+            pasted = st.text_area("또는 붙여넣기 (엑셀에서 열을 복사해도 됩니다)", key="up_text", height=150, max_chars=200_000,
+                                  placeholder="시점,막두께_nm\n2026-09-01 08:00,100.21\n2026-09-01 08:30,99.87")
+        try:
+            text = upload.read_input(file.getvalue() if file is not None else None, pasted)
+            if text is None:
+                st.caption("CSV를 올리거나 붙여넣으면 여기서 판정합니다. 예시 CSV를 내려받아 그대로 올려 봐도 됩니다.")
+                return
+            parsed = upload.parse(text)
+            values = parsed["values"]
+            n = len(values)
+            mode = st.radio("관리한계 정하기", ["앞 N점으로 추정 (Phase I)", "직접 입력"], horizontal=True, key="up_mode")
+            if mode == "직접 입력":
+                cl_col, ucl_col, lcl_col = st.columns(3)
+                center = cl_col.number_input("중심선 (CL)", value=config.CENTER, key="up_cl")
+                ucl = ucl_col.number_input("UCL", value=config.UCL, key="up_ucl")
+                lcl = lcl_col.number_input("LCL", value=config.LCL, key="up_lcl")
+                result = upload.judge_fixed(values, center, ucl, lcl)
+            elif n < upload.MIN_PHASE1 + upload.MIN_ROWS:
+                result = upload.judge_estimated(values, upload.MIN_PHASE1)  # 행이 모자라다는 오류를 낸다
+            else:
+                phase1_n = st.number_input("추정에 쓸 앞 N점", min_value=upload.MIN_PHASE1, max_value=n - upload.MIN_ROWS,
+                                           value=upload.default_phase1(n), step=10, key=f"up_n_{n}")
+                result = upload.judge_estimated(values, int(phase1_n))
+        except upload.UploadError as e:
+            st.html(ui_html.error_html(str(e)))
+            return
+        limits, events = result["limits"], result["events"]
+        times = parsed["times"]
+        span = f" · 시점 {times[0]} ~ {times[-1]}" if times and times[0] and times[-1] else ""
+        st.html(chart_header_html(values, f"관리도 · 내 데이터 ({parsed['name']}, {n:,}점{span})"))
+        fig = control_chart(values, events, limits["center"], limits["ucl"], limits["lcl"],
+                            phase_boundary=result["phase1_n"], y_title=parsed["name"], show_legend=False)
+        st.plotly_chart(fig, width="stretch", config={"displayModeBar": False})
+        st.html(ui_steps.upload_limits_html(result))
+    with st.container(key="up_rule_card"):
+        st.html(ui_steps.rule_card_html(events, values, limits))
+    if events:
+        with st.container(key="up_ai_card"):
+            ai = render_upload_ai(values, events, limits)
+        with st.container(key="up_check_card"):
+            render_checklist("up", "내 데이터", events, values, limits, ai,
+                             feedback_series=f"내 데이터 ({len(values):,}점)", feedback_refresh_all=True)
+        if st.session_state.pop("feedback_refresh", False):
+            st.rerun()  # 피드백 목록은 03(다른 fragment)에 있으므로 앱 전체를 다시 그린다
+
+
+dataset = load_json(config.SERIES_PATH) or generator.generate_dataset()
+```
+
+Modify `streamlit_app.py` — 찾을 코드:
+
+```python
+secom_section()
+st.html(ui_html.limits_html(metrics))
+```
+
+바꿀 코드:
+
+```python
+secom_section()
+upload_section(dataset)
+st.html(ui_html.limits_html(metrics))
+```
+
+- [ ] **Step 4: 통과 확인**
+
+Run: `.venv/Scripts/python -m pytest -q`
+Expected: 139 passed
+
+- [ ] **Step 5: 화면 확인 (실제 파일 올리기)**
+
+예시 CSV를 파일로 만든다: `.venv/Scripts/python -c "import json; from spc_explainer import config, upload; s = json.loads(config.SERIES_PATH.read_text(encoding='utf-8'))['series'][11]; open('/tmp/example11.csv', 'w', encoding='utf-8').write(upload.example_csv(s['values']))"`
+단계 파일에 `{"do": "file", "css": ".st-key-up_file input[type=file]", "path": "<example11.csv 절대 경로>"}`를 넣어 실제로 올린 뒤, `.st-key-upload_card`, `.st-key-up_rule_card`, `.st-key-up_ai_card`를 데스크톱·모바일로 캡처한다.
+06 체크리스트의 첫 사건을 펼쳐 `.st-key-fb_up_E1 button`을 누르면 03 아래 피드백 목록(`.st-key-feedback_card`)에 "내 데이터 (100점)" 행이 바로 생기는지도 본다.
+볼 것: 데이터 안내(저장 안 함·OpenAI 전송 안내), 파일 이름, 앞 N점 기본 50, 관리도 제목(값 열 이름·점 수·시점 범위), Phase 경계와 음영 라벨이 겹치지 않음, 한계 한 줄(σ 포함), 규칙 판정 표, AI 설명 버튼(키가 없으면 "AI 설명 불가"와 이유). "직접 입력"으로 바꾸면 3건(02와 같은 판정).
+
+- [ ] **Step 6: 커밋**
+
+```bash
+git add spc_explainer/upload.py spc_explainer/explain.py spc_explainer/rules.py spc_explainer/ui_html.py spc_explainer/ui_steps.py spc_explainer/charts.py streamlit_app.py tests/test_upload.py tests/test_explain.py tests/test_ui_html.py tests/test_ui_steps.py tests/test_charts.py tests/test_app.py
+git commit -m "feat: 06 내 데이터 CSV 올리기·붙여넣기 판정 (입력 검사, 앞 N점 추정 또는 직접 한계, 같은 규칙 엔진)" -m "Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
+git push origin main
+```
+
+---
+
+### Task 21: README·인수인계 (추가 기능·배포 URL)
+
+**Files:**
+- Modify: `README.md`, `docs/HANDOFF.md`
+
+- [ ] **Step 1: README 갱신**
+
+Modify `README.md` — 찾을 코드:
+
+```markdown
+- 설계 문서: `docs/superpowers/specs/2026-09-25-spc-explainer-design.md`
+```
+
+바꿀 코드:
+
+```markdown
+- 배포: https://spcexplaner-3riy3kwcjzxpuu9ffg5c9q.streamlit.app/
+- 설계 문서: `docs/superpowers/specs/2026-09-25-spc-explainer-design.md`
+```
+
+Modify `README.md` — 찾을 코드:
+
+```markdown
+화면은 한 페이지 스토리형입니다: 머리말 → 01 문제 → 02 규칙 판정 → 03 AI 설명 → 04 검증 → 05 실데이터(SECOM) → 06 한계. 휴대폰에서는 같은 페이지가 한 줄로 쌓입니다.
+```
+
+바꿀 코드:
+
+```markdown
+화면은 한 페이지 스토리형입니다: 머리말 → 01 문제 → 02 규칙 판정 → 03 AI 설명 → 04 검증 → 05 실데이터(SECOM) → 06 내 데이터로 판정 → 07 한계. 휴대폰에서는 같은 페이지가 한 줄로 쌓입니다.
+
+## 화면에서 할 수 있는 것
+
+- **30초 가이드**: 머리말 아래 3단계 안내(시리즈 고르기 → 판정 보기 → 설명·검증 보기). "가이드 닫기"를 누르면 이 세션 동안 다시 나오지 않습니다.
+- **용어 설명**: 점선 밑줄이 있는 용어(CL(중심선)·UCL·LCL·σ·급변·추세·치우침·오탐)에 마우스를 올리면(휴대폰은 탭) 한 줄 설명이 뜹니다. 관리도 오른쪽의 UCL·CL·LCL 라벨은 마우스를 올리면 설명이 뜹니다. 문구는 `spc_explainer/glossary.py` 한 곳에 있습니다.
+- **점 클릭 → 사건**: 02 관리도의 점을 누르면 그 점이 속한 사건을 골라 규칙 판정 표·03 AI 설명·체크리스트에서 강조합니다. 사건 밖의 점이면 그렇게 알려 줍니다. 휴대폰에서는 관리도 아래 "사건 선택"에서 고르세요.
+- **지금 확인할 것**: 사건마다 원인표 항목이 체크리스트로 나옵니다. 항목은 원인표에서만 오고, AI 설명이 검증을 통과했을 때만 AI 추천 순서가 앞에 옵니다. "인수인계 메모 내려받기 (.md)" 또는 "메모를 텍스트로 보기·복사"로 판정 요약·설명·체크리스트를 넘길 수 있습니다.
+- **오탐이에요**: 사건 항목(03과 06의 "지금 확인할 것") 안의 버튼입니다. 이번 세션에만 모이고(어디에도 저장하지 않음) 03 아래 목록에서 CSV로 내려받습니다. 시연용이며, 실제 운영에서는 이 피드백으로 규칙·원인표를 개선하는 흐름을 가정합니다.
+- **06 내 데이터로 판정**: CSV를 올리거나 붙여넣습니다. 막 두께 숫자 열 1개(앞에 시점 열은 선택), 최대 2,000행. 결측·문자·빈 파일(그리고 NUL 문자, 닫히지 않은 따옴표, 절댓값 10억 넘는 값)은 몇째 줄인지 알려 주며 거절합니다. 최소 10행이고, 관리한계는 앞 N점으로 추정(기본값: 행 수의 절반과 100 중 작은 값, 최소 20 — 추정은 30행 이상일 때만, 그보다 짧으면 직접 입력)하거나 직접 입력합니다. 판정은 같은 규칙 엔진이고, 결과는 04 검증 수치에 섞지 않습니다. 파일은 저장하지 않으며, "AI 설명 받기"를 누르면 판정 요약(사건 구간·값)이 OpenAI로 전송됩니다. "예시 CSV 내려받기"로 형식을 볼 수 있습니다.
+```
+
+Modify `README.md` — 찾을 코드:
+
+```markdown
+실시간 설명을 켜려면 App settings → Secrets에 다음을 넣습니다. 키가 없어도 저장된 결과로 모든 화면이 동작합니다.
+```
+
+바꿀 코드:
+
+```markdown
+Python 버전은 로컬과 같은 3.10을 권장합니다 (pycontrolcharts 0.1.2는 Python 3.10 이상, 3.10~3.13 지원 표기).
+실시간 설명을 켜려면 App settings → Secrets에 다음을 넣습니다. 키가 없어도 저장된 결과로 모든 화면이 동작합니다 (03의 실시간 설명과 06의 AI 설명만 꺼짐).
+```
+
+Modify `README.md` — 찾을 코드:
+
+```markdown
+- SECOM은 정답이 없어 탐지율을 계산하지 않습니다. 앞 500점으로 한계를 추정하고 나머지를 감시해 "작동 확인 + 불량 라벨과의 겹침 관찰"만 보고합니다.
+```
+
+바꿀 코드:
+
+```markdown
+- SECOM은 정답이 없어 탐지율을 계산하지 않습니다. 앞 500점으로 한계를 추정하고 나머지를 감시해 "작동 확인 + 불량 라벨과의 겹침 관찰"만 보고합니다.
+- 06에 올린 데이터의 판정은 참고용입니다. 추정 한계는 앞 N점이 안정적이라는 가정에 기댑니다.
+- 휴대폰에서 관리도 점을 눌러 사건을 고르는 동작은 자동 테스트(헤드리스 에뮬레이션)로 확인하지 못했습니다. 휴대폰에서는 "사건 선택" 드롭다운을 쓰세요.
+```
+
+- [ ] **Step 2: HANDOFF 갱신**
+
+Modify `docs/HANDOFF.md` — 현재 단계(구현 Task 1~21 완료), 완료 목록(추가 기능 6개와 A 마무리 작업), 다음 할 일(서브에이전트 최종 리뷰 → 배포 확인), 사용자 결정 사항(2026-09-26 승인 3가지·추가 기능 6개·보류 유지 2가지, 06 앞 N점 기본값, 06 내 데이터·07 한계 번호), 보류한 작은 개선에서 해결한 항목(반복 결과 줄 마크다운) 삭제.
+"계획과 실제 실행의 차이"에 넣을 것: 이 계획서 자체 점검 기록의 "캡처 중 고친 것"(모바일 툴팁 잘림, "Choose an option" → -1, Phase 글자 겹침, dragmode 미적용), 모바일 탭 미확인, 계획 검토 워크플로에서 확인·반영한 지적, 그리고 Task 15~21을 실행하며 실제로 계획과 달랐던 점.
+
+- [ ] **Step 3: 전체 테스트와 커밋**
+
+Run: `.venv/Scripts/python -m pytest -q`
+Expected: 139 passed
+
+```bash
+git add README.md docs/HANDOFF.md
+git commit -m "docs: README에 추가 기능 사용법·배포 URL·Python 버전, 인수인계 갱신" -m "Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
+git push origin main
+```
+
+---
+
 ## 자체 점검 기록
 
 - 스펙 대응 (2026-09-26 화면 태스크 재작성 후): 1절(성공 기준) → Task 10·12·13, 2절(원칙) → Global Constraints·Task 6·12, 3절(규칙) → Task 3, 4절(데이터) → Task 2, 5절(채점) → Task 4, 6.1(모델 설정) → Task 1·5, 6.2(설명) → Task 6, 6.3(단독 판정) → Task 7, 6.4(반복·캐시·ai_errors) → Task 9·10, 7절(SECOM) → Task 11·13, 8절(구조) → 파일 구조 표, 9절(화면 2A) → Task 12·13, 10절(오류 처리) → Task 5·9·12·13, 11절(테스트) → 각 태스크, 12절(배포) → Task 1·12·14, 13절(우선순위) → 태스크 순서 (기준선 없음).
@@ -4563,4 +8086,8 @@ git push origin main
   - 실제 결과 파일로 앱을 띄워 데스크톱(1440)·모바일(400) 캡처: 모든 섹션이 뜨고, 사례 해설 카드 글자 크기, "지표 생성 …" 표기(04 부제·06), 오류 개수 카드의 오탐 기준 각주를 확인했다.
   - 캡처 중 고친 것: 모바일 카드의 실제 그림 폭(약 326px)에서 시리즈 11의 "◆ 급변 #45"와 "▲ 추세 #76–81" 라벨이 겹쳤다. 기존 규칙이 바로 앞 사건과의 거리(25점)만 봐서, 두 사건 건너의 긴 라벨을 놓쳤다. → 좁은 화면 폭(200px) 기준으로 라벨 글자 폭을 어림해 앞 라벨과 겹치지 않는 첫 줄에 놓고, 네 줄 이상이면 생략하도록 바꿨다 (`charts._label_rows`, `test_band_labels_do_not_overlap_on_narrow_screens`). 20개 시리즈 중 시리즈 11만 세 줄, 다섯 개가 두 줄이다. 326px·1440px 캡처에서 겹침 없음을 확인.
   - AppTest에서 `st.html` 요소는 `at.get("html")`의 `UnknownElement`이고 본문은 `.proto.body`다 (Task 12 Step 9의 실시간 설명 확인 명령에 반영).
+- 추가 기능 태스크(15~21) 작성·검증 (2026-09-26 오후): 기능마다 scratch 작업트리에서 만들고 테스트와 데스크톱·모바일 캡처로 확인한 뒤, 단계 커밋 사이의 차이를 블록으로 옮겼다(찾을 코드는 적용 시점에 한 번만 나오도록 앞뒤 줄을 늘림, 순서대로 적용하면 다음 단계와 같아지는지 스크립트로 확인). 새 작업트리에서 Task 14 이후 상태(`184ac5d`)부터 태스크마다 테스트 적용 → 실패 확인 → 구현 적용 → 통과를 다시 돌렸다: 90 → 98 → 103 → 108 → 110 → 114 → 139, 마지막 트리는 scratch와 같다. 각 태스크의 실패 확인 Expected는 이 재현에서 나온 문구다.
+  - 캡처 중 고친 것: 모바일에서 오른쪽 끝 용어(σ)의 툴팁이 화면 밖으로 잘림 → 폭 640px 이하에서는 화면 아래 고정. 사건 밖 점을 누르면 선택 상자가 영어 "Choose an option"으로 바뀜 → "선택 안 함"을 -1로. 06 추정 모드에서 "Phase I | Phase II"가 경계에서 시작하는 음영 라벨과 겹침 → Phase 글자를 그림 아래쪽으로. `dragmode=False`는 Streamlit이 선택 가능한 차트에서 pan으로 덮어써 넣지 않았다.
+  - 계획 검토 워크플로(요구사항 대조·안전성·계획 품질 3관점 → 지적마다 반박 검증, 2026-09-26): 30개 에이전트, 지적 24건 중 확인 13건 반영 — 빈 파일 업로드, 긴 급변 구간의 원시값, csv 오류·NUL·따옴표, 1행 결측을 머리글로 오인, 아주 큰 값, 작은 단위 y축 눈금, 06 호출 뒤 남은 횟수 표시, 가이드 숫자 고정, 새 캡처 도구 미추적, 06 사건에 피드백 없음(요구를 좁힘 → 06에도 붙임), 내려받기 버튼을 개수로만 확인, AI 순서 검증 문(gate) 테스트 없음, README 문구 3곳. 기각 11건(자동 스크롤 대신 링크는 기록된 설계, 저장 입력 불일치 메모는 실제 데이터에서 도달 불가, Plotly 축 제목·인수인계 .md는 HTML 삽입이 아님, 키 표기 등).
+  - 확인하지 못한 것: 헤드리스 모바일 에뮬레이션에서는 탭(`dispatchTouchEvent`, `synthesizeTapGesture`)으로 버튼·차트 점이 눌리지 않아, 휴대폰의 점 탭 선택 여부를 모른다 → 사건 선택 드롭다운을 항상 둔다. 툴팁은 탭(포커스)으로 뜨는 것을 확인했다.
 - 이름 일관성 (2026-09-26 추가): `hero_html`, `section_html`, `limits_html`, `rule_card_html`, `ai_head_html`, `ai_body_html`, `priority_items`, `chart_header_html`, `chart_footer_html`, `kpi_summary`, `detection_groups`, `error_counts_html`, `explain_error_cases`, `cases_html`, `CASE_NOTES_PATH`, `secom.load/monitor/overlap_summary`를 정의한 태스크와 쓰는 태스크에서 같은 시그니처로 썼다.
