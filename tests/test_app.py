@@ -142,3 +142,38 @@ def test_checklist_and_handover_memo():
     assert "memo_s05" in download_keys(at)
     assert "- [x] " in memo and "시리즈 05" in memo and "## 지금 확인할 것 (원인표 기준)" in memo
     assert len(at.get("download_button")) >= 1
+
+
+def pick_notes(at) -> list[str]:
+    return [e.proto.body for e in at.get("html") if 'class="spc-pick' in e.proto.body]
+
+
+def click_point(at, sid: int, x: int) -> None:
+    """관리도에서 점 하나를 누른 것과 같은 선택 상태를 넣는다 (AppTest는 차트를 직접 누를 수 없다)."""
+    at.session_state[f"chart_{sid:02d}"] = {"selection": {"points": [{"x": x}], "point_indices": [x],
+                                                          "box": [], "lasso": []}}
+    at.run()
+
+
+def test_chart_click_picks_the_event_and_highlights_it():
+    at = run_app()
+    at.selectbox[0].set_value(11).run()  # 시리즈 11: 급변 #45, 치우침 #48–59, 추세 #76–81
+    click_point(at, 11, 52)
+    assert not at.exception
+    assert at.selectbox(key="pick_11").value == 1
+    assert any("E2 · ■ 치우침 #48–59 선택" in b and 'href="#spc-ai"' in b for b in pick_notes(at))
+    assert any("spc-rule-row sel" in e.proto.body for e in at.get("html"))
+    assert [x.proto.expanded for x in at.expander if "E2 ·" in x.label] == [True]
+    # 드롭다운으로 바꾸면 차트 선택이 남아 있어도 덮어쓰지 않는다
+    at.selectbox(key="pick_11").set_value(2).run()
+    assert at.selectbox(key="pick_11").value == 2
+
+
+def test_click_outside_events_says_so():
+    at = run_app()
+    at.selectbox[0].set_value(11).run()
+    click_point(at, 11, 63)
+    assert not at.exception
+    assert at.selectbox(key="pick_11").value == -1  # "선택 안 함"
+    assert any("#63 · 이 점은 판정된 사건에 속하지 않습니다." in b for b in pick_notes(at))
+

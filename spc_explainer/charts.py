@@ -89,6 +89,7 @@ def control_chart(values, events: list[Event], center: float, ucl: float, lcl: f
     fig.add_trace(go.Scatter(x=xs, y=vals, mode="lines+markers", name="측정값", showlegend=False,
                              line={"color": LINE, "width": 1.3},
                              marker={"size": dot, "color": "#ffffff", "line": {"color": LINE, "width": 1}},
+                             unselected={"marker": {"opacity": 1}},  # 점을 눌러도 나머지 점을 흐리게 하지 않는다
                              hovertemplate="#%{x}: %{y:.2f}<extra></extra>"))
     # 규칙이 판정한 점: 패턴별 모양·색
     for p in PATTERNS:
@@ -98,6 +99,7 @@ def control_chart(values, events: list[Event], center: float, ucl: float, lcl: f
             fig.add_trace(go.Scatter(x=idx, y=[vals[i] for i in idx], mode="markers", name=KOREAN[p],  # 범례가 모양을 그림
                                      marker={"symbol": symbol, "size": size, "color": PATTERN_COLORS[p]["fill"],
                                              "line": {"color": PATTERN_COLORS[p]["text"], "width": 1}},
+                                     unselected={"marker": {"opacity": 1}},
                                      hovertemplate="#%{x}: %{y:.2f}<extra>" + KOREAN[p] + "</extra>"))
     if fail_idx:
         fig.add_trace(go.Scatter(x=list(fail_idx), y=[vals[i] for i in fail_idx], mode="markers", name="불량 라벨",

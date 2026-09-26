@@ -1,4 +1,5 @@
 # 02 규칙 판정 카드와 03 AI 설명 카드의 HTML, 점검 우선순위 가공. 판정은 항상 규칙 결과가 기준이다.
+from . import config
 from .causes import CAUSES
 from .explain import ISSUE_KO
 from .patterns import FROM_KOREAN, KOREAN, Event
@@ -12,16 +13,19 @@ def _split_rule(sentence: str) -> tuple[str, str]:
     return main, rest[:-1] if rest.endswith(")") else rest
 
 
-def rule_card_html(events: list[Event], values) -> str:
-    """규칙 판정 결과 카드: 머리줄(확정·건수) + 사건 표(패턴·구간·판정 근거·규칙 번호) + 결정적 계산 문구."""
+def rule_card_html(events: list[Event], values, limits: dict | None = None, selected: int | None = None) -> str:
+    """규칙 판정 결과 카드: 머리줄(확정·건수) + 사건 표(패턴·구간·판정 근거·규칙 번호) + 결정적 계산 문구.
+    limits = {"ucl", "lcl"} (없으면 설정값), selected = 강조할 사건 번호(0부터)."""
+    lim = limits or {"ucl": config.UCL, "lcl": config.LCL}
     head = ('<div class="spc-step-head rule"><b>규칙 판정 결과</b>'
             f'<span class="spc-tag-fixed">확정</span><span class="spc-muted">{len(events)}건 감지</span></div>')
     rows = ['<div class="spc-rule-row spc-rule-th"><span>패턴</span><span>구간</span><span>판정 근거</span><span>규칙</span></div>']
-    for ev in events:
-        main, detail = _split_rule(describe(ev, values))
+    for i, ev in enumerate(events):
+        main, detail = _split_rule(describe(ev, values, lim["ucl"], lim["lcl"]))
         color = PATTERN_COLORS[ev.pattern]["text"]
+        cls = "spc-rule-row sel" if i == selected else "spc-rule-row"
         rows.append(
-            f'<div class="spc-rule-row"><span class="spc-pat" style="color:{color}">{SYMBOL[ev.pattern]} {term(KOREAN[ev.pattern])}</span>'
+            f'<div class="{cls}"><span class="spc-pat" style="color:{color}">{SYMBOL[ev.pattern]} {term(KOREAN[ev.pattern])}</span>'
             f'<span class="spc-mono">{span_text(ev.start, ev.end)}</span>'
             f"<span>{esc(main)}<small>{esc(detail)}</small></span>"
             f'<span class="spc-rid">{RULE_ID[ev.pattern]}</span></div>'
@@ -101,12 +105,13 @@ def priority_items(data: dict, inp: dict) -> list[dict]:
     return items
 
 
-def ai_body_html(data: dict, inp: dict) -> str:
-    """패턴 해석(summary) + 점검 우선순위 목록. LLM 문자열은 모두 이스케이프한다."""
+def ai_body_html(data: dict, inp: dict, selected: str | None = None) -> str:
+    """패턴 해석(summary) + 점검 우선순위 목록. LLM 문자열은 모두 이스케이프한다. selected 사건(E1 등)의 줄은 강조."""
     summary = data.get("summary") if isinstance(data.get("summary"), str) else ""
     rows = []
     for it in priority_items(data, inp):
         cls = "spc-prio-row" if it["known"] else "spc-prio-row unknown"
+        cls += " sel" if selected is not None and it["event_id"] == selected else ""
         rows.append(
             f'<div class="{cls}"><span class="spc-rank">{it["rank"]}</span>'
             f'<div><div class="spc-prio-title">{esc(it["title"])}</div>'
@@ -128,3 +133,41 @@ def check_head_html(has_ai: bool, ai_applied: bool) -> str:
     return ('<div class="spc-box-head"><b>지금 확인할 것</b><span class="b-rule">원인표 기준</span>'
             f'<span class="spc-note">{note}</span></div>')
 
+
+def selected_x(state) -> int | None:
+    """st.plotly_chart 선택 상태에서 누른 점의 번호. 선택이 없거나 모양이 다르면 None."""
+    try:
+        points = state["selection"]["points"]
+    except (KeyError, TypeError):
+        return None
+    for p in points if isinstance(points, list) else []:
+        x = p.get("x") if hasattr(p, "get") else None
+        if isinstance(x, (int, float)) and not isinstance(x, bool):
+            return int(round(x))
+    return None
+
+
+def event_index_at(events: list[Event], x: int) -> int | None:
+    """점 번호 x가 속한 첫 사건의 번호(0부터). 어느 사건에도 속하지 않으면 None."""
+    return next((i for i, e in enumerate(events) if e.start <= x <= e.end), None)
+
+
+NO_PICK = -1  # 사건 선택 상자의 "선택 안 함" (None을 쓰면 Streamlit이 빈 선택으로 보고 영어 안내문을 띄운다)
+
+
+def event_option(events: list[Event], i: int | None) -> str:
+    """사건 선택 상자의 글자."""
+    if i is None or i == NO_PICK:
+        return "선택 안 함"
+    e = events[i]
+    return f"E{i + 1} · {SYMBOL[e.pattern]} {KOREAN[e.pattern]} {span_text(e.start, e.end)}"
+
+
+def pick_note_html(events: list[Event], picked: int | None, outside: int | None) -> str:
+    """관리도 아래 안내: 사건 밖의 점을 눌렀을 때 / 사건을 골랐을 때 (03 설명으로 가는 링크)."""
+    if outside is not None:
+        return f'<div class="spc-pick out">#{outside} · 이 점은 판정된 사건에 속하지 않습니다.</div>'
+    if picked is None or picked == NO_PICK:
+        return ""
+    return (f'<div class="spc-pick">{esc(event_option(events, picked))} 선택 — 03의 설명과 체크리스트에서 강조했습니다 '
+            '<a href="#spc-ai">설명으로 이동 ↓</a></div>')

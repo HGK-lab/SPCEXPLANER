@@ -3,8 +3,8 @@ import json
 
 from spc_explainer.explain import build_input
 from spc_explainer.patterns import Event
-from spc_explainer.ui_steps import (ai_body_html, ai_head_html, issues_html, priority_items, rule_card_html,
-                                    run_line_html)
+from spc_explainer.ui_steps import (ai_body_html, ai_head_html, event_index_at, event_option, issues_html,
+                                    pick_note_html, priority_items, rule_card_html, run_line_html, selected_x)
 
 VALUES = [104.2 if i == 14 else 99.0 if 40 <= i <= 49 else 100.0 for i in range(100)]
 EVENTS = [Event("spike", 14, 14, "up"), Event("shift", 40, 49, "down")]
@@ -76,4 +76,28 @@ def test_run_line_shows_llm_ids_as_plain_text():
 def test_rule_card_pattern_names_have_tooltips():
     h = rule_card_html(EVENTS, VALUES)
     assert 'class="spc-term"' in h and ">급변</span>" in h and ">치우침</span>" in h
+
+
+def test_selected_x_reads_the_clicked_point():
+    assert selected_x({"selection": {"points": [{"x": 52.0, "y": 101.2}]}}) == 52
+    assert selected_x({"selection": {"points": []}}) is None
+    assert selected_x(None) is None and selected_x({}) is None and selected_x({"selection": {"points": "x"}}) is None
+    assert selected_x({"selection": {"points": [{"x": True}, {"x": 7}]}}) == 7
+
+
+def test_event_lookup_option_and_note():
+    assert event_index_at(EVENTS, 14) == 0 and event_index_at(EVENTS, 45) == 1 and event_index_at(EVENTS, 13) is None
+    assert event_option(EVENTS, 1) == "E2 · ■ 치우침 #40–49" and event_option(EVENTS, -1) == "선택 안 함"
+    assert pick_note_html(EVENTS, None, 63) == '<div class="spc-pick out">#63 · 이 점은 판정된 사건에 속하지 않습니다.</div>'
+    note = pick_note_html(EVENTS, 1, None)
+    assert "E2 · ■ 치우침 #40–49 선택" in note and 'href="#spc-ai"' in note
+    assert pick_note_html(EVENTS, None, None) == ""
+
+
+def test_selected_event_is_highlighted_in_rule_card_and_ai_body():
+    h = rule_card_html(EVENTS, VALUES, selected=1)
+    assert h.count("spc-rule-row sel") == 1 and h.index("spc-rule-row sel") > h.index("#14")
+    body = ai_body_html(DATA, INP, selected="E2")
+    assert body.count("spc-prio-row sel") == 2  # E2의 점검 항목 2개
+    assert "spc-prio-row sel" not in ai_body_html(DATA, INP)
 

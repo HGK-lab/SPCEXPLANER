@@ -51,10 +51,12 @@ def hero_html(center: float, ucl: float, lcl: float, unit: str) -> str:
     )
 
 
-def section_html(kicker: str, title: str, sub: str = "") -> str:
-    """섹션 머리: 번호·이름(작게) + 제목 + 한 줄 설명."""
+def section_html(kicker: str, title: str, sub: str = "", anchor: str = "") -> str:
+    """섹션 머리: 번호·이름(작게) + 제목 + 한 줄 설명. anchor를 주면 페이지 안 링크(#anchor)의 목적지가 된다."""
     sub_html = f'<p class="spc-sec-sub">{esc(sub)}</p>' if sub else ""
-    return f'<div class="spc-sec"><span class="spc-kicker">{esc(kicker)}</span><h2>{esc(title)}</h2>{sub_html}</div>'
+    anchor_attr = f' id="{esc(anchor)}"' if anchor else ""
+    return (f'<div class="spc-sec"{anchor_attr}><span class="spc-kicker">{esc(kicker)}</span><h2>{esc(title)}</h2>'
+            f"{sub_html}</div>")
 
 
 PROBLEM_HTML = section_html("01 문제 상황", "엔지니어는 관리도를 보고, 경험으로 우선순위를 정한다") + (
@@ -178,6 +180,13 @@ CSS = """<style>
 .spc-rule-row small { display: block; font-size: 12px; color: #5b626b; }
 .spc-pat { font-weight: 600; }
 .spc-rid { font-size: 12px; font-weight: 600; border: 1px solid #16191d; border-radius: 3px; text-align: center; }
+.spc-rule-row.sel { background: #fff7e0; box-shadow: inset 4px 0 0 #c5770f; }
+.spc-prio-row.sel { background: #fff7e0; box-shadow: -8px 0 0 #fff7e0, -12px 0 0 #c5770f; }
+.spc-pick { font-size: 13px; color: #3b424a; background: #fff7e0; border: 1px solid #e3d9bd; border-radius: 4px;
+  padding: 8px 12px; }
+.spc-pick.out { background: #f6f7f8; border-color: #d9dcdf; }
+.spc-pick a { color: #0068a7; font-weight: 600; margin-left: 6px; }
+.spc-sec[id] { scroll-margin-top: 64px; }
 .spc-rule-empty { padding: 14px 18px; font-size: 13.5px; color: #3b424a; }
 .spc-foot { display: flex; justify-content: space-between; gap: 8px; background: #f6f7f8; padding: 9px 18px;
   font-size: 12px; color: #4d545c; border-top: 1px solid #eceef0; }
