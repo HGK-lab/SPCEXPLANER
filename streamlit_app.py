@@ -462,9 +462,13 @@ def upload_section(dataset: dict) -> None:
     if events:
         with st.container(key="up_ai_card"):
             ai = render_upload_ai(values, events, limits)
+        # 데이터·한계가 바뀌면 체크·오탐 표시를 새로 시작한다: 서명을 위젯 키와 오탐 시리즈 이름에 넣는다
+        # (이전 데이터의 오탐 기록은 목록에 남고 서명으로 구분된다)
+        data_sig = hashlib.sha256(json.dumps({"values": values, "limits": limits, "phase1_n": result["phase1_n"]},
+                                             sort_keys=True).encode("utf-8")).hexdigest()[:6]
         with st.container(key="up_check_card"):
-            render_checklist("up", "내 데이터", events, values, limits, ai,
-                             feedback_series=f"내 데이터 ({len(values):,}점)", feedback_refresh_all=True)
+            render_checklist(f"up_{data_sig}", "내 데이터", events, values, limits, ai,
+                             feedback_series=f"내 데이터 ({len(values):,}점 · {data_sig})", feedback_refresh_all=True)
         if st.session_state.pop("feedback_refresh", False):
             st.rerun()  # 피드백 목록은 03(다른 fragment)에 있으므로 앱 전체를 다시 그린다
 

@@ -336,8 +336,37 @@ def test_upload_events_also_take_false_alarm_feedback():
     series = json.loads(config.SERIES_PATH.read_text(encoding="utf-8"))["series"]
     at.text_area(key="up_text").set_value(example_csv(series[11]["values"])).run()
     at.radio(key="up_mode").set_value("직접 입력").run()
-    at.button(key="fb_up_E1").click().run()
+    up_button(at, "fb_up_", "_E1").click().run()
     assert not at.exception
-    assert [(e["series"], e["span"]) for e in at.session_state["feedback"]] == [("내 데이터 (100점)", "#45")]
+    [entry] = at.session_state["feedback"]
+    assert entry["series"].startswith("내 데이터 (100점 · ") and entry["span"] == "#45"
     assert len(at.dataframe) == 1 and "feedback_csv" in download_keys(at)
+
+
+def up_button(at, prefix: str, suffix: str):
+    """06 위젯은 키에 데이터 서명이 들어가 있어 앞뒤로 찾는다."""
+    return next(b for b in at.button if (b.key or "").startswith(prefix) and b.key.endswith(suffix))
+
+
+def test_upload_new_data_resets_checks_and_false_alarm_marks():
+    # 같은 길이·같은 사건 구조의 다른 데이터로 바꾸면 이전 체크·오탐 표시가 남지 않는다. 오탐 목록에서는 두 데이터가 구분된다
+    from spc_explainer.upload import example_csv
+    at = run_app()
+    values = json.loads(config.SERIES_PATH.read_text(encoding="utf-8"))["series"][11]["values"]
+    at.text_area(key="up_text").set_value(example_csv(values)).run()
+    at.radio(key="up_mode").set_value("직접 입력").run()
+    next(c for c in at.checkbox if (c.key or "").startswith("chk_up_")).check().run()
+    up_button(at, "fb_up_", "_E1").click().run()
+    assert any(c.value for c in at.checkbox if (c.key or "").startswith("chk_up_"))
+    changed = list(values)
+    changed[45] = 103.9  # 급변 #45는 그대로, 값만 다름
+    at.text_area(key="up_text").set_value(example_csv(changed)).run()
+    assert not at.exception
+    boxes = [c for c in at.checkbox if (c.key or "").startswith("chk_up_")]
+    assert boxes and not any(c.value for c in boxes)
+    assert not any("오탐으로 표시했습니다" in e.proto.body for e in at.get("html"))
+    assert up_button(at, "fb_up_", "_E1").label == "오탐이에요"
+    up_button(at, "fb_up_", "_E1").click().run()
+    first, second = at.session_state["feedback"]
+    assert first["series"] != second["series"] and first["span"] == second["span"] == "#45"
 
