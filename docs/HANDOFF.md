@@ -1,6 +1,6 @@
 # 인수인계 (세션 간 이어가기용)
 
-마지막 갱신: 2026-09-27 12시 (캐시 키 수정 후 코드 동결, 배포 확인 완료 → 제출물은 사용자가 진행, 대기)
+마지막 갱신: 2026-09-27 오후 (소개 이미지 6장·Notion 기록 완료, 코드 동결 → 다음 세션 PDF 작성)
 
 ## 현재 단계
 **코드 동결** (8c6c2bf 이후, 제출 전까지 발견된 버그와 문서 수정만). 테스트 159개 통과. 배포 앱에 모든 변경 반영 확인. 사용자가 Secrets 등록·Reboot 완료. 제출물(PDF·데모 영상·지원서 글)은 사용자가 진행 — Claude는 대기. 이전 단계 기록:
@@ -48,8 +48,12 @@
 없음.
 
 ## 다음 할 일
-1. 대기 — 사용자가 제출물(포트폴리오 PDF·2분 데모 영상·지원서 AI 활용 경험 텍스트)을 진행한다. 요청이 오면 문서 수정·발견된 버그만 (코드 동결, 새 기능 금지)
-2. 제출 마감 9/28(월) 17시
+1. **포트폴리오 PDF 작성 (다음 세션, 사용자와 함께)** — 8~10쪽, 브리프 "최종 결과물" 표 기준(웹앱·영상·GitHub 링크 포함). 코드 동결 유지(문서·버그만)
+   - 첫 명령: `docs/portfolio/README.md` 읽고 재료 확인 → 쪽 구성부터 사용자와 정하기
+   - 재료: `docs/portfolio/numbers.md`(수치·출처), `docs/portfolio/showcase/out/` 소개 이미지 6장, `docs/portfolio/screens/`(섹션 캡처), `docs/portfolio/demo_script.md`, `docs/validation_report.md`, `docs/case_notes.md`, 이 파일의 "계획과 실제 실행의 차이" 표(24건, AI 활용 과정 증거), `docs/ai_errors.md`
+   - Notion 작업 로그 기록(2026-09-27 작성): https://app.notion.com/p/3e83baff12e681c3bf5ed91200b21111 — 계기·과정·어려움 문장을 PDF에 가져다 쓸 수 있음
+2. 남은 사용자 작업: 2분 데모 영상 녹화, 지원서 AI 활용 경험 텍스트
+3. 제출 마감 9/28(월) 17시
 
 배포 설정 메모 (2026-09-27 Streamlit 문서 확인):
 - Secrets: 앱 오른쪽 아래 "Manage app" → ⋮ → Settings → Secrets 탭에 `OPENAI_API_KEY = "..."`(최상위 키) 입력 후 Save. 앱은 `st.secrets`의 이 키를 환경변수로 옮겨 쓴다(`streamlit_app.py:19-24`)
