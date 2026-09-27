@@ -1,0 +1,145 @@
+[
+ {
+  "do": "size",
+  "w": 390,
+  "h": 844,
+  "mobile": true,
+  "dpr": 2
+ },
+ {
+  "do": "go",
+  "url": "http://localhost:8540"
+ },
+ {
+  "do": "wait",
+  "js": "document.querySelectorAll('.js-plotly-plot').length > 0",
+  "timeout": 120
+ },
+ {
+  "do": "idle"
+ },
+ {
+  "do": "eval",
+  "js": "(() => { const h = document.querySelector('[data-testid=stHeader]'); if (h) h.style.display = 'none'; const t = document.querySelector('[data-testid=stToolbar]'); if (t) t.style.display = 'none'; return true; })()"
+ },
+ {
+  "do": "shot",
+  "out": "docs/portfolio/showcase/shots/m-hero.png"
+ },
+ {
+  "do": "click",
+  "js": "document.querySelector('[data-testid=stSelectbox] input')"
+ },
+ {
+  "do": "type",
+  "text": "시리즈 11"
+ },
+ {
+  "do": "key",
+  "key": "Enter",
+  "s": 2
+ },
+ {
+  "do": "idle"
+ },
+ {
+  "do": "click",
+  "js": "document.querySelector('.st-key-pick_11 input')"
+ },
+ {
+  "do": "type",
+  "text": "E1"
+ },
+ {
+  "do": "key",
+  "key": "Enter",
+  "s": 2
+ },
+ {
+  "do": "eval",
+  "js": "(() => { document.activeElement && document.activeElement.blur(); return true; })()"
+ },
+ {
+  "do": "sleep",
+  "s": 1
+ },
+ {
+  "do": "idle"
+ },
+ {
+  "do": "eval",
+  "js": "(() => { const h = document.querySelector('[data-testid=stHeader]'); if (h) h.style.display = 'none'; const t = document.querySelector('[data-testid=stToolbar]'); if (t) t.style.display = 'none'; return true; })()"
+ },
+ {
+  "do": "eval",
+  "js": "(() => { document.querySelector('.st-key-chart_card').scrollIntoView({block: 'start'}); window.scrollBy(0, -16); return true; })()"
+ },
+ {
+  "do": "sleep",
+  "s": 1
+ },
+ {
+  "do": "shot",
+  "out": "docs/portfolio/showcase/shots/m-02-chart.png"
+ },
+ {
+  "do": "eval",
+  "js": "(() => { document.querySelector('.st-key-pick_11').scrollIntoView({block: 'start'}); window.scrollBy(0, -16); return true; })()"
+ },
+ {
+  "do": "sleep",
+  "s": 1
+ },
+ {
+  "do": "shot",
+  "out": "docs/portfolio/showcase/shots/m-02-pick.png"
+ },
+ {
+  "do": "eval",
+  "js": "(() => { document.querySelector('.st-key-rule_card').scrollIntoView({block: 'start'}); window.scrollBy(0, -16); return true; })()"
+ },
+ {
+  "do": "sleep",
+  "s": 1
+ },
+ {
+  "do": "shot",
+  "out": "docs/portfolio/showcase/shots/m-02-rule.png"
+ },
+ {
+  "do": "eval",
+  "js": "(() => { document.querySelector('.st-key-ai_card').scrollIntoView({block: 'start'}); window.scrollBy(0, -16); return true; })()"
+ },
+ {
+  "do": "sleep",
+  "s": 1
+ },
+ {
+  "do": "shot",
+  "out": "docs/portfolio/showcase/shots/m-03-ai.png"
+ },
+ {
+  "do": "eval",
+  "js": "(() => { document.querySelector('.st-key-check_card').scrollIntoView({block: 'start'}); window.scrollBy(0, -16); return true; })()"
+ },
+ {
+  "do": "sleep",
+  "s": 1
+ },
+ {
+  "do": "shot",
+  "out": "docs/portfolio/showcase/shots/m-03-check.png"
+ },
+ {
+  "do": "eval",
+  "js": "(() => { document.querySelector('.st-key-kpi_rule').scrollIntoView({block: 'start'}); window.scrollBy(0, -16); return true; })()"
+ },
+ {
+  "do": "sleep",
+  "s": 1
+ },
+ {
+  "do": "shot",
+  "out": "docs/portfolio/showcase/shots/m-04-kpi.png"
+ }
+]

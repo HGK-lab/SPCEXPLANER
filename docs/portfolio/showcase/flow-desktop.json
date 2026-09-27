@@ -1,0 +1,147 @@
+[
+ {
+  "do": "size",
+  "w": 1440,
+  "h": 1000,
+  "mobile": false,
+  "dpr": 2
+ },
+ {
+  "do": "go",
+  "url": "http://localhost:8540"
+ },
+ {
+  "do": "wait",
+  "js": "document.querySelectorAll('.js-plotly-plot').length > 0",
+  "timeout": 120
+ },
+ {
+  "do": "idle"
+ },
+ {
+  "do": "eval",
+  "js": "(() => { const h = document.querySelector('[data-testid=stHeader]'); if (h) h.style.display = 'none'; const t = document.querySelector('[data-testid=stToolbar]'); if (t) t.style.display = 'none'; return true; })()"
+ },
+ {
+  "do": "click",
+  "js": "[...document.querySelectorAll('button')].find(b => b.innerText.includes('가이드 닫기'))",
+  "s": 1
+ },
+ {
+  "do": "idle"
+ },
+ {
+  "do": "click",
+  "js": "document.querySelector('[data-testid=stSelectbox] input')"
+ },
+ {
+  "do": "type",
+  "text": "시리즈 11"
+ },
+ {
+  "do": "key",
+  "key": "Enter",
+  "s": 2
+ },
+ {
+  "do": "idle"
+ },
+ {
+  "do": "click",
+  "js": "document.querySelector('.st-key-pick_11 input')"
+ },
+ {
+  "do": "type",
+  "text": "E1"
+ },
+ {
+  "do": "key",
+  "key": "Enter",
+  "s": 2
+ },
+ {
+  "do": "eval",
+  "js": "(() => { document.activeElement && document.activeElement.blur(); return true; })()"
+ },
+ {
+  "do": "sleep",
+  "s": 1
+ },
+ {
+  "do": "idle"
+ },
+ {
+  "do": "eval",
+  "js": "(() => { const h = document.querySelector('[data-testid=stHeader]'); if (h) h.style.display = 'none'; const t = document.querySelector('[data-testid=stToolbar]'); if (t) t.style.display = 'none'; return true; })()"
+ },
+ {
+  "do": "shot",
+  "out": "docs/portfolio/showcase/shots/d-02-chart.png",
+  "js": "document.querySelector('.st-key-chart_card')",
+  "pad": 0
+ },
+ {
+  "do": "shot",
+  "out": "docs/portfolio/showcase/shots/d-02-rule.png",
+  "js": "document.querySelector('.st-key-rule_card')",
+  "pad": 0
+ },
+ {
+  "do": "shot",
+  "out": "docs/portfolio/showcase/shots/d-03-ai.png",
+  "js": "document.querySelector('.st-key-ai_card')",
+  "pad": 0
+ },
+ {
+  "do": "shot",
+  "out": "docs/portfolio/showcase/shots/d-04-kpi.png",
+  "js": "document.querySelector('.st-key-kpi_rule').closest('[data-testid=stHorizontalBlock]')",
+  "pad": 0
+ },
+ {
+  "do": "shot",
+  "out": "docs/portfolio/showcase/shots/d-04-bars.png",
+  "js": "document.querySelector('.st-key-bars_card')",
+  "pad": 0
+ },
+ {
+  "do": "shot",
+  "out": "docs/portfolio/showcase/shots/d-05-secom.png",
+  "js": "document.querySelector('.st-key-secom_card')",
+  "pad": 0
+ },
+ {
+  "do": "click",
+  "js": "document.querySelector('.st-key-up_text textarea')"
+ },
+ {
+  "do": "type",
+  "text": "시점,막두께_nm\n2026-09-01 08:00,100.91\n2026-09-01 08:30,101.74\n2026-09-01 09:00,100.10\n2026-09-01 09:30,98.99\n2026-09-01 10:00,99.07\n2026-09-01 10:30,98.95\n2026-09-01 11:00,98.12\n2026-09-01 11:30,101.83\n2026-09-01 12:00,100.34\n2026-09-01 12:30,100.93\n2026-09-01 13:00,100.66\n2026-09-01 13:30,99.13\n2026-09-01 14:00,99.55\n2026-09-01 14:30,101.25\n2026-09-01 15:00,98.59\n2026-09-01 15:30,99.94\n2026-09-01 16:00,101.81\n2026-09-01 16:30,98.70\n2026-09-01 17:00,99.62\n2026-09-01 17:30,100.51\n2026-09-01 18:00,100.50\n2026-09-01 18:30,99.91\n2026-09-01 19:00,100.39\n2026-09-01 19:30,100.49\n2026-09-01 20:00,100.36\n2026-09-01 20:30,98.36\n2026-09-01 21:00,99.25\n2026-09-01 21:30,102.03\n2026-09-01 22:00,99.33\n2026-09-01 22:30,101.29\n2026-09-01 23:00,99.07\n2026-09-01 23:30,100.38\n2026-09-02 00:00,98.54\n2026-09-02 00:30,100.40\n2026-09-02 01:00,97.79\n2026-09-02 01:30,99.70\n2026-09-02 02:00,99.70\n2026-09-02 02:30,98.83\n2026-09-02 03:00,99.76\n2026-09-02 03:30,100.32\n2026-09-02 04:00,99.20\n2026-09-02 04:30,98.82\n2026-09-02 05:00,99.26\n2026-09-02 05:30,101.28\n2026-09-02 06:00,100.06\n2026-09-02 06:30,103.33\n2026-09-02 07:00,99.32\n2026-09-02 07:30,98.83\n2026-09-02 08:00,100.14\n2026-09-02 08:30,100.58\n2026-09-02 09:00,102.50\n2026-09-02 09:30,100.19\n2026-09-02 10:00,100.86\n2026-09-02 10:30,101.54\n2026-09-02 11:00,100.20\n2026-09-02 11:30,101.56\n2026-09-02 12:00,100.41\n2026-09-02 12:30,101.02\n2026-09-02 13:00,101.44\n2026-09-02 13:30,101.01\n2026-09-02 14:00,99.94\n2026-09-02 14:30,100.15\n2026-09-02 15:00,100.08\n2026-09-02 15:30,97.45\n2026-09-02 16:00,99.75\n2026-09-02 16:30,102.38\n2026-09-02 17:00,100.23\n2026-09-02 17:30,99.59\n2026-09-02 18:00,101.30\n2026-09-02 18:30,101.64\n2026-09-02 19:00,101.32\n2026-09-02 19:30,99.06\n2026-09-02 20:00,99.63\n2026-09-02 20:30,98.83\n2026-09-02 21:00,99.61\n2026-09-02 21:30,102.44\n2026-09-02 22:00,98.78\n2026-09-02 22:30,99.81\n2026-09-02 23:00,100.37\n2026-09-02 23:30,100.41\n2026-09-03 00:00,100.55\n2026-09-03 00:30,102.37\n2026-09-03 01:00,100.84\n2026-09-03 01:30,99.45\n2026-09-03 02:00,98.64\n2026-09-03 02:30,99.83\n2026-09-03 03:00,100.22\n2026-09-03 03:30,99.94\n2026-09-03 04:00,99.31\n2026-09-03 04:30,98.88\n2026-09-03 05:00,99.14\n2026-09-03 05:30,100.87\n2026-09-03 06:00,99.42\n2026-09-03 06:30,100.03\n2026-09-03 07:00,100.45\n2026-09-03 07:30,98.92\n2026-09-03 08:00,100.17\n2026-09-03 08:30,99.20\n2026-09-03 09:00,99.78\n2026-09-03 09:30,101.25\n",
+  "s": 1
+ },
+ {
+  "do": "click",
+  "js": "[...document.querySelectorAll('.spc-sec h2')].find(h => h.textContent.includes('내 관리도'))",
+  "s": 1
+ },
+ {
+  "do": "wait",
+  "js": "!!document.querySelector('.st-key-up_rule_card')",
+  "timeout": 60
+ },
+ {
+  "do": "idle"
+ },
+ {
+  "do": "shot",
+  "out": "docs/portfolio/showcase/shots/d-06-upload.png",
+  "js": "document.querySelector('.st-key-upload_card')",
+  "pad": 0
+ },
+ {
+  "do": "shot",
+  "out": "docs/portfolio/showcase/shots/d-06-rule.png",
+  "js": "document.querySelector('.st-key-up_rule_card')",
+  "pad": 0
+ }
+]

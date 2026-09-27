@@ -1,7 +1,7 @@
 # Chrome 원격 디버깅(CDP)으로 페이지를 열고 단계별 동작(대기·클릭·터치·입력·캡처)을 실행한다 (검증용 스크립트).
 # 사용법: python cdp_steps.py <chrome_profile_dir> <steps.json>
 # steps.json은 단계 목록이다. 예:
-#   [{"do": "size", "w": 1440, "h": 2600, "mobile": false},
+#   [{"do": "size", "w": 1440, "h": 2600, "mobile": false, "dpr": 1},   dpr 2면 2배 해상도
 #    {"do": "go", "url": "http://localhost:8501"},
 #    {"do": "wait", "js": "document.querySelectorAll('.js-plotly-plot').length > 0", "timeout": 60},
 #    {"do": "idle"},                                   Streamlit 실행 표시가 사라질 때까지 대기
@@ -73,7 +73,7 @@ try:
         if do == "size":
             mobile = bool(st.get("mobile"))
             cmd("Emulation.setDeviceMetricsOverride",
-                {"width": st["w"], "height": st["h"], "deviceScaleFactor": 1, "mobile": mobile})
+                {"width": st["w"], "height": st["h"], "deviceScaleFactor": st.get("dpr", 1), "mobile": mobile})
             cmd("Emulation.setTouchEmulationEnabled", {"enabled": mobile, "maxTouchPoints": 5 if mobile else 1})
         elif do == "go":
             cmd("Page.navigate", {"url": st["url"]})
