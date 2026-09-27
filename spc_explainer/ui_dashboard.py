@@ -1,5 +1,6 @@
 # 04 검증 섹션(규칙 판정 vs LLM 단독 판정)의 지표 가공과 HTML.
-# 스타일 출처: docs/design/ref/detection-bars.png, Claude Design 2A. 모든 숫자는 metrics.json·explanations.json에서만 읽는다.
+# 스타일 출처: docs/design/ref/detection-bars.png, Claude Design 2A. 모든 숫자는 결과 파일(metrics.json·explanations.json·
+# llm_detections.json·rule_timing.json)에서만 읽는다. 비용만 config 단가표를 곱한다.
 from .explain import ISSUE_KO
 from .patterns import FROM_KOREAN, KOREAN, PATTERNS
 from .ui_html import PATTERN_COLORS, RULE_ID, SYMBOL, esc, span_text, term
@@ -20,6 +21,36 @@ def fmt_pct(x) -> str:
 def fmt_num(x) -> str:
     """3.0 → "3", 1.5 → "1.5"."""
     return f"{x:.1f}".rstrip("0").rstrip(".")
+
+
+def fmt_usd(x: float) -> str:
+    """유효숫자 2자리: 0.0395 → "$0.04", 0.4599 → "$0.46", 0.00112 → "$0.0011"."""
+    return "$0.0001 미만" if x < 0.0001 else f"${x:.2g}"
+
+
+def fmt_ms(x: float) -> str:
+    """0.843 → "0.84", 12.34 → "12", 345.6 → "346" (100 이상에서 지수 표기가 되지 않게)."""
+    return f"{x:.2g}" if x < 100 else f"{x:.0f}"
+
+
+def speed_cost(detections: dict | None, timing: dict | None, prices: dict, checked: str | None = None) -> dict:
+    """모델별 단독 판정 호출의 평균 응답 시간·토큰·비용(단가표에 있을 때만)과 규칙 엔진 판정 시간.
+    호출 오류는 시간·토큰에서 뺀다. 파일이 없으면 빈 값."""
+    models = {}
+    for name, m in ((detections or {}).get("models") or {}).items():
+        runs = [r for s in m.get("series", {}).values() for r in s.get("runs", [])]
+        ok = [r for r in runs if r.get("error") is None and r.get("latency_s") is not None]
+        usage = [r["usage"] for r in ok if r.get("usage")]
+        prompt = sum(u.get("prompt_tokens") or 0 for u in usage)
+        completion = sum(u.get("completion_tokens") or 0 for u in usage)
+        price = prices.get(name)
+        models[name] = {
+            "calls": len(runs), "latency_mean": _mean([r["latency_s"] for r in ok]) if ok else None,
+            "prompt_tokens": prompt, "completion_tokens": completion, "checked": checked,
+            "cost_usd": (prompt * price["input"] + completion * price["output"]) / 1e6 if price and usage else None,
+        }
+    rule = {"ms": timing["mean_ms_per_series"], "measured_at": timing.get("measured_at")} if timing else None
+    return {"rule": rule, "models": models}
 
 
 def tier(name: str) -> str:
@@ -101,15 +132,16 @@ def subtitle_text(metrics: dict | None) -> str:
             f"심은 이상 {sum(d['injected'].values())}건({counts}) · 심은 위치를 정답으로 사용 · 지표 생성 {metrics['generated_at']}")
 
 
-def kpi_rule_html(rule: dict) -> str:
+def kpi_rule_html(rule: dict, speed: dict | None = None) -> str:
+    timing = f'<span class="spc-kpi-speed">시리즈 1개 판정 평균 {fmt_ms(speed["ms"])}ms</span>' if speed else ""
     return ('<div class="spc-kpi"><div class="spc-kpi-top"><span class="b-rule">규칙</span>규칙 판정 탐지율</div>'
             f'<div class="spc-kpi-num">{fmt_pct(rule["rate"])}</div>'
             f'<div class="spc-kpi-sub">{rule["detected"]}/{rule["injected"]} 탐지 · {term("오탐")} {rule["false_events"]}건 '
-            f'(정상 시리즈 {rule["normal_alarmed"]}/{rule["normal_series"]}개 경보) · 매번 같은 결과</div></div>')
+            f'(정상 시리즈 {rule["normal_alarmed"]}/{rule["normal_series"]}개 경보) · 매번 같은 결과{timing}</div></div>')
 
 
-def kpi_model_html(m: dict, rule_rate) -> str:
-    """모델 하나의 KPI 카드: 등급 표기 + 실제 모델명 + 반복 평균 탐지율(규칙 대비 차이)."""
+def kpi_model_html(m: dict, rule_rate, speed: dict | None = None) -> str:
+    """모델 하나의 KPI 카드: 등급 표기 + 실제 모델명 + 반복 평균 탐지율(규칙 대비 차이) + 호출 시간·비용(결과 파일에 있을 때)."""
     delta = ""
     if m["mean"] is not None and rule_rate is not None and m["mean"] != rule_rate:
         diff = f"{(m['mean'] - rule_rate) * 100:+.1f}".replace("-", "−")
@@ -120,7 +152,18 @@ def kpi_model_html(m: dict, rule_rate) -> str:
             f'<div class="spc-kpi-top"><span class="b-ai">{esc(tier(m["name"]))}</span>AI 단독 판정 탐지율</div>'
             f'<div class="spc-kpi-num">{fmt_pct(m["mean"])}{delta}</div>'
             f'<div class="spc-kpi-sub"><span class="spc-kpi-name">{esc(m["name"])}</span> · {spread} · '
-            f'{term("오탐")} 평균 {fmt_num(m["false_mean"])}건 · 형식 위반 {m["format_violations"]} · 호출 오류 {m["call_errors"]}</div></div>')
+            f'{term("오탐")} 평균 {fmt_num(m["false_mean"])}건 · 형식 위반 {m["format_violations"]} · 호출 오류 {m["call_errors"]}'
+            f'{_speed_text(speed)}</div></div>')
+
+
+def _speed_text(speed: dict | None) -> str:
+    if not speed or speed["latency_mean"] is None:
+        return ""
+    parts = [f'호출당 평균 {speed["latency_mean"]:.1f}초']
+    if speed["cost_usd"] is not None:
+        basis = f' (단가 {speed["checked"]} 기준)' if speed["checked"] else ""
+        parts.append(f'{speed["calls"]}회 비용 {fmt_usd(speed["cost_usd"])}{basis}')
+    return f'<span class="spc-kpi-speed">{esc(" · ".join(parts))}</span>'
 
 
 def _bar_row(who: str, color: str, rate, lo, hi, value_text: str, frac_text: str) -> str:

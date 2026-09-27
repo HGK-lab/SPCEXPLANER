@@ -1,6 +1,9 @@
 # 오프라인 실험: 가상 데이터 → 규칙 판정 → LLM 설명·단독 판정(반복, 캐시) → 지표·리포트·ai_errors
 import hashlib
 import json
+import platform
+import statistics
+import time
 from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass
 from datetime import datetime
@@ -237,6 +240,19 @@ def _detect_metrics(detections: dict, series: list[dict], truths: list[list[Even
         result.append({"model": name, "temperature": cfg.get("temperature"), "repeats": cfg["repeats"],
                        "prompt_version": detections.get("prompt_version"), "runs": runs})
     return result
+
+
+def rule_timing(dataset: dict, repeats: int = 20) -> dict:
+    """규칙 엔진이 시리즈 1개를 판정하는 시간(ms). 04 검증에서 LLM 호출 시간과 나란히 보여준다."""
+    ms = []
+    for _ in range(repeats):
+        for s in dataset["series"]:
+            t0 = time.perf_counter()
+            rules.detect(s["values"])
+            ms.append((time.perf_counter() - t0) * 1000)
+    return {"measured_at": _now(), "python": platform.python_version(), "n_series": len(dataset["series"]),
+            "n_points": len(dataset["series"][0]["values"]), "repeats": repeats, "calls": len(ms),
+            "mean_ms_per_series": round(statistics.fmean(ms), 4), "median_ms_per_series": round(statistics.median(ms), 4)}
 
 
 def compute_metrics(dataset: dict, explanations: dict, detections: dict, secom_df=None) -> dict:

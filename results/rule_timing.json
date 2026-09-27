@@ -1,0 +1,10 @@
+{
+ "measured_at": "2026-09-27T11:39:59",
+ "python": "3.10.11",
+ "n_series": 20,
+ "n_points": 100,
+ "repeats": 20,
+ "calls": 400,
+ "mean_ms_per_series": 0.4784,
+ "median_ms_per_series": 0.4356
+}

@@ -55,6 +55,7 @@ SK하이닉스 AI 해커톤 2026 지원용 포트폴리오로 만들었습니다
     python scripts/run_experiment.py            # LLM 호출. 이미 받은 결과는 캐시에서 재사용
     python scripts/run_experiment.py --no-llm   # LLM 없이 지표·리포트만 다시 생성
     python scripts/run_experiment.py --force    # 캐시를 무시하고 모두 다시 호출
+    python scripts/measure_rules.py             # 규칙 엔진 판정 시간만 다시 재기 (LLM 호출 없음, results/rule_timing.json)
 
 SECOM 선정 센서 다시 받기 (선택, 결과 CSV는 저장소에 들어 있음):
 
@@ -62,7 +63,8 @@ SECOM 선정 센서 다시 받기 (선택, 결과 CSV는 저장소에 들어 있
 
 ## 설정
 
-`spc_explainer/config.py` 한 곳에서 바꿉니다: 모델명, temperature, 반복 수, `gpt-6-astra` 켜기/끄기, 실시간 호출 한도, 공정 상수, SECOM 센서 선정 조건.
+`spc_explainer/config.py` 한 곳에서 바꿉니다: 모델명, temperature, 반복 수, `gpt-6-astra` 켜기/끄기, 실시간 호출 한도, 공정 상수, SECOM 센서 선정 조건, 04 비용 계산용 단가표.
+04의 호출 시간·토큰은 결과 파일(`results/llm_detections.json`)에서 읽고, 비용은 그 토큰에 단가표(`PRICES_USD_PER_1M`, 확인 날짜 `PRICES_CHECKED`)를 곱합니다. 단가표에 없는 모델은 비용을 표시하지 않습니다.
 `gpt-6-astra`는 OpenAI 대시보드에서 모델을 허용한 뒤 `enabled`를 `True`로 바꾸면 단독 판정 비교에 1회 들어갑니다.
 
 ## 배포

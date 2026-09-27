@@ -256,6 +256,7 @@ CSS = """<style>
 .spc-kpi-delta { font-size: 14px; font-weight: 600; color: #b7191c; margin-left: 8px; }
 .spc-kpi-sub { font-size: 12px; color: #4d545c; line-height: 1.5; }
 .spc-kpi-name { font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #3b424a; }
+.spc-kpi-speed { display: block; margin-top: 4px; color: #16191d; }
 .spc-bars-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 8px;
   padding-bottom: 10px; border-bottom: 1px solid #eceef0; }
 .spc-bars-head b { font-size: 15px; }

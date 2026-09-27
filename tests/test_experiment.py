@@ -97,3 +97,13 @@ def test_script_exits_with_message_without_key(monkeypatch):
     with pytest.raises(SystemExit) as exc:
         runpy.run_path(str(config.ROOT / "scripts" / "run_experiment.py"), run_name="__main__")
     assert "OPENAI_API_KEY" in str(exc.value)
+
+
+def test_rule_timing_measures_one_series_judgement():
+    # 04 검증에서 LLM 호출 시간과 나란히 보여줄 규칙 엔진 판정 시간 (결과 파일 results/rule_timing.json의 내용)
+    from spc_explainer.experiment import rule_timing
+    from spc_explainer.generator import generate_dataset
+    t = rule_timing(generate_dataset(), repeats=2)
+    assert t["n_series"] == 20 and t["repeats"] == 2 and t["calls"] == 40 and t["n_points"] == 100
+    assert 0 < t["median_ms_per_series"] and 0 < t["mean_ms_per_series"] < 1000
+    assert t["measured_at"] and t["python"]

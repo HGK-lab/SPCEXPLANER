@@ -124,6 +124,21 @@ def test_verification_renders_from_metrics_without_llm_results(monkeypatch, tmp_
     assert any("수동 해설 본문" in m.value for m in at.markdown)
 
 
+def test_verification_shows_speed_and_cost_from_result_files():
+    # 04 KPI의 응답 시간·비용은 결과 파일(llm_detections.json, rule_timing.json)과 config 단가표로만 계산한다
+    from spc_explainer.ui_dashboard import fmt_ms, fmt_usd, speed_cost
+    at = run_app()
+    det = json.loads(config.DETECTIONS_PATH.read_text(encoding="utf-8"))
+    timing = json.loads(config.RULE_TIMING_PATH.read_text(encoding="utf-8"))
+    s = speed_cost(det, timing, config.PRICES_USD_PER_1M)
+    bodies = " ".join(e.proto.body for e in at.get("html"))
+    assert f"시리즈 1개 판정 평균 {fmt_ms(s['rule']['ms'])}ms" in bodies
+    for name, m in s["models"].items():
+        assert f"호출당 평균 {m['latency_mean']:.1f}초" in bodies, name
+        assert f"{m['calls']}회 비용 {fmt_usd(m['cost_usd'])}" in bodies, name
+    assert f"단가 {config.PRICES_CHECKED} 기준" in bodies
+
+
 def test_repeat_runs_show_llm_ids_as_plain_text(monkeypatch, tmp_path):
     # 03의 "같은 입력 반복 결과": LLM이 준 id에 링크 서식이 있어도 마크다운으로 해석되지 않는다
     saved = json.loads(config.EXPLANATIONS_PATH.read_text(encoding="utf-8"))

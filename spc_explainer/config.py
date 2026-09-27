@@ -8,6 +8,7 @@ SECOM_PATH = ROOT / "data" / "secom" / "secom_selected.csv"
 EXPLANATIONS_PATH = ROOT / "results" / "explanations.json"
 DETECTIONS_PATH = ROOT / "results" / "llm_detections.json"
 METRICS_PATH = ROOT / "results" / "metrics.json"
+RULE_TIMING_PATH = ROOT / "results" / "rule_timing.json"  # 규칙 엔진 판정 시간 (scripts/measure_rules.py)
 REPORT_PATH = ROOT / "docs" / "validation_report.md"
 AI_ERRORS_PATH = ROOT / "docs" / "ai_errors.md"
 CASE_NOTES_PATH = ROOT / "docs" / "case_notes.md"  # 04 검증의 사례 해설(수동 분석)
@@ -56,6 +57,11 @@ DETECT_MODELS = [
     # 비교 실험 1회만. OpenAI 대시보드에서 이 모델을 허용한 뒤 True로 바꾼다.
     {"name": "gpt-6-astra", "temperature": None, "repeats": 1, "enabled": False},
 ]
+# 단가표 (USD / 100만 토큰, 표준 등급). 04 검증의 비용 표시에만 쓴다. 단가표에 없는 모델은 비용을 표시하지 않는다.
+# 출처: https://developers.openai.com/api/docs/pricing (2026-09-27 확인). 결과 파일의 usage에는 캐시 구분이 없어
+# 입력 토큰은 모두 캐시 안 된 단가로 계산한다 (실제 청구액과 같거나 조금 크다).
+PRICES_CHECKED = "2026-09-27"
+PRICES_USD_PER_1M = {"gpt-4.1-mini": {"input": 0.40, "output": 1.60}, "gpt-6-sol": {"input": 2.00, "output": 10.00}}
 MAX_WORKERS = 6  # 실험 때 동시 호출 수
 API_MAX_RETRIES = 3  # 네트워크·429·5xx 재시도 (SDK가 수행)
 API_TIMEOUT_S = 180

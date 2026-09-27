@@ -2,8 +2,8 @@
 from spc_explainer.matching import summarize
 from spc_explainer.patterns import Event
 from spc_explainer.ui_dashboard import (NOTES_HEAD_HTML, cases_html, detection_bars_html, detection_groups,
-                                        error_counts_html, explain_error_cases, fact_lines, fmt_num, fmt_pct,
-                                        kpi_model_html, kpi_rule_html, kpi_summary, subtitle_text)
+                                        error_counts_html, explain_error_cases, fact_lines, fmt_ms, fmt_num, fmt_pct, fmt_usd,
+                                        kpi_model_html, kpi_rule_html, kpi_summary, speed_cost, subtitle_text)
 
 T = [[Event("spike", 5, 5, "up"), Event("trend", 20, 27, "up")], [Event("shift", 40, 49, "down")], []]
 RULES = summarize(T, T)  # 규칙: 3/3
@@ -88,3 +88,41 @@ def test_false_alarm_term_has_tooltip_in_kpi_and_counts():
         assert ">오탐</span>" in h and 'data-tip="' in h
     assert ">급변</span>" in detection_bars_html(detection_groups(METRICS))
 
+
+
+def _run(latency, prompt, completion, error=None):
+    usage = None if prompt is None else {"prompt_tokens": prompt, "completion_tokens": completion}
+    return {"run": 0, "text": "{}", "error": error, "latency_s": latency, "usage": usage}
+
+
+DETECTIONS = {"prompt_version": "detect-v1", "models": {
+    "gpt-4.1-mini": {"config": {}, "series": {
+        "0": {"runs": [_run(1.0, 1000, 100), _run(3.0, 1000, 100)]},
+        "1": {"runs": [_run(9.0, None, None, error="오류")]}}},  # 호출 오류는 시간·토큰에서 뺀다
+    "새모델": {"config": {}, "series": {"0": {"runs": [_run(4.0, 10, 10)]}}}}}
+PRICES = {"gpt-4.1-mini": {"input": 0.40, "output": 1.60}}
+TIMING = {"measured_at": "2026-09-27T12:00:00", "python": "3.10.11", "n_series": 20, "n_points": 100, "repeats": 20,
+          "calls": 400, "mean_ms_per_series": 0.84, "median_ms_per_series": 0.8}
+
+
+def test_speed_and_cost_come_from_result_files():
+    s = speed_cost(DETECTIONS, TIMING, PRICES)
+    m = s["models"]["gpt-4.1-mini"]
+    assert m["calls"] == 3 and m["latency_mean"] == 2.0 and m["prompt_tokens"] == 2000 and m["completion_tokens"] == 200
+    assert abs(m["cost_usd"] - (2000 * 0.40 + 200 * 1.60) / 1e6) < 1e-12
+    assert s["models"]["새모델"]["cost_usd"] is None  # 단가표에 없으면 비용을 만들지 않는다
+    assert s["rule"]["ms"] == 0.84
+    assert speed_cost(None, None, PRICES) == {"rule": None, "models": {}}
+    assert fmt_usd(0.0395) == "$0.04" and fmt_usd(0.4599) == "$0.46" and fmt_usd(0.00112) == "$0.0011"
+    assert fmt_ms(0.843) == "0.84" and fmt_ms(12.34) == "12" and fmt_ms(345.6) == "346"
+
+
+def test_kpi_cards_show_speed_and_cost_only_when_files_have_them():
+    k = kpi_summary(METRICS)
+    s = speed_cost(DETECTIONS, TIMING, PRICES, "2026-09-27")
+    h = kpi_model_html(k["models"][0], k["rule"]["rate"], s["models"]["gpt-4.1-mini"])
+    assert "호출당 평균 2.0초" in h and "3회 비용 $0.0011" in h and "단가 2026-09-27 기준" in h
+    assert "시리즈 1개 판정 평균 0.84ms" in kpi_rule_html(k["rule"], s["rule"])
+    assert "호출당" not in kpi_model_html(k["models"][0], k["rule"]["rate"]) and "ms" not in kpi_rule_html(k["rule"])
+    no_price = kpi_model_html(k["models"][0], k["rule"]["rate"], s["models"]["새모델"])
+    assert "호출당 평균 4.0초" in no_price and "$" not in no_price

@@ -311,12 +311,14 @@ def verification_section(metrics: dict | None) -> None:
         st.info("검증 결과가 아직 없습니다. `python scripts/run_experiment.py`로 만들 수 있습니다.")
         return
     kpi = ui_dashboard.kpi_summary(metrics)
+    speed = ui_dashboard.speed_cost(load_json(config.DETECTIONS_PATH), load_json(config.RULE_TIMING_PATH),
+                                    config.PRICES_USD_PER_1M, config.PRICES_CHECKED)
     cols = st.columns(1 + len(kpi["models"]))
     with cols[0], st.container(key="kpi_rule"):
-        st.html(ui_dashboard.kpi_rule_html(kpi["rule"]))
+        st.html(ui_dashboard.kpi_rule_html(kpi["rule"], speed["rule"]))
     for i, m in enumerate(kpi["models"]):
         with cols[i + 1], st.container(key=f"kpi_model_{i}"):
-            st.html(ui_dashboard.kpi_model_html(m, kpi["rule"]["rate"]))
+            st.html(ui_dashboard.kpi_model_html(m, kpi["rule"]["rate"], speed["models"].get(m["name"])))
     with st.container(key="bars_card"):
         bars_col, facts_col = st.columns([2.6, 1])
         with bars_col:
