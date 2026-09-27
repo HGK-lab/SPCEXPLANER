@@ -22,6 +22,7 @@ import urllib.request
 
 import websocket
 
+sys.stdout.reconfigure(encoding="utf-8")  # 한국어 윈도 콘솔 기본(cp949)은 ✓ 같은 글자를 못 찍어 도중에 멈춘다
 CHROME = r"C:\Program Files\Google\Chrome\Application\chrome.exe"
 PORT = 9334
 
