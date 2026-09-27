@@ -55,3 +55,11 @@ def test_explain_model_caps_output_tokens(monkeypatch):
     assert completions.kwargs["max_completion_tokens"] == config.EXPLAIN_MODEL["max_completion_tokens"] >= 1000
     llm_client.call_json(config.DETECT_MODELS[0], "s", "u")
     assert "max_completion_tokens" not in completions.kwargs
+
+
+def test_call_error_is_logged_with_the_original_message(monkeypatch, caplog):
+    # 원문(인증 오류 본문 등)은 서버 로그에만 남기고, 화면은 일반 문구를 쓴다 (test_app 참고)
+    use_fake(monkeypatch, fail=True)
+    with caplog.at_level("WARNING", logger="spc_explainer.llm_client"):
+        llm_client.call_json({"name": "gpt-4.1-mini", "temperature": 0}, "s", "u")
+    assert any("RuntimeError: boom" in r.getMessage() and "gpt-4.1-mini" in r.getMessage() for r in caplog.records)

@@ -53,7 +53,8 @@ def test_live_button_click_shows_reply_without_error(monkeypatch):
     at.selectbox[0].set_value(5).run()
     at.button(key="live_button").click().run()
     assert not at.exception
-    assert any("가짜 호출 오류" in m.value for m in at.error)
+    assert any("설명을 받지 못했습니다. 잠시 후 다시 시도해 주세요" in m.value for m in at.error)
+    assert not any("가짜 호출 오류" in m.value for m in at.error)  # 오류 원문은 화면에 내지 않는다 (로그에만)
 
 
 WEIRD_REPLIES = [
@@ -322,7 +323,8 @@ def test_upload_live_call_shares_the_quota_and_refreshes(monkeypatch):
     at.button(key="up_live_button").click().run()
     assert not at.exception
     assert at.session_state["live_used"] == 1
-    assert any("가짜 호출 오류" in m.value for m in at.error)
+    assert any("설명을 받지 못했습니다" in m.value for m in at.error)
+    assert not any("가짜 호출 오류" in m.value for m in at.error)
     assert any(f"남은 횟수 {config.LIVE_CALLS_PER_SESSION - 1}/" in e.proto.body for e in at.get("html")
                if "spc-status" in e.proto.body and "저장된 설명" in e.proto.body)  # 03의 안내도 갱신됨
 

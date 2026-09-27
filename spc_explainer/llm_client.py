@@ -1,9 +1,12 @@
 # OpenAI 호출을 한 곳에 모은다. JSON 모드로 부르고 원문·소요 시간·토큰 수를 돌려준다.
+import logging
 import os
 import time
 from dataclasses import dataclass
 
 from . import config
+
+LOG = logging.getLogger(__name__)
 
 
 @dataclass
@@ -53,7 +56,9 @@ def call_json(model: dict, system: str, user: str) -> LLMReply:
     try:
         r = _get_client().chat.completions.create(**kwargs)
     except Exception as e:  # SDK 재시도 후에도 실패 → 예외 대신 기록으로 돌려준다
-        return LLMReply(None, f"{type(e).__name__}: {e}", time.perf_counter() - t0, None)
+        error = f"{type(e).__name__}: {e}"
+        LOG.warning("OpenAI 호출 실패 (%s): %s", model["name"], error)  # 원문은 로그에만. 화면은 일반 문구
+        return LLMReply(None, error, time.perf_counter() - t0, None)
     usage = None
     if r.usage is not None:
         usage = {"prompt_tokens": r.usage.prompt_tokens, "completion_tokens": r.usage.completion_tokens}

@@ -18,6 +18,7 @@ from spc_explainer.patterns import KOREAN
 st.set_page_config(page_title="SPC 설명기", layout="wide")
 LOG = logging.getLogger("spc_explainer")
 AI_FAIL_TEXT = "AI 설명을 표시하지 못했습니다. 규칙 판정과 체크리스트는 그대로 쓸 수 있습니다."
+LLM_FAIL_TEXT = "설명을 받지 못했습니다. 잠시 후 다시 시도해 주세요."  # 오류 원문(인증 본문 등)은 llm_client가 로그에 남긴다
 
 # 배포 환경: Streamlit Secrets의 키를 환경변수로 옮긴다 (로컬은 llm_client가 .env를 읽는다)
 try:
@@ -115,7 +116,7 @@ def render_ai_card(sid: int, values, events, selected: str | None = None) -> dic
         st.html(ui_steps.ai_head_html(None))
         with st.container(key="ai_body"):
             if error:
-                st.error(f"호출 오류: {error}")
+                st.error(LLM_FAIL_TEXT)
             else:
                 st.info("저장된 설명이 없습니다. `python scripts/run_experiment.py`로 만들 수 있습니다.")
     else:
@@ -386,7 +387,7 @@ def render_upload_ai(values, events, limits: dict) -> dict | None:
         return None
     if reply.error:
         with st.container(key="up_ai_msg"):
-            st.error(f"호출 오류: {reply.error}")
+            st.error(LLM_FAIL_TEXT)
         return None
     try:
         data, issues = explain.validate(reply.text, inp)
