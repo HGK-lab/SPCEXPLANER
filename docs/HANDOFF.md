@@ -1,6 +1,6 @@
 # 인수인계 (세션 간 이어가기용)
 
-마지막 갱신: 2026-09-27 오후 (소개 이미지 6장·Notion 기록 완료, 코드 동결 → 다음 세션 PDF 작성)
+마지막 갱신: 2026-09-27 16시 반 (포트폴리오 PDF 노션 작성 중 — 4쪽 구성 확정, 1쪽 완료, 쪽 나눔 도구 준비)
 
 ## 현재 단계
 **코드 동결** (8c6c2bf 이후, 제출 전까지 발견된 버그와 문서 수정만). 테스트 159개 통과. 배포 앱에 모든 변경 반영 확인. 사용자가 Secrets 등록·Reboot 완료. 제출물(PDF·데모 영상·지원서 글)은 사용자가 진행 — Claude는 대기. 이전 단계 기록:
@@ -45,11 +45,17 @@
 - 2026-09-27: 개인 스킬 `~/.claude/skills/showcase-images` 개선(저장소 밖) — `references/annotated-deck.md`(장마다 다른 장면, 손글씨 주석, 직접 그린 선화, 방향 합의 순서), `scripts/copy_check.py`(금지 표현·숫자 점검), SKILL.md·styles.md·slide-patterns.md 연결. 원본 백업은 이 세션 스크래치에만 있음
 
 ## 진행 중
-없음.
+- **포트폴리오 PDF (2026-09-27 오후, 사용자와 함께)** — 노션 비공개 페이지 「AI가 내놓은 답, 그대로 믿어도 될까?」 https://app.notion.com/p/3e83baff12e68181969ac6ba367ed140
+  - 결정: A4 **4쪽**(1 표지 겸 두 작품 요약 · 2 SPC 문제와 구조 · 3 SPC 검증 실험 · 4 노트 인박스), 개조식 명사형(핵심 문장만 완결문), 개인 정보 없음(블라인드), 1쪽 링크 없음(링크는 3쪽 끝), 두 앱 소개 이미지 12장 모두 사용(SPC 6장은 이 저장소 `showcase/out`, 노트 인박스 6장은 노션 「노트 인박스」 기록에서 받음)
+  - 완료: 1쪽(답 한 줄·역할 한 줄·작품 카드 2개, 각 카드에 표지 사진). 2~4쪽은 사진 배치 + 🚧 뼈대 상자(채울 내용 목록)만
+  - 노트 인박스 최신 수치(저장소 `C:\dev\note-inbox` 기준): 커밋 60개(08-27~09-06), 테스트 182개(유닛 122·계측 60), INTERNET 권한 없음. 노션 기록의 42커밋·106개는 옛 값
+  - 쪽 나눔 도구(저장소 밖 `C:\dev\portfolio-tools`, README 있음): 크롬 확장 포크(app.notion.com 지원, 사용자가 개발자 모드로 설치해야 함), `notion-export`(notion-to-md 3.1.9 → A4 Marp PDF, 테스트 16개, 토큰은 그 폴더 `.env`). 실제 페이지로 4쪽 A4 PDF 3.94MB 생성 확인
 
 ## 다음 할 일
-1. **포트폴리오 PDF 작성 (다음 세션, 사용자와 함께)** — 8~10쪽, 브리프 "최종 결과물" 표 기준(웹앱·영상·GitHub 링크 포함). 코드 동결 유지(문서·버그만)
-   - 첫 명령: `docs/portfolio/README.md` 읽고 재료 확인 → 쪽 구성부터 사용자와 정하기
+1. **포트폴리오 PDF 이어서** — 위 "진행 중"의 노션 페이지. 사용자 1쪽 확인 → 2쪽부터 한 쪽씩 채우고 멈춰 확인. 코드 동결 유지(문서·버그만)
+   - 첫 명령: 노션 페이지를 fetch해 🚧 뼈대 상자 내용 확인 → 2쪽 본문 작성(update_content로 🚧 상자만 교체, 사진 블록은 건드리지 않음)
+   - 쪽 맞춤 확인: `cd C:\dev\portfolio-tools\notion-export && npm run export && npm run preview -- out\3e83baff\portfolio.md` (쪽별 PNG). 최종 PDF는 노션 내보내기·크롬 확장·Marp 중 사용자가 고름
+   - 제출 전: 🚧 상자 전부 삭제, 3쪽 끝 링크(배포·GitHub·영상), 블라인드 규정이 계정 이름(HGK-lab)까지 막는지 사용자 확인
    - 재료: `docs/portfolio/numbers.md`(수치·출처), `docs/portfolio/showcase/out/` 소개 이미지 6장, `docs/portfolio/screens/`(섹션 캡처), `docs/portfolio/demo_script.md`, `docs/validation_report.md`, `docs/case_notes.md`, 이 파일의 "계획과 실제 실행의 차이" 표(24건, AI 활용 과정 증거), `docs/ai_errors.md`
    - Notion 작업 로그 기록(2026-09-27 작성): https://app.notion.com/p/3e83baff12e681c3bf5ed91200b21111 — 계기·과정·어려움 문장을 PDF에 가져다 쓸 수 있음
 2. 남은 사용자 작업: 2분 데모 영상 녹화, 지원서 AI 활용 경험 텍스트
