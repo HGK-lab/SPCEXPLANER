@@ -21,6 +21,8 @@ PDF는 사용자가 만든다. 이 폴더는 재료만 둔다.
 | `b-dot-click-rule-table.png` | 점 클릭: 강조된 규칙 판정 표 |
 | `b-ai-explanation.png` | AI 설명 카드만 |
 | `b-checklist.png` | 조치 체크리스트 카드만 (AI 추천 순위 표시) |
+| `deploy-desktop-live-explanation.png` | 배포 앱(데스크톱 1440) 03 — 시리즈 11 실시간 설명 1회: "✓ 검증 통과", gpt-4.1-mini 6.0초, 남은 횟수 2/3 (2026-09-27 12시) |
+| `deploy-mobile-04-kpi.png` | 배포 앱(모바일 400) 04 KPI 카드 3장 — 탐지율 + 호출당 응답 시간·비용, 규칙 엔진 판정 시간 |
 | `b-upload-input.png` | 06 파일 올리기 카드만 (올린 파일·한계 방식·추정 관리도) |
 
 다시 찍을 때: 앱을 새로 띄워 `docs/superpowers/tools/cdp_steps.py`로 시리즈 11 선택 → #45 클릭 → 예시 CSV 올리기 → 창 높이를 페이지 전체로 늘려 한 장을 찍고, 섹션 머리(`.spc-sec`) 위치로 자른다.
