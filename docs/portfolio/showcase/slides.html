@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>SPC 설명기 — 소개 이미지</title>
+<!-- 설계: docs/superpowers/specs/2026-09-27-showcase-images-design.md -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hahmlet:wght@600;700&family=IBM+Plex+Sans+KR:wght@400;500;600&family=Nanum+Pen+Script&display=swap">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: #6b6b6b; font-family: "IBM Plex Sans KR", sans-serif; color: #efede8; word-break: keep-all; -webkit-font-smoothing: antialiased; }
+.deck { display: flex; flex-direction: column; gap: 40px; padding: 40px; width: max-content; }
+.slide { position: relative; width: 1920px; height: 1080px; overflow: hidden; flex: none; }
+.abs { position: absolute; }
+
+/* 글자 */
+.t { font-family: "Hahmlet", serif; font-weight: 600; letter-spacing: -.01em; line-height: 1.24; color: #efede8; }
+.lede { font-size: 25px; line-height: 1.7; color: #c4c1ba; text-wrap: pretty; }
+.fine { font-size: 17px; line-height: 1.6; color: #8f8d87; }
+.pg { font-size: 20px; color: rgba(239,237,232,.5); }
+.pen { font-family: "Nanum Pen Script", cursive; line-height: 1.05; }
+.y { color: #f2c95c; }
+.proj { font-size: 26px; font-weight: 600; }
+.proj span { display: block; font-size: 20px; font-weight: 400; color: #b9b7b0; margin-top: 6px; }
+
+/* 캡처 틀: 데스크톱 = 흰 판, 모바일 = 휴대폰 */
+.desk { background: #fff; border-radius: 10px; overflow: hidden; box-shadow: 0 30px 70px rgba(0,0,0,.38); }
+.desk img { display: block; width: 100%; }
+.phone { background: #0f1012; border-radius: 58px; padding: 14px; box-shadow: 0 34px 70px rgba(0,0,0,.42); }
+.phone .scr { border-radius: 45px; overflow: hidden; background: #f3f4f5; }
+.phone .scr img { display: block; width: 100%; }
+.print { background: #fbfaf6; padding: 16px 16px 70px; box-shadow: 0 26px 50px rgba(0,0,0,.4); }
+.print img { display: block; width: 100%; }
+.print .cap { position: absolute; left: 22px; bottom: 16px; font-family: "Nanum Pen Script", cursive; font-size: 40px; color: #2d2a24; }
+.tape { width: 170px; height: 46px; background: rgba(226,214,170,.62); }
+
+/* 4장 표 */
+table.data { border-collapse: collapse; font-size: 21px; color: #c4c1ba; font-variant-numeric: tabular-nums; }
+table.data th { text-align: left; font-weight: 400; padding: 0 44px 14px 0; border-bottom: 1px solid rgba(239,237,232,.3); }
+table.data td { padding: 12px 44px 12px 0; border-bottom: 1px solid rgba(239,237,232,.14); vertical-align: baseline; }
+table.data td.who { color: #efede8; font-size: 22px; }
+table.data td.big { font-size: 38px; font-weight: 500; color: #efede8; }
+</style>
+</head>
+<body>
+<!-- 손떨림 필터: 선화·동그라미에 공통 -->
+<svg width="0" height="0" style="position:absolute">
+  <filter id="wobble"><feTurbulence type="fractalNoise" baseFrequency="0.035" numOctaves="2" seed="7"/><feDisplacementMap in="SourceGraphic" scale="2.6"/></filter>
+  <filter id="wobble2"><feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="2" seed="3"/><feDisplacementMap in="SourceGraphic" scale="3"/></filter>
+</svg>
+<div class="deck">
+
+<!-- ───────── 1 표지: 흑연 + 점 격자, 기울인 큰 데스크톱 + 휴대폰 ───────── -->
+<section class="slide" id="cover" style="background:#26272b; background-image:radial-gradient(rgba(239,237,232,.075) 1.4px, transparent 1.6px); background-size:30px 30px">
+  <div class="abs proj" style="left:96px; top:84px">SPC 설명기<span>관리도 이상을 판정하고 설명하는 웹앱, 2026</span></div>
+  <h1 class="abs t" style="left:96px; top:228px; width:820px; font-size:60px">판정은 통계 규칙에 맡기고,<br>AI에게는 설명만 맡겼습니다</h1>
+  <p class="abs lede" style="left:96px; top:420px; width:620px">관리도에서 이상 구간을 찾는 일은 규칙 엔진이 합니다. AI는 그 결과만 받아, 무엇부터 점검할지 순서를 붙입니다.</p>
+
+  <div class="abs desk" style="left:930px; top:312px; width:1180px; transform:rotate(-3deg); transform-origin:0 0">
+    <img src="shots/d-02-chart.png" alt="">
+    <img src="shots/d-02-rule.png" alt="" style="border-top:18px solid #f3f4f5">
+    <!-- #45에 빨간 펜 동그라미 (캡처 속 1179,268 / 2560×1314) -->
+    <svg class="abs" style="left:506px; top:88px; width:74px" viewBox="0 0 60 60"><path d="M31 5 C49 5 57 19 55 33 C53 48 38 57 25 55 C10 53 3 40 5 26 C7 13 18 6 34 8" fill="none" stroke="#d8443a" stroke-width="2.6" stroke-linecap="round" filter="url(#wobble2)"/></svg>
+  </div>
+  <div class="abs pen y" style="left:1150px; top:196px; font-size:46px; transform:rotate(-3deg)">한계를 넘은 점은 규칙이 확정</div>
+  <svg class="abs" style="left:1376px; top:290px; width:110px" viewBox="0 0 110 120"><path d="M20 6 C38 30 60 60 92 96 M92 96 L90 76 M92 96 L73 92" fill="none" stroke="#f2c95c" stroke-width="3" stroke-linecap="round" filter="url(#wobble2)"/></svg>
+
+  <div class="abs phone" style="left:170px; top:600px; width:300px; transform:rotate(4deg)"><div class="scr"><img src="shots/m-hero.png" alt=""></div></div>
+  <div class="abs pen y" style="left:500px; top:790px; font-size:42px; transform:rotate(-4deg)">휴대폰에서도 같은 화면</div>
+  <div class="abs pg" style="right:64px; top:48px">1 / 6</div>
+</section>
+
+<!-- ───────── 2 규칙 판정: 짙은 남청, 휴대폰 셋 계단식, 제목 오른쪽 정렬 ───────── -->
+<section class="slide" id="rules" style="background:#1d2733">
+  <div class="abs phone" style="left:96px; top:84px; width:330px"><div class="scr"><img src="shots/m-02-chart.png" alt=""></div></div>
+  <!-- 휴대폰 관리도의 #45 (캡처 속 371,373 / 780×1688) -->
+  <svg class="abs" style="left:228px; top:216px; width:52px" viewBox="0 0 60 60"><path d="M31 5 C49 5 57 19 55 33 C53 48 38 57 25 55 C10 53 3 40 5 26 C7 13 18 6 34 8" fill="none" stroke="#d8443a" stroke-width="3" stroke-linecap="round" filter="url(#wobble2)"/></svg>
+  <div class="abs phone" style="left:470px; top:204px; width:330px"><div class="scr"><img src="shots/m-02-pick.png" alt=""></div></div>
+  <div class="abs phone" style="left:844px; top:324px; width:330px"><div class="scr"><img src="shots/m-02-rule.png" alt=""></div></div>
+
+  <h1 class="abs t" style="right:96px; top:112px; width:640px; font-size:60px; text-align:right">이상 구간은 규칙이<br>먼저 확정합니다</h1>
+  <p class="abs lede" style="right:96px; top:302px; width:600px; text-align:right">급변, 치우침, 추세 세 가지를 통계 규칙(Nelson R1~R3)으로 판정합니다. 같은 입력이면 항상 같은 결과입니다.</p>
+  <div class="abs pen y" style="left:1262px; top:452px; width:560px; font-size:46px; transform:rotate(-3deg)">점을 누르면 그 사건이<br>표에서 강조돼요</div>
+  <svg class="abs" style="left:1156px; top:396px; width:100px" viewBox="0 0 100 60"><path d="M94 50 C70 46 40 36 10 20 M10 20 L30 14 M10 20 L26 34" fill="none" stroke="#f2c95c" stroke-width="3" stroke-linecap="round" filter="url(#wobble2)"/></svg>
+  <div class="abs pg" style="right:64px; bottom:48px">2 / 6</div>
+</section>
+
+<!-- ───────── 3 AI 설명: 따뜻한 먹색 + 흐린 관리도 선, 큰 데스크톱 카드 + 잘린 휴대폰 ───────── -->
+<section class="slide" id="explain" style="background:#2e2925">
+  <svg class="abs" style="left:0; top:260px; width:1920px; opacity:.13" viewBox="0 0 400 60"><polyline fill="none" stroke="#efede8" stroke-width=".6" points="0,32 10,28 20,36 30,30 40,33 50,25 60,31 70,38 80,27 90,30 100,34 110,26 120,31 130,29 140,36 150,6 160,34 170,24 180,27 190,22 200,25 210,31 220,33 230,29 240,37 250,30 260,32 270,38 280,31 290,27 300,22 310,31 320,29 330,33 340,30 350,32 360,28 370,34 380,30 400,31"/></svg>
+  <div class="abs desk" style="left:96px; top:130px; width:1150px">
+    <img src="shots/d-03-ai.png" alt="">
+    <!-- "✓ 검증 통과" 배지 (캡처 속 341,51 / 2560 폭) -->
+    <svg class="abs" style="left:106px; top:6px; width:96px" viewBox="0 0 96 40"><ellipse cx="48" cy="20" rx="45" ry="16" fill="none" stroke="#d8443a" stroke-width="2.4" filter="url(#wobble2)"/></svg>
+  </div>
+  <div class="abs pen y" style="left:330px; top:58px; font-size:42px; transform:rotate(-2deg)">실험 출력 48개 모두 통과</div>
+  <svg class="abs" style="left:262px; top:78px; width:70px" viewBox="0 0 70 70"><path d="M64 10 C46 18 30 34 16 58 M16 58 L16 40 M16 58 L32 50" fill="none" stroke="#f2c95c" stroke-width="3" stroke-linecap="round" filter="url(#wobble2)"/></svg>
+
+  <div class="abs phone" style="left:1600px; top:120px; width:340px; transform:rotate(6deg)"><div class="scr"><img src="shots/m-03-check.png" alt=""></div></div>
+  <div class="abs pen y" style="left:1290px; top:560px; width:290px; font-size:40px; transform:rotate(-5deg)">원인표 밖 원인은<br>검증에서 걸러요</div>
+
+  <h1 class="abs t" style="left:96px; top:846px; width:1200px; font-size:60px">AI는 무엇부터 볼지만 알려 줍니다</h1>
+  <p class="abs lede" style="left:96px; top:936px; width:1100px">규칙이 넘긴 구간과 원인표만 받아 점검 순서를 고릅니다. 출력은 매번 형식, 원인표, 판정 일치를 검증합니다.</p>
+  <div class="abs pg" style="right:64px; bottom:48px">3 / 6</div>
+</section>
+
+<!-- ───────── 4 검증: 위 청회색 / 아래 흑연, 표 + 데스크톱 크롭 + 경계의 휴대폰 ───────── -->
+<section class="slide" id="verify" style="background:linear-gradient(#313944 0 56%, #26272b 56% 100%)">
+  <h1 class="abs t" style="left:96px; top:86px; width:900px; font-size:58px">AI에게 판정까지 맡겨 봤습니다</h1>
+  <p class="abs lede" style="left:96px; top:176px; width:860px; font-size:22px">규칙 정의대로 이상 21개를 심은 가상 관리도 20개로, 규칙 엔진과 AI 단독 판정을 같은 기준으로 채점했습니다. AI는 모델마다 3번씩 돌렸습니다.</p>
+  <table class="abs data" style="left:96px; top:292px; width:860px">
+    <tr><th>판정 방식</th><th>찾은 이상</th><th>오탐 (회당 평균)</th><th>걸린 시간</th></tr>
+    <tr><td class="who">규칙 엔진</td><td class="big">21/21</td><td class="big">6건</td><td class="big">0.48ms</td></tr>
+    <tr><td class="who">gpt-4.1-mini</td><td class="big">14/21</td><td class="big">103건</td><td class="big">2.1초</td></tr>
+    <tr><td class="who">gpt-6-sol</td><td class="big">21/21</td><td class="big">6건</td><td class="big">10.8초</td></tr>
+  </table>
+  <p class="abs fine" style="left:96px; top:618px; width:860px; color:#9a9790">시간은 규칙 엔진 시리즈 1개, AI 호출 1번 기준.</p>
+  <svg class="abs" style="left:968px; top:442px; width:60px" viewBox="0 0 60 40"><path d="M56 20 C40 19 24 19 6 20 M6 20 L18 10 M6 20 L18 30" fill="none" stroke="#f2c95c" stroke-width="3" stroke-linecap="round" filter="url(#wobble2)"/></svg>
+  <div class="abs pen y" style="left:1036px; top:438px; font-size:42px; transform:rotate(-2deg)">치우침은 7개 중 1.3개만</div>
+  <svg class="abs" style="left:968px; top:524px; width:60px" viewBox="0 0 60 40"><path d="M56 20 C40 19 24 19 6 20 M6 20 L18 10 M6 20 L18 30" fill="none" stroke="#f2c95c" stroke-width="3" stroke-linecap="round" filter="url(#wobble2)"/></svg>
+  <div class="abs pen y" style="left:1036px; top:500px; font-size:42px; transform:rotate(-2deg)">답은 규칙과 같다.<br>대신 60번에 $0.46</div>
+
+  <div class="abs desk" style="left:96px; top:680px; width:1180px"><img src="shots/d-04-bars.png" alt=""></div>
+  <div class="abs phone" style="left:1470px; top:300px; width:300px; transform:rotate(-5deg)"><div class="scr"><img src="shots/m-04-kpi.png" alt=""></div></div>
+  <div class="abs pg" style="left:1780px; bottom:48px">4 / 6</div>
+</section>
+
+<!-- ───────── 5 실데이터·내 데이터: 노란 방 황갈색, 인화지 콜라주 + 웨이퍼 선화 ───────── -->
+<section class="slide" id="realdata" style="background:#342c1a">
+  <div class="abs print" style="left:96px; top:104px; width:840px; transform:rotate(-2.5deg)"><img src="shots/d-05-secom.png" alt=""><div class="cap">SECOM 센서 88, 알람 24건</div></div>
+  <div class="abs tape" style="left:150px; top:84px; transform:rotate(-8deg)"></div>
+  <div class="abs print" style="left:1010px; top:470px; width:720px; transform:rotate(2deg)"><img src="shots/d-06-upload.png" alt=""><div class="cap">내 CSV도 같은 규칙으로</div></div>
+  <div class="abs tape" style="left:1320px; top:448px; transform:rotate(6deg)"></div>
+
+  <!-- 웨이퍼 측정점 선화 -->
+  <svg class="abs" style="left:1180px; top:40px; width:380px" viewBox="0 0 320 320">
+    <defs><clipPath id="wc"><circle cx="160" cy="160" r="128"/></clipPath></defs>
+    <g fill="none" stroke="#efede8" stroke-linecap="round" filter="url(#wobble)">
+      <g clip-path="url(#wc)" stroke-opacity=".22" stroke-width="1">
+        <path d="M32 52 H288 M32 76 H288 M32 100 H288 M32 124 H288 M32 148 H288 M32 172 H288 M32 196 H288 M32 220 H288 M32 244 H288 M32 268 H288"/>
+        <path d="M52 32 V288 M76 32 V288 M100 32 V288 M124 32 V288 M148 32 V288 M172 32 V288 M196 32 V288 M220 32 V288 M244 32 V288 M268 32 V288"/>
+      </g>
+      <path d="M160 32 A128 128 0 1 1 159.9 32 Z" stroke-width="1.8"/>
+      <path d="M154 287 L160 279 L166 287" stroke-width="1.8"/>
+      <g stroke="#f2c95c" stroke-width="2">
+        <path d="M154 160 h12 M160 154 v12"/>
+        <path d="M154 96 h12 M160 90 v12"/><path d="M154 224 h12 M160 218 v12"/><path d="M90 160 h12 M96 154 v12"/><path d="M218 160 h12 M224 154 v12"/>
+        <path d="M78 78 h12 M84 72 v12"/><path d="M230 78 h12 M236 72 v12"/><path d="M78 242 h12 M84 236 v12"/><path d="M230 242 h12 M236 236 v12"/>
+      </g>
+    </g>
+  </svg>
+  <div class="abs pen y" style="left:1580px; top:130px; width:280px; font-size:42px; transform:rotate(-4deg)">관리도의 점 하나<br>= 한 번 잰 막 두께</div>
+
+  <h1 class="abs t" style="left:96px; top:752px; width:820px; font-size:56px">가상 데이터 밖에서도<br>돌려 봤습니다</h1>
+  <p class="abs lede" style="left:96px; top:912px; width:840px; font-size:21px">공개 반도체 공정 데이터(UCI SECOM) 센서에 같은 규칙을 적용했습니다. 정답이 없어 탐지율은 따지지 않았습니다. 내 CSV를 올려도 같은 규칙으로 판정합니다.</p>
+  <div class="abs pg" style="right:64px; top:48px">5 / 6</div>
+</section>
+
+<!-- ───────── 6 마무리: 가장 어두운 바탕, 큰 휴대폰 + 증착 챔버 선화 ───────── -->
+<section class="slide" id="closing" style="background:#1b1c1f">
+  <div class="abs phone" style="left:130px; top:-70px; width:520px"><div class="scr"><img src="shots/m-03-ai.png" alt=""></div></div>
+  <h1 class="abs t" style="left:780px; top:170px; width:1000px; font-size:64px">직접 눌러 보실 수 있습니다</h1>
+  <p class="abs lede" style="left:780px; top:272px; width:860px">배포 앱에서 시리즈를 고르고, 점을 누르고, 내 CSV를 올려 보세요. 코드와 실험 기록은 저장소에 있습니다.</p>
+  <div class="abs" style="left:780px; top:410px; font-size:26px; line-height:1.9; font-weight:500">spcexplaner-3riy3kwcjzxpuu9ffg5c9q.streamlit.app<br>github.com/HGK-lab/SPCEXPLANER</div>
+
+  <!-- 증착(CVD) 챔버 단면 선화: 교과서 수준의 일반 구조 -->
+  <svg class="abs" style="left:1210px; top:590px; width:640px" viewBox="0 0 460 320">
+    <g fill="none" stroke="#efede8" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" filter="url(#wobble)">
+      <path d="M70 48 H350 V262 H70 Z"/><path d="M80 58 H340 V252 H80 Z" stroke-opacity=".55"/>
+      <path d="M210 0 V48 M204 0 V48"/><path d="M196 16 L224 30 M196 30 L224 16 M196 16 V30 M224 16 V30"/>
+      <path d="M100 78 H320 M100 86 H320 M100 78 V86 M320 78 V86"/>
+      <path d="M118 86 v4 M142 86 v4 M166 86 v4 M190 86 v4 M214 86 v4 M238 86 v4 M262 86 v4 M286 86 v4 M304 86 v4" stroke-opacity=".8"/>
+      <path d="M130 96 V150 M170 96 V150 M210 96 V150 M250 96 V150 M290 96 V150" stroke-dasharray="4 7" stroke-opacity=".7"/>
+      <path d="M140 168 H280" stroke-width="3"/>
+      <path d="M128 172 H292 V198 H128 Z"/>
+      <path d="M142 186 l10 -7 l10 14 l10 -14 l10 14 l10 -14 l10 14 l10 -14 l10 14 l10 -14 l10 14 l10 -14 l10 14 l6 -7" stroke="#d8443a" stroke-width="1.3"/>
+      <path d="M200 198 V262 M220 198 V262"/>
+      <path d="M312 262 V306 M332 262 V306"/><path d="M322 280 v22 m-6 -8 l6 8 l6 -8"/>
+    </g>
+    <g fill="none" stroke="#f2c95c" stroke-width="1.1" stroke-linecap="round" filter="url(#wobble)">
+      <path d="M356 82 H324"/><path d="M356 158 L284 168"/><path d="M356 204 L296 190"/>
+    </g>
+    <g fill="#f2c95c" font-family="Nanum Pen Script, cursive">
+      <text x="232" y="22" font-size="18">가스 유입</text>
+      <text x="360" y="88" font-size="18">샤워헤드</text>
+      <text x="360" y="156" font-size="18">웨이퍼</text>
+      <text x="360" y="174" font-size="16">막이 쌓이는 곳</text>
+      <text x="360" y="210" font-size="18">히터 받침</text>
+      <text x="344" y="300" font-size="18">배기</text>
+    </g>
+  </svg>
+  <div class="abs pen y" style="left:790px; top:690px; width:380px; font-size:44px; transform:rotate(-3deg)">이 챔버에서 쌓인 막 두께를<br>관리도로 봅니다</div>
+  <div class="abs pen y" style="left:680px; top:940px; font-size:40px; transform:rotate(-2deg)">휴대폰으로도 됩니다</div>
+  <div class="abs pg" style="right:64px; top:48px">6 / 6</div>
+</section>
+
+</div>
+</body>
+</html>

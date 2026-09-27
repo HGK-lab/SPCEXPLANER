@@ -41,6 +41,8 @@
 - 검증·캡처 도구: `docs/superpowers/tools/` — `extract_plan.py`(계획서 코드만으로 프로젝트 추출), `apply_brief.py`(브리프 코드 적용), `cdp_shot.py`·`cdp_steps.py`(헤드리스 Chrome 캡처·단계 실행, `websocket-client` 필요 — requirements에는 없음), `app_steps.py`(단계 파일 만들기), `run_shots.sh`(앱을 새로 띄워 단계 실행 후 끔)
 - 진행 기록(ledger): `.superpowers/sdd/2026-09-25-spc-explainer/progress.md` — git 제외라 이 PC에만 있다. 다른 PC에서는 `git log`로 태스크 완료를 확인한다
 
+- 2026-09-27 오후: 포트폴리오 소개 이미지 6장 (`docs/portfolio/showcase/out/`). 브레인스토밍으로 방향 확정 — 어두운 바탕(장마다 다른 색), 장마다 다른 구도·데스크톱/모바일 비율, 손글씨 주석(노랑·빨강), 직접 그린 선화(증착 챔버 단면, 웨이퍼 측정점), 대회 이름·AI 티 장치 제외. 설계 `docs/superpowers/specs/2026-09-27-showcase-images-design.md`, 계획 `docs/superpowers/plans/2026-09-27-showcase-images.md`. 렌더 경고 0, 문구·숫자 점검(`check.py`) 통과
+
 ## 진행 중
 없음.
 

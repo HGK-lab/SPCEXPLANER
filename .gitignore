@@ -19,3 +19,6 @@ venv/
 # OS
 .DS_Store
 Thumbs.db
+
+# 브레인스토밍 시안·실행 기록 (이 PC 전용)
+.superpowers/

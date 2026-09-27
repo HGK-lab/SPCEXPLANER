@@ -4,6 +4,7 @@ PDF는 사용자가 만든다. 이 폴더는 재료만 둔다.
 
 - `numbers.md` — 핵심 수치 1쪽. 숫자마다 결과 파일·필드 출처
 - `demo_script.md` — 2분 데모 영상 스크립트 초안 (스크롤 순서대로 장면·화면·말할 문장)
+- `showcase/out/` — **포트폴리오 소개 이미지 6장** (1920×1080 PNG, `_overview.png`는 6장 모음). 원본은 `showcase/slides.html`(조판)·`shots/`(캡처)·`flow-*.json`(캡처 단계), 점검은 `python docs/portfolio/showcase/check.py`, 다시 렌더는 `node ~/.claude/skills/showcase-images/scripts/render.mjs docs/portfolio/showcase/slides.html`. 설계 `docs/superpowers/specs/2026-09-27-showcase-images-design.md`
 - `screens/` — 데스크톱 폭 1440 캡처 (2026-09-27 오후 재촬영, 로컬 실행, 커밋 038e625 코드 기준, 저장된 AI 설명 사용)
 
 | 파일 | 내용 |
