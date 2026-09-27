@@ -1,5 +1,6 @@
 # 스토리형 앱이 예외 없이 그려지는지 (Streamlit AppTest, 네트워크 없음)
 import json
+import os
 from pathlib import Path
 
 from streamlit.testing.v1 import AppTest
@@ -151,6 +152,33 @@ def test_verification_shows_speed_and_cost_from_result_files():
         assert f"호출당 평균 {m['latency_mean']:.1f}초" in bodies, name
         assert f"{m['calls']}회 비용 {fmt_usd(m['cost_usd'])}" in bodies, name
     assert f"단가 {config.PRICES_CHECKED} 기준" in bodies
+
+
+def _touch_later(path: Path) -> None:
+    """수정 시각을 1초 뒤로 (같은 초 안에 다시 쓰면 파일 시스템에 따라 시각이 안 바뀔 수 있다)."""
+    t = path.stat().st_mtime_ns + 1_000_000_000
+    os.utime(path, ns=(t, t))
+
+
+def test_changed_files_show_without_restart(monkeypatch, tmp_path):
+    # 배포는 푸시 때 프로세스를 재시작하지 않는다. 캐시 키에 파일 수정 시각이 있어 문서·결과 파일만 바꿔도 반영된다
+    notes = tmp_path / "notes.md"
+    notes.write_text("### 사례\n첫 번째 글", encoding="utf-8")
+    timing = tmp_path / "rule_timing.json"
+    saved = json.loads(config.RULE_TIMING_PATH.read_text(encoding="utf-8"))
+    timing.write_text(json.dumps(dict(saved, mean_ms_per_series=1.5)), encoding="utf-8")
+    monkeypatch.setattr(config, "CASE_NOTES_PATH", notes)
+    monkeypatch.setattr(config, "RULE_TIMING_PATH", timing)
+    at = run_app()
+    assert any("첫 번째 글" in m.value for m in at.markdown)
+    assert any("시리즈 1개 판정 평균 1.5ms" in e.proto.body for e in at.get("html"))
+    notes.write_text("### 사례\n고친 글", encoding="utf-8")
+    timing.write_text(json.dumps(dict(saved, mean_ms_per_series=2.5)), encoding="utf-8")
+    _touch_later(notes)
+    _touch_later(timing)
+    at.run()
+    assert any("고친 글" in m.value for m in at.markdown)
+    assert any("시리즈 1개 판정 평균 2.5ms" in e.proto.body for e in at.get("html"))
 
 
 def test_repeat_runs_show_llm_ids_as_plain_text(monkeypatch, tmp_path):

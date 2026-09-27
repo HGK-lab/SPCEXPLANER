@@ -1,7 +1,8 @@
 # SPC 설명기 화면: 한 페이지 스토리형
 # (머리말·가이드 → 01 문제 → 02 규칙 판정 → 03 AI 설명 → 04 검증 → 05 실데이터 → 06 내 데이터 판정 → 07 한계).
 # 판정은 규칙 엔진, 설명은 LLM(저장된 결과 우선, 실시간 호출은 횟수 제한).
-# 시리즈·센서·올린 데이터를 바꾸면 st.fragment로 감싼 그 섹션만 다시 그린다. 결과 파일 읽기와 SECOM 계산은 캐시한다.
+# 시리즈·센서·올린 데이터를 바꾸면 st.fragment로 감싼 그 섹션만 다시 그린다. 결과 파일 읽기와 SECOM 계산은 캐시한다
+# (파일 수정 시각이 캐시 키에 들어가 파일이 바뀌면 다시 읽는다).
 import hashlib
 import json
 import logging
@@ -28,27 +29,48 @@ except Exception:  # secrets.toml이 없는 로컬 실행
     pass
 
 
+def file_stamp(path) -> int | None:
+    """캐시 키에 넣는 파일 수정 시각. 배포는 푸시 때 프로세스를 재시작하지 않아, 경로만 키로 쓰면 옛 내용이 남는다."""
+    return path.stat().st_mtime_ns if path.exists() else None
+
+
 @st.cache_data
-def load_json(path):
-    """JSON 파일을 읽는다. 없으면 None."""
+def _load_json(path, stamp):
     return json.loads(path.read_text(encoding="utf-8")) if path.exists() else None
 
 
+def load_json(path):
+    """JSON 파일을 읽는다. 없으면 None. 파일이 바뀌면 다시 읽는다."""
+    return _load_json(path, file_stamp(path))
+
+
 @st.cache_data
-def load_text(path):
+def _load_text(path, stamp):
     return path.read_text(encoding="utf-8") if path.exists() else None
 
 
+def load_text(path):
+    return _load_text(path, file_stamp(path))
+
+
 @st.cache_data
-def secom_sensors(path) -> list[str]:
-    """SECOM CSV의 센서 열 이름. 파일이 없으면 빈 목록."""
+def _secom_sensors(path, stamp) -> list[str]:
     df = secom.load(path)
     return [] if df is None else [c for c in df.columns if c.startswith("sensor_")]
 
 
-@st.cache_data
+def secom_sensors(path) -> list[str]:
+    """SECOM CSV의 센서 열 이름. 파일이 없으면 빈 목록."""
+    return _secom_sensors(path, file_stamp(path))
+
+
 def secom_view(path, sensor: str):
     """센서 하나의 값·라벨·Phase I 한계·Phase II 알람·불량 겹침. 같은 파일·센서면 다시 계산하지 않는다."""
+    return _secom_view(path, sensor, file_stamp(path))
+
+
+@st.cache_data
+def _secom_view(path, sensor: str, stamp):
     df = secom.load(path)
     values, labels = df[sensor].tolist(), df["label"].tolist()
     limits, alarms = secom.monitor(values)
