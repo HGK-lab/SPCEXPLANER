@@ -54,8 +54,9 @@
 ## 다음 할 일
 1. **포트폴리오 PDF 마무리** — 위 "진행 중"의 노션 페이지. 사용자가 4쪽 초안 검토 → 고칠 곳 반영(update_content로 글 블록만 교체, 사진 블록은 서명 주소라 old_str로 잡지 말 것). 코드 동결 유지(문서·버그만)
    - 첫 명령: 사용자에게 4쪽 검토 결과 받기. 수정 후 `npm run export && npm run preview`로 쪽마다 넘침 확인
-   - 쪽 맞춤 확인: `cd C:\dev\portfolio-tools\notion-export && npm run export && npm run preview -- out\3e83baff\portfolio.md` (쪽별 PNG). 최종 PDF는 노션 내보내기·크롬 확장·Marp 중 사용자가 고름
-   - 제출 전: 🚧 상자 전부 삭제, 3쪽 끝 링크(배포·GitHub·영상), 블라인드 규정이 계정 이름(HGK-lab)까지 막는지 사용자 확인
+   - 쪽 맞춤 확인: `cd C:\dev\portfolio-tools\notion-export && npm run export && npm run preview -- out\3e83baff\portfolio.md` (쪽별 PNG)
+   - **최종 PDF = Marp PDF** (사용자 결정 09-27): `npm run pdf -- out\3e83baff\portfolio.md` → `out\3e83baff\portfolio.pdf`. 🚧 상자는 변환 때 자동으로 빠짐
+   - 하지 않기로 한 것 (사용자 결정 09-27): 3쪽 데모 영상 링크(자리도 뺌), 블라인드 규정 확인
    - 재료: `docs/portfolio/numbers.md`(수치·출처), `docs/portfolio/showcase/out/` 소개 이미지 6장, `docs/portfolio/screens/`(섹션 캡처), `docs/portfolio/demo_script.md`, `docs/validation_report.md`, `docs/case_notes.md`, 이 파일의 "계획과 실제 실행의 차이" 표(24건, AI 활용 과정 증거), `docs/ai_errors.md`
    - Notion 작업 로그 기록(2026-09-27 작성): https://app.notion.com/p/3e83baff12e681c3bf5ed91200b21111 — 계기·과정·어려움 문장을 PDF에 가져다 쓸 수 있음
 2. 남은 사용자 작업: 2분 데모 영상 녹화, 지원서 AI 활용 경험 텍스트
