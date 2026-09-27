@@ -4,7 +4,7 @@ from .causes import CAUSES
 from .explain import ISSUE_KO
 from .patterns import FROM_KOREAN, KOREAN, Event
 from .rules import describe
-from .ui_html import PATTERN_COLORS, RULE_ID, SYMBOL, esc, span_text, term
+from .ui_html import PATTERN_COLORS, RULE_ID, SYMBOL, clip, esc, span_text, term
 
 
 def _split_rule(sentence: str) -> tuple[str, str]:
@@ -53,7 +53,7 @@ def ai_head_html(issues: list[dict] | None) -> str:
 
 def issues_html(issues: list[dict]) -> str:
     """검증 문제 목록. 판정은 규칙 판정 결과를 따르라고 적는다."""
-    items = "".join(f"<li>{esc(ISSUE_KO[i['type']])}: {esc(i['detail'])}</li>" for i in issues)
+    items = "".join(f"<li>{esc(ISSUE_KO[i['type']])}: {esc(clip(i['detail']))}</li>" for i in issues)
     return ('<div class="spc-issues">검증에서 문제가 발견됐습니다. 판정은 위 규칙 판정 결과를 따르세요.'
             f"<ul>{items}</ul></div>")
 
@@ -94,12 +94,12 @@ def priority_items(data: dict, inp: dict) -> list[dict]:
             row = CAUSES.get(cid) if isinstance(cid, str) else None
             items.append({
                 "rank": len(items) + 1,
-                "event_id": eid,
+                "event_id": clip(eid),
                 "rule_id": RULE_ID.get(patterns.get(eid), "-"),
-                "cause_id": str(cid),
+                "cause_id": clip(cid),
                 "title": row["check"] if row else "원인표에 없는 원인",
-                "cause": row["cause"] if row else str(cid),
-                "reason": str(c.get("reason", "")),
+                "cause": row["cause"] if row else clip(cid),
+                "reason": clip(c.get("reason", "")),
                 "known": row is not None,
             })
     return items
@@ -107,7 +107,7 @@ def priority_items(data: dict, inp: dict) -> list[dict]:
 
 def ai_body_html(data: dict, inp: dict, selected: str | None = None) -> str:
     """패턴 해석(summary) + 점검 우선순위 목록. LLM 문자열은 모두 이스케이프한다. selected 사건(E1 등)의 줄은 강조."""
-    summary = data.get("summary") if isinstance(data.get("summary"), str) else ""
+    summary = clip(data.get("summary")) if isinstance(data.get("summary"), str) else ""
     rows = []
     for it in priority_items(data, inp):
         cls = "spc-prio-row" if it["known"] else "spc-prio-row unknown"

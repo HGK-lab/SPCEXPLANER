@@ -45,3 +45,13 @@ def test_call_error_is_returned_not_raised(monkeypatch):
     use_fake(monkeypatch, fail=True)
     r = llm_client.call_json({"name": "x", "temperature": None}, "s", "u")
     assert r.text is None and r.error == "RuntimeError: boom" and r.usage is None
+
+
+def test_explain_model_caps_output_tokens(monkeypatch):
+    # 설명 LLM 출력 길이 상한 (실험 출력 최대 632토큰). 단독 판정 모델에는 넣지 않는다 (실험 조건 유지)
+    from spc_explainer import config
+    completions = use_fake(monkeypatch)
+    llm_client.call_json(config.EXPLAIN_MODEL, "s", "u")
+    assert completions.kwargs["max_completion_tokens"] == config.EXPLAIN_MODEL["max_completion_tokens"] >= 1000
+    llm_client.call_json(config.DETECT_MODELS[0], "s", "u")
+    assert "max_completion_tokens" not in completions.kwargs

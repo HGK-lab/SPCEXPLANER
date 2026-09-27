@@ -19,6 +19,16 @@ def esc(text) -> str:
     return html.escape(str(text), quote=True)
 
 
+LLM_FIELD_MAX = 300  # 화면·메모에 보이는 LLM 문자열 한 칸의 최대 글자 수 (실험 출력의 가장 긴 칸은 115자)
+LLM_RAW_MAX = 4000  # 형식이 틀린 출력의 원문을 보여줄 때 최대 글자 수 (실험 출력 전체는 최대 1,624자)
+
+
+def clip(text, n: int = LLM_FIELD_MAX) -> str:
+    """LLM 문자열을 보이기 전에 자른다 (출력 토큰 상한과 별개의 두 번째 안전장치)."""
+    s = str(text)
+    return s if len(s) <= n else s[:n] + "…"
+
+
 def span_text(start: int, end: int) -> str:
     """구간 표기: #14 또는 #45–52 (점 번호는 0부터)."""
     return f"#{start}" if start == end else f"#{start}–{end}"

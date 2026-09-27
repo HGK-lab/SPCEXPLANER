@@ -82,6 +82,19 @@ def test_any_llm_output_never_shows_a_stack_trace(monkeypatch):
         assert any("07 한계" in e.proto.body for e in at.get("html")), text[:60]
 
 
+def test_raw_llm_text_is_clipped_on_screen(monkeypatch):
+    # JSON이 아닌 긴 출력은 원문을 보여 주되 글자 수 상한까지만
+    from spc_explainer.ui_html import LLM_RAW_MAX
+    monkeypatch.setattr(llm_client, "get_api_key", lambda: "test-key")
+    monkeypatch.setattr(llm_client, "call_json", lambda model, system, user: llm_client.LLMReply("x" * 50_000, None, 0.1, None))
+    at = run_app()
+    at.selectbox[0].set_value(5).run()
+    at.button(key="live_button").click().run()
+    assert not at.exception
+    raw = [c.value for c in at.code if c.value.startswith("xxx")]
+    assert raw and all(len(v) == LLM_RAW_MAX + 1 for v in raw)
+
+
 def test_ai_card_failure_is_contained(monkeypatch):
     # 안전망: 설명을 그리는 도중 예상 못 한 예외가 나도 카드 안내로 끝나고 나머지 화면은 그대로
     from spc_explainer import explain

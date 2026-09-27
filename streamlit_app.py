@@ -132,7 +132,7 @@ def render_ai_card(sid: int, values, events, selected: str | None = None) -> dic
                 st.html(ui_steps.ai_body_html(data, shown_inp, selected))
             else:
                 with st.container(key="ai_body"):
-                    st.code(text or "", language="json")
+                    st.code(ui_html.clip(text or "", ui_html.LLM_RAW_MAX), language="json")
         except Exception:  # 안전망: 어떤 출력이 와도 스택트레이스 대신 안내만 (예외는 서버 로그에)
             LOG.exception("AI 설명 표시 실패 (시리즈 %s)", sid)
             ai = None
@@ -395,7 +395,7 @@ def render_upload_ai(values, events, limits: dict) -> dict | None:
             st.html(ui_steps.issues_html(issues))
         if not isinstance(data, dict):
             with st.container(key="up_ai_msg"):
-                st.code(reply.text or "", language="json")
+                st.code(ui_html.clip(reply.text or "", ui_html.LLM_RAW_MAX), language="json")
             return None
         st.html(ui_steps.ai_body_html(data, inp))
         names = ", ".join(sorted({explain.ISSUE_KO[i["type"]] for i in issues}))

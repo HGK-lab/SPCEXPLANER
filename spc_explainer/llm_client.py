@@ -47,6 +47,8 @@ def call_json(model: dict, system: str, user: str) -> LLMReply:
     }
     if model.get("temperature") is not None:
         kwargs["temperature"] = model["temperature"]
+    if model.get("max_completion_tokens"):
+        kwargs["max_completion_tokens"] = model["max_completion_tokens"]
     t0 = time.perf_counter()
     try:
         r = _get_client().chat.completions.create(**kwargs)

@@ -114,3 +114,19 @@ def test_upload_limits_line():
     assert "50번 점부터 (Phase II)" in upload_limits_html(est)
     fixed = {"mode": "fixed", "phase1_n": None, "limits": {"center": 100, "ucl": 103, "lcl": 97}}
     assert "직접 입력한 한계 · CL 100 · UCL 103 · LCL 97 · 모든 점을 판정" in upload_limits_html(fixed)
+
+
+def test_long_llm_strings_are_clipped_before_display():
+    # 출력 토큰 상한과 별개로, 화면에 보이기 전에 LLM 문자열을 글자 수로 한 번 더 자른다
+    from spc_explainer.ui_html import LLM_FIELD_MAX, clip
+    from spc_explainer.ui_steps import ai_body_html, issues_html, priority_items
+    long = "가" * 10_000
+    inp = {"events": [{"event_id": "E1", "pattern": "급변"}]}
+    data = {"summary": long, "priority": ["E1"],
+            "events": [{"event_id": "E1", "checks": [{"cause_id": "Z" * 5000, "reason": long}]}]}
+    items = priority_items(data, inp)
+    assert len(items[0]["reason"]) == len(items[0]["cause_id"]) == LLM_FIELD_MAX + 1  # 자른 뒤 "…"
+    body = ai_body_html(data, inp)
+    assert long not in body and "가" * LLM_FIELD_MAX + "…" in body
+    assert long not in issues_html([{"type": "cause", "detail": long}])
+    assert clip("짧다") == "짧다"

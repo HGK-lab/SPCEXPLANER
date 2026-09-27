@@ -66,3 +66,13 @@ def test_handover_memo():
     assert "- [x] 해당 런의 MFC 유량 로그 확인 — 가스 유량 순간 이상 (MFC 스파이크) · AI 추천 1순위 (AI: 유량 로그)" in memo
     assert "- [ ] 같은 웨이퍼 재측정" in memo and "### E2 · ■ 치우침 #40–49" in memo
     assert "## AI 설명 (참고용)\n\n- 없음" in handover_md("t", "n", cards, set(), None)
+
+
+def test_llm_reason_and_summary_are_clipped_in_the_memo():
+    from spc_explainer.ui_html import LLM_FIELD_MAX
+    long = "나" * 5000
+    inp = {"events": [{"event_id": "E1", "pattern": "급변"}]}
+    order = ai_order({"events": [{"event_id": "E1", "checks": [{"cause_id": "SP-1", "reason": long}]}]}, inp)
+    assert len(order["E1"][0][1]) == LLM_FIELD_MAX + 1
+    memo = handover_md("t", "now", [], set(), {"model": "m", "status": "s", "summary": long})
+    assert long not in memo and "나" * LLM_FIELD_MAX + "…" in memo

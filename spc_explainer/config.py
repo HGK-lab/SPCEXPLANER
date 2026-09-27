@@ -50,7 +50,8 @@ SHIFT_MEAN_OFFSET = 1.5  # 치우침 평균 이동(σ 배수)
 
 # ── LLM (모델명은 여기서만 관리) ──
 # temperature가 None이면 요청에 넣지 않는다(모델 기본값). gpt-6-sol은 0을 거부한다 (2026-09-25 확인).
-EXPLAIN_MODEL = {"name": "gpt-4.1-mini", "temperature": 0, "repeats": 3}
+# max_completion_tokens: 출력 길이 상한. 실험 출력은 최대 632토큰, 06은 사건이 최대 100건이라 여유를 둔다
+EXPLAIN_MODEL = {"name": "gpt-4.1-mini", "temperature": 0, "repeats": 3, "max_completion_tokens": 4000}
 DETECT_MODELS = [
     {"name": "gpt-4.1-mini", "temperature": 0, "repeats": 3, "enabled": True},
     {"name": "gpt-6-sol", "temperature": None, "repeats": 3, "enabled": True},

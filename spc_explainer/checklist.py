@@ -4,7 +4,7 @@ from . import config
 from .causes import CAUSES
 from .patterns import FROM_KOREAN, KOREAN, Event
 from .rules import describe
-from .ui_html import SYMBOL, span_text
+from .ui_html import SYMBOL, clip, span_text
 
 
 def ai_order(data: dict | None, inp: dict) -> dict[str, list[tuple[str, str]]]:
@@ -24,7 +24,7 @@ def ai_order(data: dict | None, inp: dict) -> dict[str, list[tuple[str, str]]]:
             if (isinstance(cid, str) and cid in CAUSES and CAUSES[cid]["pattern"] == patterns.get(eid)
                     and cid not in [p[0] for p in picked]):
                 reason = c.get("reason")
-                picked.append((cid, " ".join(reason.split()) if isinstance(reason, str) else ""))
+                picked.append((cid, clip(" ".join(reason.split())) if isinstance(reason, str) else ""))
         order[eid] = picked
     return order
 
@@ -66,7 +66,7 @@ def handover_md(title: str, now: str, cards: list[dict], checked: set[tuple[str,
     lines += [f"- {c['title']} — {c['rule']}" for c in cards] or ["- 이상 없음"]
     lines += ["", "## AI 설명 (참고용)", ""]
     if ai:
-        lines += [f"- 모델: {ai['model']} · {ai['status']}", f"- 요약: {' '.join(str(ai['summary']).split())}"]
+        lines += [f"- 모델: {ai['model']} · {ai['status']}", f"- 요약: {clip(' '.join(str(ai['summary']).split()))}"]
     else:
         lines.append("- 없음")
     lines += ["", "## 지금 확인할 것 (원인표 기준)"]
