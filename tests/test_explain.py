@@ -95,6 +95,16 @@ def test_parseable_but_wrong_types_do_not_raise():
         signature(data)  # 예외가 나면 안 된다
 
 
+def test_pattern_of_any_type_is_a_format_issue_not_an_exception():
+    # pattern이 배열·객체면 dict 멤버십 검사에서 TypeError가 났다 (화면에 스택트레이스, 05~07 사라짐)
+    for bad in (["급변"], {"a": 1}, 3, None, True, 1.5):
+        obj = variant(lambda o: o["events"][0].__setitem__("pattern", bad))
+        assert "format" in issue_types(obj), bad
+    deep = "[" * 100_000 + "]" * 100_000  # 파서의 재귀 한도를 넘는 중첩
+    data, issues = validate(deep, INP)
+    assert data is None and [i["type"] for i in issues] == ["format"]
+
+
 def test_signature_ignores_reason_wording():
     other = variant(lambda o: o["events"][0]["checks"][0].update(reason="다른 문장"))
     assert signature(GOOD) == signature(other)

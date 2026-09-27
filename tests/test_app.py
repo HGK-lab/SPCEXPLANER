@@ -56,6 +56,47 @@ def test_live_button_click_shows_reply_without_error(monkeypatch):
     assert any("가짜 호출 오류" in m.value for m in at.error)
 
 
+WEIRD_REPLIES = [
+    '{"summary": "요약", "events": [{"event_id": "E1", "pattern": ["급변"], "rule": "r", "checks": []}], "priority": ["E1"]}',
+    '{"summary": ["요약"], "events": [{"event_id": "E1", "pattern": {"x": 1}, "checks": [{"cause_id": {}, "reason": []}]}], '
+    '"priority": [[], {}]}',
+    "[" * 100_000 + "]" * 100_000,
+    "null",
+]
+
+
+def test_any_llm_output_never_shows_a_stack_trace(monkeypatch):
+    # 03·06 실시간 설명에 어떤 모양의 출력이 와도 예외 없이 형식 위반으로 보이고, 아래 섹션(07 한계)까지 그려진다
+    from spc_explainer.upload import example_csv
+    monkeypatch.setattr(llm_client, "get_api_key", lambda: "test-key")
+    monkeypatch.setattr(config, "LIVE_CALLS_PER_SESSION", 99)
+    series = json.loads(config.SERIES_PATH.read_text(encoding="utf-8"))["series"]
+    for text in WEIRD_REPLIES:
+        monkeypatch.setattr(llm_client, "call_json", lambda model, system, user, t=text: llm_client.LLMReply(t, None, 0.1, None))
+        at = run_app()
+        at.selectbox[0].set_value(5).run()
+        at.button(key="live_button").click().run()
+        at.text_area(key="up_text").set_value(example_csv(series[11]["values"])).run()
+        at.button(key="up_live_button").click().run()
+        assert not at.exception, text[:60]
+        assert any("07 한계" in e.proto.body for e in at.get("html")), text[:60]
+
+
+def test_ai_card_failure_is_contained(monkeypatch):
+    # 안전망: 설명을 그리는 도중 예상 못 한 예외가 나도 카드 안내로 끝나고 나머지 화면은 그대로
+    from spc_explainer import explain
+
+    def boom(text, inp):
+        raise RuntimeError("검증기 내부 오류")
+    monkeypatch.setattr(explain, "validate", boom)
+    at = run_app()
+    at.selectbox[0].set_value(5).run()
+    assert not at.exception
+    assert any("AI 설명을 표시하지 못했습니다" in m.value for m in at.warning)
+    assert not any("검증기 내부 오류" in m.value for m in at.warning)
+    assert any("07 한계" in e.proto.body for e in at.get("html"))
+
+
 def test_stale_saved_explanation_shows_warning(monkeypatch, tmp_path):
     # 규칙·설정을 바꾸고 실험을 다시 안 돌린 경우: 저장된 설명의 입력이 지금 판정과 달라도 화면은 그대로, 경고만 뜬다
     saved = json.loads(config.EXPLANATIONS_PATH.read_text(encoding="utf-8"))

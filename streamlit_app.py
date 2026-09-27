@@ -4,6 +4,7 @@
 # 시리즈·센서·올린 데이터를 바꾸면 st.fragment로 감싼 그 섹션만 다시 그린다. 결과 파일 읽기와 SECOM 계산은 캐시한다.
 import hashlib
 import json
+import logging
 import os
 from datetime import date, datetime
 
@@ -15,6 +16,8 @@ from spc_explainer.charts import chart_footer_html, chart_header_html, control_c
 from spc_explainer.patterns import KOREAN
 
 st.set_page_config(page_title="SPC 설명기", layout="wide")
+LOG = logging.getLogger("spc_explainer")
+AI_FAIL_TEXT = "AI 설명을 표시하지 못했습니다. 규칙 판정과 체크리스트는 그대로 쓸 수 있습니다."
 
 # 배포 환경: Streamlit Secrets의 키를 환경변수로 옮긴다 (로컬은 llm_client가 .env를 읽는다)
 try:
@@ -116,19 +119,25 @@ def render_ai_card(sid: int, values, events, selected: str | None = None) -> dic
             else:
                 st.info("저장된 설명이 없습니다. `python scripts/run_experiment.py`로 만들 수 있습니다.")
     else:
-        data, issues = explain.validate(text, shown_inp)
-        names = ", ".join(sorted({explain.ISSUE_KO[i["type"]] for i in issues}))
-        ai = {"data": data if isinstance(data, dict) else None, "inp": shown_inp, "model": model["name"],
-              "ok": not issues and shown_inp == inp,  # 저장된 입력이 지금 판정과 다르면 순서를 쓰지 않는다
-              "status": ("검증 통과" if not issues else f"검증 문제: {names}") + f" · {source}"}
-        st.html(ui_steps.ai_head_html(issues))
-        if issues:
-            st.html(ui_steps.issues_html(issues))
-        if isinstance(data, dict):
-            st.html(ui_steps.ai_body_html(data, shown_inp, selected))
-        else:
-            with st.container(key="ai_body"):
-                st.code(text or "", language="json")
+        try:
+            data, issues = explain.validate(text, shown_inp)
+            names = ", ".join(sorted({explain.ISSUE_KO[i["type"]] for i in issues}))
+            ai = {"data": data if isinstance(data, dict) else None, "inp": shown_inp, "model": model["name"],
+                  "ok": not issues and shown_inp == inp,  # 저장된 입력이 지금 판정과 다르면 순서를 쓰지 않는다
+                  "status": ("검증 통과" if not issues else f"검증 문제: {names}") + f" · {source}"}
+            st.html(ui_steps.ai_head_html(issues))
+            if issues:
+                st.html(ui_steps.issues_html(issues))
+            if isinstance(data, dict):
+                st.html(ui_steps.ai_body_html(data, shown_inp, selected))
+            else:
+                with st.container(key="ai_body"):
+                    st.code(text or "", language="json")
+        except Exception:  # 안전망: 어떤 출력이 와도 스택트레이스 대신 안내만 (예외는 서버 로그에)
+            LOG.exception("AI 설명 표시 실패 (시리즈 %s)", sid)
+            ai = None
+            with st.container(key="ai_fail"):
+                st.warning(AI_FAIL_TEXT)
     if cached and cached.get("input") != inp:
         with st.container(key="ai_warn"):
             st.warning("저장된 설명의 입력이 현재 규칙 판정과 다릅니다. 실험을 다시 돌려야 합니다.")
@@ -151,14 +160,18 @@ def render_ai_card(sid: int, values, events, selected: str | None = None) -> dic
         st.rerun()
     if runs:
         with st.container(key="ai_runs"), st.expander(f"같은 입력 {len(runs)}회 반복 결과 (저장된 설명)"):
-            for r in runs:
-                if r["error"]:
-                    st.html(ui_steps.run_line_html(r["run"] + 1, "호출 오류", None))
-                    continue
-                data, issues = explain.validate(r["text"], cached["input"])
-                state = ", ".join(sorted({explain.ISSUE_KO[i["type"]] for i in issues})) if issues else "검증 통과"
-                items = ui_steps.priority_items(data, cached["input"]) if isinstance(data, dict) else []
-                st.html(ui_steps.run_line_html(r["run"] + 1, state, items))
+            try:
+                for r in runs:
+                    if r["error"]:
+                        st.html(ui_steps.run_line_html(r["run"] + 1, "호출 오류", None))
+                        continue
+                    data, issues = explain.validate(r["text"], cached["input"])
+                    state = ", ".join(sorted({explain.ISSUE_KO[i["type"]] for i in issues})) if issues else "검증 통과"
+                    items = ui_steps.priority_items(data, cached["input"]) if isinstance(data, dict) else []
+                    st.html(ui_steps.run_line_html(r["run"] + 1, state, items))
+            except Exception:  # 안전망 (위와 같음)
+                LOG.exception("반복 결과 표시 실패 (시리즈 %s)", sid)
+                st.caption("반복 결과를 표시하지 못했습니다.")
     return ai
 
 
@@ -373,18 +386,24 @@ def render_upload_ai(values, events, limits: dict) -> dict | None:
         with st.container(key="up_ai_msg"):
             st.error(f"호출 오류: {reply.error}")
         return None
-    data, issues = explain.validate(reply.text, inp)
-    st.html(ui_steps.ai_head_html(issues))
-    if issues:
-        st.html(ui_steps.issues_html(issues))
-    if not isinstance(data, dict):
-        with st.container(key="up_ai_msg"):
-            st.code(reply.text or "", language="json")
+    try:
+        data, issues = explain.validate(reply.text, inp)
+        st.html(ui_steps.ai_head_html(issues))
+        if issues:
+            st.html(ui_steps.issues_html(issues))
+        if not isinstance(data, dict):
+            with st.container(key="up_ai_msg"):
+                st.code(reply.text or "", language="json")
+            return None
+        st.html(ui_steps.ai_body_html(data, inp))
+        names = ", ".join(sorted({explain.ISSUE_KO[i["type"]] for i in issues}))
+        return {"data": data, "inp": inp, "model": model["name"], "ok": not issues,
+                "status": ("검증 통과" if not issues else f"검증 문제: {names}") + " · 실시간 설명"}
+    except Exception:  # 안전망: 어떤 출력이 와도 스택트레이스 대신 안내만 (예외는 서버 로그에)
+        LOG.exception("06 AI 설명 표시 실패")
+        with st.container(key="up_ai_fail"):
+            st.warning(AI_FAIL_TEXT)
         return None
-    st.html(ui_steps.ai_body_html(data, inp))
-    names = ", ".join(sorted({explain.ISSUE_KO[i["type"]] for i in issues}))
-    return {"data": data, "inp": inp, "model": model["name"], "ok": not issues,
-            "status": ("검증 통과" if not issues else f"검증 문제: {names}") + " · 실시간 설명"}
 
 
 @st.fragment

@@ -77,7 +77,7 @@ def validate(text: str | None, inp: dict) -> tuple[dict | None, list[dict]]:
 
     try:
         data = json.loads(text)
-    except (TypeError, ValueError) as e:
+    except (TypeError, ValueError, RecursionError) as e:  # RecursionError: 파서 한도를 넘는 중첩
         add("format", f"JSON 파싱 실패: {e}")
         return None, issues
     if not isinstance(data, dict):
@@ -99,8 +99,8 @@ def validate(text: str | None, inp: dict) -> tuple[dict | None, list[dict]]:
         eid = ev["event_id"]
         seen.append(eid)
         pattern = ev.get("pattern")
-        if pattern not in FROM_KOREAN:
-            add("format", f"{eid}: pattern '{pattern}'은 급변/추세/치우침이 아님")
+        if not isinstance(pattern, str) or pattern not in FROM_KOREAN:  # 배열·객체는 dict 검사에서 TypeError
+            add("format", f"{eid}: pattern '{str(pattern)[:40]}'은 급변/추세/치우침이 아님")
         elif eid in expected and pattern != expected[eid]:
             add("mismatch", f"{eid}: 패턴 '{pattern}' ≠ 규칙 판정 '{expected[eid]}'")
         if not isinstance(ev.get("rule"), str):
