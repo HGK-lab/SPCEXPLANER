@@ -42,6 +42,7 @@
 - 진행 기록(ledger): `.superpowers/sdd/2026-09-25-spc-explainer/progress.md` — git 제외라 이 PC에만 있다. 다른 PC에서는 `git log`로 태스크 완료를 확인한다
 
 - 2026-09-27 오후: 포트폴리오 소개 이미지 6장 (`docs/portfolio/showcase/out/`). 브레인스토밍으로 방향 확정 — 어두운 바탕(장마다 다른 색), 장마다 다른 구도·데스크톱/모바일 비율, 손글씨 주석(노랑·빨강), 직접 그린 선화(증착 챔버 단면, 웨이퍼 측정점), 대회 이름·AI 티 장치 제외. 설계 `docs/superpowers/specs/2026-09-27-showcase-images-design.md`, 계획 `docs/superpowers/plans/2026-09-27-showcase-images.md`. 렌더 경고 0, 문구·숫자 점검(`check.py`) 통과
+- 2026-09-27: 개인 스킬 `~/.claude/skills/showcase-images` 개선(저장소 밖) — `references/annotated-deck.md`(장마다 다른 장면, 손글씨 주석, 직접 그린 선화, 방향 합의 순서), `scripts/copy_check.py`(금지 표현·숫자 점검), SKILL.md·styles.md·slide-patterns.md 연결. 원본 백업은 이 세션 스크래치에만 있음
 
 ## 진행 중
 없음.
