@@ -119,7 +119,7 @@ def control_chart(values, events: list[Event], center: float, ucl: float, lcl: f
     pad = (hi - lo) * 0.06 or 1.0
     yaxis = {"range": [lo - pad, hi + pad], "showgrid": True, "gridcolor": GRID, "zeroline": False,
              "tickfont": {"family": MONO, "size": 11, "color": TICK},
-             "title": {"text": y_title, "font": {"size": 12, "color": TICK}}}
+             "title": {"text": esc(y_title), "font": {"size": 12, "color": TICK}}}  # 06 열 이름: Plotly가 <a> 등을 그린다
     if 3 <= hi - lo + 2 * pad <= 14:  # 가상 데이터(97~103nm 부근)는 1 간격. 더 좁거나 넓으면 Plotly가 정한다
         yaxis["dtick"] = 1
     xaxis = {"range": [-0.8, len(vals) - 0.2], "showgrid": False, "zeroline": False, "showline": True,

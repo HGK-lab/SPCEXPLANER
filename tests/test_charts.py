@@ -103,3 +103,11 @@ def test_small_scale_data_keeps_y_tick_labels():
     fig = control_chart(vals, [], 0.503, 0.506, 0.500)
     assert fig.layout.yaxis.dtick is None
     assert control_chart(VALUES, EVENTS, 100, 103, 97).layout.yaxis.dtick == 1
+
+
+def test_axis_title_from_uploaded_header_is_escaped():
+    # 06 올린 파일의 열 이름이 축 제목으로 간다. Plotly는 제목의 <a href>를 링크로 그리므로 이스케이프한다
+    fig = control_chart(VALUES, EVENTS, 100, 103, 97, y_title='<a href="https://evil.example/login">재로그인</a>')
+    title = fig.layout.yaxis.title.text
+    assert "<a" not in title and "&lt;a href=&quot;https://evil.example/login&quot;&gt;" in title
+    assert control_chart(VALUES, EVENTS, 100, 103, 97, y_title="sensor_88").layout.yaxis.title.text == "sensor_88"
