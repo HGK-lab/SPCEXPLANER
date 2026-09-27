@@ -66,10 +66,14 @@ def control_chart(values, events: list[Event], center: float, ucl: float, lcl: f
     rows = _label_rows(ordered, len(vals)) if band_labels else []
     if rows and max(rows) >= MAX_LABEL_ROWS:
         rows = []
+    # 음영은 한 번에 넣는다: add_vrect를 사건마다 부르면 매번 도형 목록 전체를 다시 검사해 시간이 제곱으로 는다
+    fig.update_layout(shapes=[
+        {"type": "rect", "x0": e.start - 0.5, "x1": e.end + 0.5, "y0": 0, "y1": 1, "xref": "x", "yref": "y domain",
+         "fillcolor": _rgba(PATTERN_COLORS[e.pattern]["fill"], 0.10),
+         "line": {"color": _rgba(PATTERN_COLORS[e.pattern]["fill"], 0.35), "width": 1}, "layer": "below"}
+        for e in ordered])
     for i, e in enumerate(ordered):
         color = PATTERN_COLORS[e.pattern]
-        fig.add_vrect(x0=e.start - 0.5, x1=e.end + 0.5, fillcolor=_rgba(color["fill"], 0.10),
-                      line={"color": _rgba(color["fill"], 0.35), "width": 1}, layer="below")
         if rows:
             fig.add_annotation(x=e.start - 0.5, y=1, xref="x", yref="paper", xanchor="left", yanchor="bottom",
                                yshift=rows[i] * LABEL_ROW_PX, text=f"<b>{_band_text(e)}</b>",

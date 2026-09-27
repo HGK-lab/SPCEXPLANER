@@ -8,6 +8,8 @@ from datetime import datetime, timedelta
 from . import rules, secom
 
 MAX_ROWS = 2000
+MAX_UPLOAD_MB = 1  # .streamlit/config.toml의 server.maxUploadSize와 같아야 한다 (uploader 인자는 브라우저에서만 걸림)
+MAX_EVENTS = 100  # 사건이 이보다 많으면 한계가 데이터와 맞지 않는 것으로 보고 판정하지 않는다 (그림·체크리스트·LLM 입력 크기)
 MIN_ROWS = 10  # 판정에 쓸 최소 행 수
 MIN_PHASE1 = 20  # 한계 추정에 쓸 앞 구간의 최소 점 수
 PHASE1_CAP = 100  # 앞 N점 기본값의 상한
@@ -32,6 +34,8 @@ def decode(raw: bytes) -> str:
 def read_input(raw: bytes | None, pasted: str) -> str | None:
     """판정할 글자. 올린 파일이 있으면 그것(비어 있으면 오류), 없으면 붙여넣은 글자. 둘 다 비었으면 None(기다림)."""
     if raw is not None:
+        if len(raw) > MAX_UPLOAD_MB * 1024 * 1024:
+            raise UploadError(f"파일이 {MAX_UPLOAD_MB}MB를 넘습니다. {MAX_ROWS:,}행 이하의 CSV만 판정합니다.")
         text = decode(raw)
         if not text.strip():
             raise UploadError("올린 파일이 비어 있습니다. 막 두께 숫자가 한 줄에 하나씩 있는 CSV를 올려 주세요.")
@@ -59,6 +63,8 @@ def parse(text: str) -> dict:
         lines.pop()
     if not lines:
         raise UploadError("비어 있습니다. 막 두께 숫자가 한 줄에 하나씩 있는 CSV를 올리거나 붙여넣어 주세요.")
+    if len(lines) > MAX_ROWS + 1:  # 머리글 1줄까지. CSV로 읽기 전에 막는다
+        raise UploadError(f"데이터가 {len(lines):,}줄입니다. 최대 {MAX_ROWS:,}행(머리글 제외)까지 판정합니다.")
     first = lines[0]
     delimiter = "\t" if "\t" in first else (";" if ";" in first and "," not in first else ",")
     try:
@@ -119,6 +125,7 @@ def judge_estimated(values: list[float], phase1_n: int) -> dict:
     if not math.isfinite(limits["sigma"]) or limits["sigma"] <= 0:
         raise UploadError(f"앞 {phase1_n}점의 값이 모두 같아 한계를 추정할 수 없습니다. 한계를 직접 입력해 주세요.")
     limits, events = secom.monitor(values, phase1_n)
+    _check_event_count(events)
     return {"mode": "estimated", "limits": limits, "events": events, "phase1_n": phase1_n}
 
 
@@ -127,7 +134,15 @@ def judge_fixed(values: list[float], center: float, ucl: float, lcl: float) -> d
     if not lcl < center < ucl:
         raise UploadError("관리한계는 LCL < 중심선(CL) < UCL 이어야 합니다.")
     limits = {"center": center, "ucl": ucl, "lcl": lcl}
-    return {"mode": "fixed", "limits": limits, "events": rules.detect(values, center, ucl, lcl), "phase1_n": None}
+    events = rules.detect(values, center, ucl, lcl)
+    _check_event_count(events)
+    return {"mode": "fixed", "limits": limits, "events": events, "phase1_n": None}
+
+
+def _check_event_count(events: list) -> None:
+    if len(events) > MAX_EVENTS:
+        raise UploadError(f"규칙 판정 사건이 {len(events):,}건으로 너무 많습니다 (최대 {MAX_EVENTS}건). 관리한계가 이 데이터와 "
+                          "맞지 않을 수 있습니다. 앞 N점을 바꾸거나 한계를 직접 입력해 주세요.")
 
 
 def example_csv(values: list[float], start: str = "2026-09-01 08:00", minutes: int = 30) -> str:

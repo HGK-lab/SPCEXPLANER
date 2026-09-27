@@ -9,3 +9,7 @@ borderColor = "#d9dcdf"
 baseRadius = "small"
 font = "IBM Plex Sans KR:https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500;600;700&display=swap"
 codeFont = "IBM Plex Mono:https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&display=swap"
+
+# 올리기 한도(MB). file_uploader의 max_upload_size는 브라우저에서만 걸려서 서버 한도도 같이 둔다 (upload.MAX_UPLOAD_MB와 같게)
+[server]
+maxUploadSize = 1

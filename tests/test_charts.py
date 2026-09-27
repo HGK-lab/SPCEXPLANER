@@ -35,6 +35,16 @@ def test_truth_is_outline_only():
     assert len(outlines) == 1 and outlines[0].fillcolor == "rgba(0,0,0,0)"
 
 
+def test_many_rule_bands_are_added_at_once():
+    # 음영을 사건마다 add_vrect로 넣으면 Plotly가 매번 도형 목록 전체를 다시 검사해 1000건에 3분이 걸렸다
+    import time
+    many = [Event("spike", i, i, "up") for i in range(0, 2000, 2)]
+    t0 = time.perf_counter()
+    fig = control_chart([100.0] * 2000, many, 100, 103, 97, show_legend=False)
+    assert time.perf_counter() - t0 < 5
+    assert len([s for s in fig.layout.shapes if s.type == "rect"]) == 1000
+
+
 def test_many_events_hide_band_labels_and_secom_arguments_still_work():
     many = [Event("spike", i, i, "up") for i in range(0, 90, 9)]
     fig = control_chart(VALUES, many, 100, 103, 97, phase_boundary=50, fail_idx=[3], y_title="sensor_88")

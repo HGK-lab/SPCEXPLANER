@@ -397,7 +397,7 @@ def upload_section(dataset: dict) -> None:
         st.html(ui_html.UPLOAD_NOTE_HTML)
         file_col, paste_col = st.columns(2)
         with file_col:
-            file = st.file_uploader("CSV 파일 올리기", type=["csv", "txt"], max_upload_size=1, key="up_file")
+            file = st.file_uploader("CSV 파일 올리기", type=["csv", "txt"], max_upload_size=upload.MAX_UPLOAD_MB, key="up_file")
             st.download_button("예시 CSV 내려받기 (가상 시리즈 11)", upload.example_csv(dataset["series"][11]["values"]),
                                file_name="spc_example.csv", mime="text/csv", on_click="ignore", key="up_example")
         with paste_col:

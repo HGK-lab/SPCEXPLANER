@@ -1,11 +1,12 @@
 # 내 데이터 판정: 입력 검사(결측·문자·행 수·열 수·인코딩), 한계 추정·직접 입력, 가상 시리즈를 CSV로 넣었을 때 같은 판정
 import json
+import re
 
 import pytest
 
 from spc_explainer import config, rules
-from spc_explainer.upload import (MAX_ROWS, UploadError, decode, default_phase1, example_csv, judge_estimated,
-                                  judge_fixed, parse, read_input)
+from spc_explainer.upload import (MAX_EVENTS, MAX_ROWS, MAX_UPLOAD_MB, UploadError, decode, default_phase1,
+                                  example_csv, judge_estimated, judge_fixed, parse, read_input)
 
 SERIES = json.loads(config.SERIES_PATH.read_text(encoding="utf-8"))["series"]
 
@@ -123,6 +124,31 @@ def test_missing_or_nan_first_row_is_not_taken_as_header():
 def test_absurdly_large_values_are_rejected():
     with pytest.raises(UploadError, match="3행: 막 두께 값 '1e300'이\\(가\\) 너무 큽니다"):
         parse("100\n101\n1e300\n" + numbers(12))
+
+
+def test_oversized_input_is_rejected_before_reading_rows():
+    # 파일 크기·줄 수를 CSV로 읽기 전에 막는다 (읽은 뒤 세면 메모리가 입력의 약 78배까지 늘었다)
+    with pytest.raises(UploadError, match=f"{MAX_UPLOAD_MB}MB"):
+        read_input(b"100\n" * (MAX_UPLOAD_MB * 1024 * 1024 // 4 + 1), "")
+    with pytest.raises(UploadError, match=f"최대 {MAX_ROWS:,}행"):
+        parse(numbers(MAX_ROWS + 500) + "\nabc")  # 뒤쪽 글자 오류보다 행 수 초과를 먼저 알린다
+
+
+def test_server_upload_limit_matches_the_uploader():
+    # file_uploader의 max_upload_size는 브라우저에서만 걸린다. 서버 한도(server.maxUploadSize, 기본 200MB)도 맞춘다
+    text = (config.ROOT / ".streamlit" / "config.toml").read_text(encoding="utf-8")
+    server = re.search(r"^\[server\]\s*\n(.*?)(?=^\[|\Z)", text, re.M | re.S)
+    assert server and re.search(rf"^maxUploadSize\s*=\s*{MAX_UPLOAD_MB}\s*$", server.group(1), re.M)
+
+
+def test_too_many_events_are_rejected():
+    # 한계가 데이터와 맞지 않아 사건이 수백 건 나오면 그림·체크리스트·LLM 입력이 모두 커진다 → 판정 전에 안내
+    with pytest.raises(UploadError, match="사건이"):
+        judge_fixed([110.0, 100.0] * 1000, 100, 103, 97)
+    with pytest.raises(UploadError, match="사건이"):
+        judge_estimated([100.0, 100.01] * 50 + [110.0, 100.0] * 950, 100)
+    ok = judge_fixed([110.0, 100.0] * MAX_EVENTS, 100, 103, 97)
+    assert len(ok["events"]) == MAX_EVENTS
 
 
 def test_long_spike_run_is_summarized():
