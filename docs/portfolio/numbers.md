@@ -13,6 +13,7 @@
 | 정상 시리즈 경보 | 5개 중 1개 | `rules.normal.alarmed_series` |
 | 오탐 사건 | 6건 (정상 시리즈 급변 1 + 이상 시리즈 급변 2·추세 2·치우침 1) | `rules.normal.false_events`·`rules.anomalous.false_events`·`rules.false_list` |
 | 패턴 혼동 | 0건 | `rules.anomalous.confusions` |
+| 시리즈 1개(100점) 판정 시간 | 평균 0.48ms (중앙값 0.44ms, 400회, Python 3.10.11, 2026-09-27 측정) | `results/rule_timing.json` (`scripts/measure_rules.py`) |
 
 ## 2. LLM 단독 판정 비교 (규칙 정의 + 원시값만 주고 직접 판정, 모델별 3회)
 | 항목 | gpt-4.1-mini (temperature 0) | gpt-6-sol (기본값) | 출처 |
@@ -27,6 +28,7 @@
 | 호출 수 | 60 (20 시리즈 × 3회) | 60 | `results/llm_detections.json` · `models.*.series.*.runs` |
 | 응답 시간 평균 (중앙값, 최소~최대) | 2.05초 (1.70, 1.05~4.50) | 10.82초 (10.08, 7.36~18.09) | `llm_detections.json` · `runs[].latency_s` |
 | 토큰 합계 (입력 / 출력) | 56,880 / 10,449 | 56,820 / 34,625 | `llm_detections.json` · `runs[].usage` |
+| 비용 (60회) | $0.039 | $0.46 | 위 토큰 × `config.PRICES_USD_PER_1M` (OpenAI 가격표, 2026-09-27 확인) |
 
 gpt-6-sol의 오탐 6건은 규칙 엔진의 오탐 6건과 같은 사건이다 (`detect[1].runs[].false_list` = `rules.false_list`, 방향 필드만 없음).
 
@@ -40,8 +42,9 @@ gpt-6-sol의 오탐 6건은 규칙 엔진의 오탐 6건과 같은 사건이다 
 | 반복마다 1순위 원인·점검 순서가 바뀐 시리즈 | 0 / 16 | `explain.repeat_changed_series` |
 | 응답 시간 평균 (중앙값) | 3.38초 (3.30) | `results/explanations.json` · `runs[].latency_s` |
 | 토큰 합계 (입력 / 출력) | 45,210 / 17,843 | `explanations.json` · `runs[].usage` |
+| 비용 (48회) | $0.047 | 위 토큰 × `config.PRICES_USD_PER_1M` |
 
-실험 전체 호출: 60 + 60 + 48 = 168회, 호출 오류 0.
+실험 전체 호출: 60 + 60 + 48 = 168회, 호출 오류 0. 비용 합계 $0.546 ($0.039 + $0.460 + $0.047).
 
 ## 4. 실데이터 확인 (UCI SECOM, 정답 없음 — 탐지율 계산 안 함)
 시간순 1,567행 중 앞 500점(Phase I)으로 한계 추정, 나머지 1,067점(Phase II)을 같은 규칙으로 감시 (`metrics.json` · `secom.n`·`secom.phase1_n`).
@@ -53,6 +56,6 @@ gpt-6-sol의 오탐 6건은 규칙 엔진의 오탐 6건과 같은 사건이다 
 
 출처: `metrics.json` · `secom.sensors.*` (`limits`, `events`, `by_pattern`, `events_with_fail`, `flagged_points`, `fail_rate_flagged`, `fail_rate_phase2`). 겹침은 관찰일 뿐, 인과나 탐지 성능으로 해석하지 않는다.
 
-## 결과 파일에 없는 숫자 (쓸 때 출처를 따로 밝힐 것)
-- 실험 비용(달러): 결과 파일에 없다. `docs/HANDOFF.md`에만 $0.546(4.1-mini $0.086 + sol $0.460)으로 적혀 있고 산출 근거는 남아 있지 않다. 쓰려면 OpenAI 사용량 화면에서 2026-09-25 값을 다시 확인한다.
-- 사례 해설의 "한계 안 값을 급변이라고 한 점 262개": `docs/case_notes.md`의 수동 집계다.
+## 계산 기준
+- 비용: 결과 파일의 토큰 수에 `spc_explainer/config.py`의 단가표(USD / 100만 토큰 — gpt-4.1-mini 입력 $0.40·출력 $1.60, gpt-6-sol 입력 $2.00·출력 $10.00, https://developers.openai.com/api/docs/pricing 2026-09-27 확인)를 곱했다. 결과 파일에는 캐시 입력 구분이 없어 입력은 모두 캐시 안 된 단가로 계산했다 (실제 청구액과 같거나 조금 크다). 04 화면의 KPI 카드도 같은 계산이다.
+- 사례 해설의 "한계 안 값을 급변이라고 한 점 262개(보고한 293개 중)": `python scripts/case_counts.py`가 `results/llm_detections.json`에서 센 값 (`tests/test_case_notes.py`가 해설 글과 대조).
