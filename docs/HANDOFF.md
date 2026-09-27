@@ -1,9 +1,9 @@
 # 인수인계 (세션 간 이어가기용)
 
-마지막 갱신: 2026-09-27 16시 반 (포트폴리오 PDF 노션 작성 중 — 4쪽 구성 확정, 1쪽 완료, 쪽 나눔 도구 준비)
+마지막 갱신: 2026-09-27 저녁 (제출 완료 — 사용자 보고)
 
 ## 현재 단계
-**코드 동결** (8c6c2bf 이후, 제출 전까지 발견된 버그와 문서 수정만). 테스트 159개 통과. 배포 앱에 모든 변경 반영 확인. 사용자가 Secrets 등록·Reboot 완료. 제출물(PDF·데모 영상·지원서 글)은 사용자가 진행 — Claude는 대기. 이전 단계 기록:
+**제출 완료** (2026-09-27, 사용자 보고). 그 전 단계: **코드 동결** (8c6c2bf 이후, 제출 전까지 발견된 버그와 문서 수정만). 테스트 159개 통과. 배포 앱에 모든 변경 반영 확인. 사용자가 Secrets 등록·Reboot 완료. 제출물(PDF·데모 영상·지원서 글)은 사용자가 진행 — Claude는 대기. 이전 단계 기록:
 구현 계획의 Task 1~21을 모두 마쳤다 (테스트 139개 통과, 매 태스크 커밋·푸시). 배포 확인(D)도 마쳤다. 서브에이전트 최종 리뷰(C)는 2026-09-26 20:52에 시작했지만 리뷰어 7개가 모두 세션 한도로 멈춰 결과가 없다. 2026-09-27 진행 순서(사용자 지정): 로컬 실시간 설명 1회 확인 → 최종 리뷰 재실행(리뷰어 2개, 순서대로) → 심각도 높은 지적 수정 → 제출물 재료(캡처·수치 요약·데모 스크립트) → 사용자 보고.
 
 ## 완료
@@ -45,22 +45,21 @@
 - 2026-09-27: 개인 스킬 `~/.claude/skills/showcase-images` 개선(저장소 밖) — `references/annotated-deck.md`(장마다 다른 장면, 손글씨 주석, 직접 그린 선화, 방향 합의 순서), `scripts/copy_check.py`(금지 표현·숫자 점검), SKILL.md·styles.md·slide-patterns.md 연결. 원본 백업은 이 세션 스크래치에만 있음
 
 ## 진행 중
-- **포트폴리오 PDF (2026-09-27 오후, 사용자와 함께)** — 노션 비공개 페이지 「AI가 내놓은 답, 그대로 믿어도 될까?」 https://app.notion.com/p/3e83baff12e68181969ac6ba367ed140
+없음 (제출 완료). 아래는 제출 전 마지막 작업 기록.
+- **포트폴리오 PDF (2026-09-27 오후, 사용자와 함께 — 제출됨)** — 노션 비공개 페이지 「AI가 내놓은 답, 그대로 믿어도 될까?」 https://app.notion.com/p/3e83baff12e68181969ac6ba367ed140
   - 결정: A4 **4쪽**(1 표지 겸 두 작품 요약 · 2 SPC 문제와 구조 · 3 SPC 검증 실험 · 4 노트 인박스), 개조식 명사형(핵심 문장만 완결문), 개인 정보 없음(블라인드), **PDF에 주소·링크 없음**(3쪽 링크 줄 삭제, 소개 이미지 06의 배포·GitHub 주소 줄 지우고 다시 렌더 — 사용자 결정 09-27), 두 앱 소개 이미지 12장 모두 사용(SPC 6장은 이 저장소 `showcase/out`, 노트 인박스 6장은 노션 「노트 인박스」 기록에서 받음)
   - 완료(초안): 4쪽 모두. 1쪽 답·역할 줄·작품 카드 2개 + "AI를 쓴 곳, 쓰지 않은 곳" 비교표 / 2쪽 문제·3단 구조(규칙 판정·AI 설명·검증기)·써 보는 흐름 / 3쪽 실험 설정·결과 해석·설명 AI·실데이터·만드는 과정·한계 / 4쪽 노트 인박스 계기·판단 3개·완료의 기준·두 작품의 공통점. Marp 렌더로 4쪽 모두 A4 한 쪽 안(넘침 없음), PDF 4.11MB, 글자·링크에 주소 없음 확인. 노션 맨 위 🚧 "작성 중" 상자는 Marp 변환 때 자동으로 빠짐. 노션 사진 블록은 서명 주소 때문에 하나만 바꿀 수 없어 사진 12장을 다시 올리고 페이지 전체를 교체했음(글은 그대로)
   - 노트 인박스 최신 수치(저장소 `C:\dev\note-inbox` 기준): 커밋 60개(08-27~09-06), 테스트 182개(유닛 122·계측 60), INTERNET 권한 없음. 노션 기록의 42커밋·106개는 옛 값
   - 쪽 나눔 도구(저장소 밖 `C:\dev\portfolio-tools`, README 있음): 크롬 확장 포크(app.notion.com 지원, 사용자가 개발자 모드로 설치해야 함), `notion-export`(notion-to-md 3.1.9 → A4 Marp PDF, 테스트 16개, 토큰은 그 폴더 `.env`). 실제 페이지로 4쪽 A4 PDF 3.94MB 생성 확인
 
 ## 다음 할 일
-1. **포트폴리오 PDF 마무리** — 위 "진행 중"의 노션 페이지. 사용자가 4쪽 초안 검토 → 고칠 곳 반영(update_content로 글 블록만 교체, 사진 블록은 서명 주소라 old_str로 잡지 말 것). 코드 동결 유지(문서·버그만)
-   - 첫 명령: 사용자에게 4쪽 검토 결과 받기. 수정 후 `npm run export && npm run preview`로 쪽마다 넘침 확인
-   - 쪽 맞춤 확인: `cd C:\dev\portfolio-tools\notion-export && npm run export && npm run preview -- out\3e83baff\portfolio.md` (쪽별 PNG)
-   - **최종 PDF = Marp PDF** (사용자 결정 09-27): `npm run pdf -- out\3e83baff\portfolio.md` → `out\3e83baff\portfolio.pdf`. 🚧 상자는 변환 때 자동으로 빠짐
-   - 하지 않기로 한 것 (사용자 결정 09-27): 3쪽 데모 영상 링크(자리도 뺌), 블라인드 규정 확인, PDF 속 배포·GitHub 주소(링크 줄과 사진 속 주소 모두 뺌)
-   - 재료: `docs/portfolio/numbers.md`(수치·출처), `docs/portfolio/showcase/out/` 소개 이미지 6장, `docs/portfolio/screens/`(섹션 캡처), `docs/portfolio/demo_script.md`, `docs/validation_report.md`, `docs/case_notes.md`, 이 파일의 "계획과 실제 실행의 차이" 표(24건, AI 활용 과정 증거), `docs/ai_errors.md`
-   - Notion 작업 로그 기록(2026-09-27 작성): https://app.notion.com/p/3e83baff12e681c3bf5ed91200b21111 — 계기·과정·어려움 문장을 PDF에 가져다 쓸 수 있음
-2. 남은 사용자 작업: 2분 데모 영상 녹화, 지원서 AI 활용 경험 텍스트
-3. 제출 마감 9/28(월) 17시
+없음 — **제출 완료** (2026-09-27, 사용자 보고). 새 지시가 올 때까지 대기. 배포 앱은 심사 중일 수 있으니 코드를 바꾸기 전에 사용자에게 확인.
+
+참고 (제출물 원본·재료 위치):
+- 포트폴리오 PDF: 위 "진행 중"의 노션 페이지 → Marp PDF (`C:\dev\portfolio-tools\notion-export`에서 `npm run pdf -- out\3e83baff\portfolio.md` → `out\3e83baff\portfolio.pdf`)
+- 지원서 「AI 활용 경험」: 심층 인터뷰 8라운드로 방향을 정한 초안 v3 (1,926자, 맨 앞 [요약]). 핵심 "코드는 AI에게, 나는 AI가 일하는 판을 짠다", 척추는 세션 인계 규칙·계획과 테스트 먼저·리뷰 에이전트, 사례는 SPC와 노트 인박스. 인터뷰 기록과 본문은 `.omc/specs/deep-interview-ai-usage-essay.md` — git 제외라 이 PC에만 있음. 실제 제출본은 사용자가 고쳤을 수 있음
+- 재료: `docs/portfolio/numbers.md`(수치·출처), `docs/portfolio/showcase/out/` 소개 이미지 6장, `docs/portfolio/screens/`(섹션 캡처), `docs/portfolio/demo_script.md`, `docs/validation_report.md`, `docs/case_notes.md`, 이 파일의 "계획과 실제 실행의 차이" 표(24건), `docs/ai_errors.md`
+- Notion 작업 로그 기록: https://app.notion.com/p/3e83baff12e681c3bf5ed91200b21111
 
 배포 설정 메모 (2026-09-27 Streamlit 문서 확인):
 - Secrets: 앱 오른쪽 아래 "Manage app" → ⋮ → Settings → Secrets 탭에 `OPENAI_API_KEY = "..."`(최상위 키) 입력 후 Save. 앱은 `st.secrets`의 이 키를 환경변수로 옮겨 쓴다(`streamlit_app.py:19-24`)
